@@ -51,7 +51,7 @@ const features = ["Private Room", "House", "2 Rooms", "1 Bath"]
 
 export default function ShowListing() {
     return (
-        <div>
+        <div className={`${inter.className}`}>
         {/* Desktop View */}
         <div className="hidden md:block">
           <Navbar />
