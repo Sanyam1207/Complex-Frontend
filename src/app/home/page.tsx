@@ -1,6 +1,7 @@
 'use client'; // Only needed if you're using Next.js App Router
 
 import MobileBottomTabs from '@/components/MobileBottomTabs';
+import Navbar from '@/components/NavBar';
 import PropertyCardCarousel from '@/components/PropertyCard';
 import TabsBar from '@/components/TabsBar';
 import { Inter } from 'next/font/google';
@@ -78,6 +79,7 @@ export default function Home() {
     ];
     return (
         <div className='bg-black'>
+            <Navbar />
             <TabsBar />
             {/* Main Content */}
             <div className="min-h-screen -z-[400] bg-gray-100 rounded-t-3xl p-4">
