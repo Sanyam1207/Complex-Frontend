@@ -7,6 +7,7 @@ import { Menu as MenuIcon } from "lucide-react";
 import SignUpModal from "./RegisterPopup";
 import LoginModal from "./LoginPopup";
 import MobileFilterModal from "./MobileFilterPopup";
+import { usePathname } from "next/navigation";
 
 // Fonts
 const knewave = Knewave({
@@ -18,11 +19,12 @@ const inter = Inter({
 });
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showSignUpModel, setShowSignUpModal] = useState(false);
   const [showLoginModel, setShowLoginModal] = useState(false);
-  const [showMobileFilterModal , setShowMobileFilterModal] = useState(false);
+  const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
 
   return (
     <nav
@@ -39,7 +41,7 @@ export default function Navbar() {
         - First row: brand name centered
         - Second row: search bar (left) + mobileslider icon (right)
       */}
-      <div className="md:hidden w-full px-4 py-4 flex flex-col space-y-4">
+      <div className="md:hidden w-full px-4 py-4 flex flex-col space-y-5">
         {/* 1) Brand in the middle */}
         <div className="flex items-center justify-center">
           {/* Blue circle + brand text */}
@@ -50,40 +52,42 @@ export default function Navbar() {
         </div>
 
         {/* 2) Search Bar + mobileslider icon in same row */}
-        <div className="flex items-center justify-between bg-[#2F2F2F] rounded-full px-4 py-2">
-          {/* Search Section */}
-          <div className="flex items-center">
-            <div className="bg-[#1c1c1c] p-2 rounded-full">
-              <Image
-                src="/icons/firrsearch.png"
-                height={15.43}
-                width={15.43}
-                alt="search-icon"
+        {pathname === "/create-listing-steps" ? (
+          <h1 className="text-base self-center text-white font-bold">Listing</h1>
+        ) : (
+          <div className="flex items-center justify-between bg-[#2F2F2F] rounded-full px-4 py-2">
+            {/* Search Section */}
+            <div className="flex items-center">
+              <div className="bg-[#1c1c1c] p-2 rounded-full">
+                <Image
+                  src="/icons/firrsearch.png"
+                  height={15.43}
+                  width={15.43}
+                  alt="search-icon"
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Search location"
+                className="ml-2 w-full border-none outline-none bg-transparent text-[14px] text-white placeholder-white"
               />
             </div>
-            <input
-              type="text"
-              placeholder="Search location"
-              className="
-                ml-2 w-full
-                border-none outline-none
-                bg-transparent
-                text-[14px] text-white placeholder-white
-              "
-            />
-          </div>
 
-          {/* mobileslider icon */}
-          <button onClick={() => {setShowMobileFilterModal(true)}} className="p-2 ml-2 rounded-full bg-[#353537]">
-            <Image
-              src="/icons/mobileslider.svg"
-              alt="Slider Icon"
-              width={20}
-              height={20}
-            />
-          </button>
-        </div>
-        <MobileFilterModal isOpen={showMobileFilterModal} onClose={() => {setShowMobileFilterModal(false)}} />
+            {/* Mobile slider icon */}
+            <button
+              onClick={() => setShowMobileFilterModal(true)}
+              className="p-2 ml-2 rounded-full bg-[#353537]"
+            >
+              <Image
+                src="/icons/mobileslider.svg"
+                alt="Slider Icon"
+                width={20}
+                height={20}
+              />
+            </button>
+          </div>
+        )}
+        <MobileFilterModal isOpen={showMobileFilterModal} onClose={() => { setShowMobileFilterModal(false) }} />
       </div>
 
       {/* 
