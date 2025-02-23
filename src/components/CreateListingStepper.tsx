@@ -5,6 +5,7 @@ const CreateListingStepper = ({steps, activeStep, handleBackButton} : {steps: st
     
     return (
         <div className="bg-[#1c1c1c] flex flex-col items-center p-6 mb-3 space-y-10">
+            
             {/* Stepper */}
             <CustomStepper steps={steps} activeStep={activeStep} />
 
@@ -12,12 +13,13 @@ const CreateListingStepper = ({steps, activeStep, handleBackButton} : {steps: st
             <div className="flex flex-row items-center md:w-1/2 max-w-3xl text-white">
                 <button
                     onClick={handleBackButton}
-                    className="bg-[#353537] px-4 py-2 mr-10 md:mr-40 rounded-full hover:bg-gray-600 transition"
+                    className="bg-[#353537] hidden md:block px-4 py-2 mr-10 md:mr-40 rounded-full hover:bg-gray-600 transition"
                 >
                     Back
                 </button>
                 <h1 className="text-sm font-semibold">
-                    {steps[activeStep - 1]}
+                    {steps[activeStep - 1]} <br />
+                    {activeStep === 3 ? (<div className='mt-2 font-normal'>Enter the nearest intersection if you <br /> prefer not to share your exact address</div>) : ''}
                 </h1>
             </div>
         </div>
