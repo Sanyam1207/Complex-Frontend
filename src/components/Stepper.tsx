@@ -1,7 +1,6 @@
 import Stack from '@mui/material/Stack';
 import Step from '@mui/material/Step';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
-import { StepIconProps } from '@mui/material/StepIcon';
 import Stepper from '@mui/material/Stepper';
 import { styled } from '@mui/material/styles';
 
@@ -33,7 +32,7 @@ const QontoConnector = styled(StepConnector)(({ theme }) => ({
 
 export default function CustomStepper({activeStep, steps}: {activeStep: number, steps: string[]}) {
   return (
-    <Stack sx={{ width: '100%' }} spacing={4}>
+    <Stack sx={{ width: '70%' }} spacing={4}>
       <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
         {steps.map((label) => (
           <Step key={label}>
