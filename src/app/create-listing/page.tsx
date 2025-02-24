@@ -1,7 +1,9 @@
+'use client'
 import React from "react";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/NavBar";
+import { useRouter } from "next/navigation";
 const inter = Inter({
     subsets: ["latin"],
 })
@@ -75,6 +77,7 @@ const StepItem = ({
 
 
 export default function CreateListing() {
+    const router = useRouter();
     return (
         <>
             {/* MOBILE LAYOUT */}
@@ -112,7 +115,7 @@ export default function CreateListing() {
                             <div className="flex-1" />
                         </div>
                         {/* Get Started Button */}
-                        <button className="bg-black text-white w-full py-3 rounded-full font-semibold text-sm">
+                        <button onClick={() => {router.push('create-listing-steps')}} className="bg-black text-white w-full py-3 rounded-full font-semibold text-sm">
                             Get Started
                         </button>
                     </div>
@@ -129,7 +132,7 @@ export default function CreateListing() {
                         <br />
                         your listing.
                     </h1>
-                    <button className="bg-black text-white px-6 py-3 rounded-full font-semibold text-sm">
+                    <button onClick={() => {router.push('/create-listing-steps')}} className="bg-black text-white px-6 py-3 rounded-full font-semibold text-sm">
                         Get Started
                     </button>
                 </div>

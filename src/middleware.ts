@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt';
 export { default } from 'next-auth/middleware';
 
 export const config = {
-  matcher: [],
+  matcher: ["/"],
 };
 
 export async function middleware(request: NextRequest) {
@@ -14,17 +14,9 @@ export async function middleware(request: NextRequest) {
 
 
   if (
-    token &&
-    (url.pathname.startsWith('/register') ||
-      url.pathname.startsWith('/login') ||
-      url.pathname.startsWith('/verify') ||
-      url.pathname === '/')
+    (url.pathname.startsWith('/'))
   ) {
-    return NextResponse.redirect(new URL('/homePage', request.url));
-  }
-
-  if (!token && (url.pathname.startsWith('/sanyam') || url.pathname === '/')) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/home', request.url));
   }
 
   return NextResponse.next();

@@ -7,7 +7,7 @@ import { Menu as MenuIcon } from "lucide-react";
 import SignUpModal from "./RegisterPopup";
 import LoginModal from "./LoginPopup";
 import MobileFilterModal from "./MobileFilterPopup";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // Fonts
 const knewave = Knewave({
@@ -19,6 +19,7 @@ const inter = Inter({
 });
 
 export default function Navbar() {
+  const router = useRouter()
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -46,7 +47,7 @@ export default function Navbar() {
         <div className="flex items-center justify-center">
           {/* Blue circle + brand text */}
           <div className="mr-2 h-4 w-4 rounded-full bg-[#0A84FF]" />
-          <span className={`text-base ${knewave.className}`}>
+          <span onClick={() => {router.push('/home')}} className={`cursor-pointer text-base ${knewave.className}`}>
             Findmyrentals
           </span>
         </div>
@@ -106,7 +107,7 @@ export default function Navbar() {
         {/* Logo / Brand */}
         <div className="flex items-center">
           <div className="mr-4 h-[32px] w-[32px] rounded-full bg-[#0A84FF]" />
-          <div className={`text-[20px] ${knewave.className}`}>
+          <div onClick={() => {router.push('/home')}} className={`cursor-pointer text-[20px] ${knewave.className}`}>
             Findmyrentals
           </div>
         </div>
@@ -143,6 +144,7 @@ export default function Navbar() {
 
         {/* Create listing button (Desktop only) */}
         <button
+          onClick={() => { router.push('/create-listing') }}
           type="button"
           className="
             text-sm font-semibold
@@ -213,7 +215,7 @@ export default function Navbar() {
                 >
                   Sign up
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push("/create-listing")}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   List your place
                 </li>
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
@@ -240,7 +242,7 @@ export default function Navbar() {
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Wishlist
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/complete-account')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Create profile
                 </li>
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">

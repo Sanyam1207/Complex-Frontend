@@ -3,6 +3,7 @@
 import Navbar from "@/components/NavBar";
 import { Inter } from "next/font/google";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const inter = Inter({
@@ -10,6 +11,7 @@ const inter = Inter({
 });
 
 export default function CompleteProfile() {
+    const router = useRouter();
     const [gender, setGender] = useState("");
     const [about, setAbout] = useState("");
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
@@ -123,7 +125,7 @@ export default function CompleteProfile() {
             >
                 <div className="relative bg-black text-white pt-6 pb-6 px-4">
                     <button
-                        onClick={() => alert("Go back!")}
+                        onClick={() => {router.push('/home')}}
                         className="absolute top-6 left-4 text-white"
                     >
                         <Image

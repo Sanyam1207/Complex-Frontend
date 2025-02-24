@@ -5,6 +5,7 @@ import Navbar from "@/components/NavBar";
 import CreateListingStepper from "@/components/CreateListingStepper";
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -157,6 +158,7 @@ function PropertyColumn({
 }
 
 export default function Page() {
+    const router = useRouter();
     const [activeStep, setActiveStep] = useState(1);
     const [selectedTab, setSelectedTab] = useState<"Apartment" | "House">("Apartment");
     const [bedrooms, setBedrooms] = useState("");
@@ -863,7 +865,7 @@ export default function Page() {
 
                             {/* Continue Button */}
                             <button
-                                onClick={() => console.log("Uploaded images:", images)}
+                                onClick={() => console.log(router.push('/show-listing'))}
                                 className="bg-black text-white rounded-full px-6 py-3 w-full max-w-md"
                             >
                                 Continue

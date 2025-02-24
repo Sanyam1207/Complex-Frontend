@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { Inter } from "next/font/google";
-import { Heart } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function MobileBottomTabs() {
+    const router = useRouter()
     return (
         <div
             className={`
@@ -77,7 +78,7 @@ export default function MobileBottomTabs() {
             </button>
 
             {/* Profile */}
-            <button className="flex flex-col items-center justify-center text-white space-y-1">
+            <button onClick={() => {router.push("/complete-account")}} className="flex flex-col items-center justify-center text-white space-y-1">
                 <Image
                     src="/icons/Profile.svg"
                     alt="Profile"
