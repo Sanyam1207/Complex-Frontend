@@ -47,7 +47,7 @@ export default function Navbar() {
         <div className="flex items-center justify-center">
           {/* Blue circle + brand text */}
           <div className="mr-2 h-4 w-4 rounded-full bg-[#0A84FF]" />
-          <span onClick={() => {router.push('/home')}} className={`cursor-pointer text-base ${knewave.className}`}>
+          <span onClick={() => { router.push('/home') }} className={`cursor-pointer text-base ${knewave.className}`}>
             Findmyrentals
           </span>
         </div>
@@ -107,20 +107,25 @@ export default function Navbar() {
         {/* Logo / Brand */}
         <div className="flex items-center">
           <div className="mr-4 h-[32px] w-[32px] rounded-full bg-[#0A84FF]" />
-          <div onClick={() => {router.push('/home')}} className={`cursor-pointer text-[20px] ${knewave.className}`}>
+          <div onClick={() => { router.push('/home') }} className={`cursor-pointer text-[20px] ${knewave.className}`}>
             Findmyrentals
           </div>
+          {
+            pathname === "/complete-account" && (
+              <div className={`ml-4 text-xl ${inter.className} text-white`}>Create Profile</div>
+            )
+          }
         </div>
 
         {/* Search Bar (Desktop) */}
         <div
-          className="
+          className={` ${pathname === '/complete-account' ? "hidden" : "flex"}
             flex items-center 
             bg-[#2F2F2F] 
             rounded-full 
             px-4 py-2 
             w-[26.18rem]
-          "
+          `}
         >
           <div className="bg-[#1c1c1c] p-2 rounded-full">
             <Image
@@ -146,15 +151,16 @@ export default function Navbar() {
         <button
           onClick={() => { router.push('/create-listing') }}
           type="button"
-          className="
+          className={`
             text-sm font-semibold
             bg-transparent text-white
             hover:underline hover:opacity-80
             transition-all
-          "
+          `}
         >
           Create listing
         </button>
+
 
         {/* Hamburger + User Icon (Desktop) */}
         <div
@@ -215,7 +221,7 @@ export default function Navbar() {
                 >
                   Sign up
                 </li>
-                <li onClick={() => {router.push("/create-listing")}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push("/create-listing") }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   List your place
                 </li>
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
@@ -242,7 +248,7 @@ export default function Navbar() {
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Wishlist
                 </li>
-                <li onClick={() => {router.push('/complete-account')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/complete-account') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Create profile
                 </li>
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
