@@ -6,7 +6,7 @@ const page = () => {
     return (
         <>
             <Navbar />
-            <div className="bg-[#1c1c1c] flex h-screen text-[#2C3C4E] flex-col pt-10">
+            <div className="bg-[#1c1c1c] hidden md:flex h-screen text-[#2C3C4E] flex-col pt-10">
                 <div className="flex flex-row justify-between  px-14 items-center">
 
                     {/* Left Section: Search Bar & Sort Button */}
