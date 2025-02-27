@@ -1,3 +1,4 @@
+import MobileBottomTabs from '@/components/MobileBottomTabs'
 import Navbar from '@/components/NavBar'
 import Image from 'next/image'
 import React from 'react'
@@ -89,121 +90,104 @@ const page = () => {
                         {/* show all chats section */}
                         <div className="h-full overflow-y-auto p-5">
                             {/* John Doe (special snippet + Unread badge) */}
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center space-x-3">
-                                    {/* Avatar */}
-                                    <div className="w-10 h-10 relative">
-                                        <Image
-                                            src="/icons/usericon.png"
-                                            alt="avatar"
-                                            layout="fill"
-                                            objectFit="cover"
-                                            className="rounded-full"
-                                        />
-                                    </div>
-                                    {/* Name & snippet */}
+                            <div className="flex items-start justify-between bg-white rounded-md p-3">
+                                <div className="flex justify-center items-center">
+                                    {/* Left image (placeholder) */}
+                                    <Image
+                                        src="/icons/similarlisting.png"
+                                        alt="Thumbnail"
+                                        width={32}
+                                        height={32}
+                                        className='rounded-full mr-3 h-10 w-10'
+                                    />
                                     <div className="flex flex-col">
-                                        <span className="font-medium text-sm">John Doe</span>
-                                        <span className="text-xs text-gray-500">Hi, my name is John Do...</span>
+                                        <span className="font-semibold">265 Main St</span>
+                                        <span className="text-sm text-[#2C3C4E]">
+                                            This is the count of total char . . . 45
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-end">
-                                    <span className="text-xs text-gray-500">Just now</span>
-                                    <span className="bg-black text-white text-xs px-2 py-1 rounded-full">
-                                        Unread
-                                    </span>
+                                    <span className="text-xs text-gray-400">Just now</span>
+                                    <div className="mt-1">
+                                        {/* Example star icon */}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-400"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Sachin Tendulkar */}
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 relative">
-                                        <Image
-                                            src="/icons/usericon.png"
-                                            alt="avatar"
-                                            layout="fill"
-                                            objectFit="cover"
-                                            className="rounded-full"
-                                        />
-                                    </div>
+                            <div className="flex items-start justify-between bg-white rounded-md p-3">
+                                <div className="flex justify-center items-center">
+                                    {/* Left image (placeholder) */}
+                                    <Image
+                                        src="/icons/similarlisting.png"
+                                        alt="Thumbnail"
+                                        width={32}
+                                        height={32}
+                                        className='rounded-full mr-3 h-10 w-10'
+                                    />
                                     <div className="flex flex-col">
-                                        <span className="font-medium text-sm">Sachin Tendulkar</span>
-                                        <span className="text-xs text-gray-500">
-                                            This is the count of total char . . .
+                                        <span className="font-semibold">265 Main St</span>
+                                        <span className="text-sm text-[#2C3C4E]">
+                                            This is the count of total char . . . 45
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex items-center space-x-3">
-                                    <span className="text-xs text-gray-500">Just now</span>
-                                    <span className="text-xs text-gray-500">45</span>
-                                    {/* Star icon */}
-                                    <svg
-                                        className="w-4 h-4 text-gray-400"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l2.184 6.728a1 
-                1 0 00.95.69h7.063c.969 0 1.371 1.24.588 
-                1.81l-5.72 4.088a1 1 0 00-.364 
-                1.118l2.183 6.728c.3.921-.755 
-                1.688-1.54 1.118l-5.72-4.088a1 1 0 
-                00-1.176 0l-5.72 4.088c-.784.57-1.84-.197-1.54-1.118l2.183-6.728a1 
-                1 0 00-.364-1.118l-5.72-4.088c-.783-.57-.38-1.81.589-1.81h7.062a1 
-                1 0 00.951-.69l2.184-6.728z"
-                                        />
-                                    </svg>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-xs text-gray-400">Just now</span>
+                                    <div className="mt-1">
+                                        {/* Example star icon */}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-400"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Rohit Sharma */}
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 relative">
-                                        <Image
-                                            src="/icons/usericon.png"
-                                            alt="avatar"
-                                            layout="fill"
-                                            objectFit="cover"
-                                            className="rounded-full"
-                                        />
-                                    </div>
+                            <div className="flex items-start justify-between bg-white rounded-md p-3">
+                                <div className="flex justify-center items-center">
+                                    {/* Left image (placeholder) */}
+                                    <Image
+                                        src="/icons/similarlisting.png"
+                                        alt="Thumbnail"
+                                        width={32}
+                                        height={32}
+                                        className='rounded-full mr-3 h-10 w-10'
+                                    />
                                     <div className="flex flex-col">
-                                        <span className="font-medium text-sm">Rohit Sharma</span>
-                                        <span className="text-xs text-gray-500">
-                                            This is the count of total char . . .
+                                        <span className="font-semibold">265 Main St</span>
+                                        <span className="text-sm text-[#2C3C4E]">
+                                            This is the count of total char . . . 45
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-xs text-gray-500">Just now</span>
-                                    <span className="text-xs text-gray-500">45</span>
-                                    <svg
-                                        className="w-4 h-4 text-gray-400"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        {/* same star path as above */}
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l2.184 6.728a1 
-                1 0 00.95.69h7.063c.969 0 1.371 1.24.588 
-                1.81l-5.72 4.088a1 1 0 00-.364 
-                1.118l2.183 6.728c.3.921-.755 
-                1.688-1.54 1.118l-5.72-4.088a1 1 0 
-                00-1.176 0l-5.72 4.088c-.784.57-1.84-.197-1.54-1.118l2.183-6.728a1 
-                1 0 00-.364-1.118l-5.72-4.088c-.783-.57-.38-1.81.589-1.81h7.062a1 
-                1 0 00.951-.69l2.184-6.728z"
-                                        />
-                                    </svg>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-xs text-gray-400">Just now</span>
+                                    <div className="mt-1">
+                                        {/* Example star icon */}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-400"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
 
@@ -324,6 +308,82 @@ const page = () => {
                     </div>
                 </div>
             </div>
+
+
+
+            <div className="flex md:hidden flex-col h-[100vh] bg-white p-4 text-[#2C3C4E]">
+                {/* First message */}
+                <div className="flex items-start justify-between bg-white rounded-md p-3">
+                    <div className="flex justify-center items-center">
+                        {/* Left image (placeholder) */}
+                        <Image
+                            src="/icons/similarlisting.png"
+                            alt="Thumbnail"
+                            width={32}
+                            height={32}
+                            className='rounded-full mr-3 h-10 w-10'
+                        />
+                        <div className="flex flex-col">
+                            <span className="font-semibold">265 Main St</span>
+                            <span className="text-sm text-[#2C3C4E]">
+                                This is the count of total char . . . 45
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-400">Just now</span>
+                        <div className="mt-1">
+                            {/* Example star icon */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-gray-400"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <hr className='my-3' />
+
+                {/* Second message */}
+                <div className="flex items-start justify-between bg-white rounded-md p-3">
+                    <div className="flex justify-center items-center">
+                        {/* Left image (placeholder) */}
+                        <Image
+                            src="/icons/similarlisting.png"
+                            alt="Thumbnail"
+                            width={32}
+                            height={32}
+                            className='rounded-full mr-3 h-10 w-10'
+                        />
+                        <div className="flex flex-col">
+                            <span className="font-semibold">265 Main St</span>
+                            <span className="text-sm text-[#2C3C4E]">
+                                This is the count of total char . . . 45
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-400">Just now</span>
+                        <div className="mt-1">
+                            {/* Example star icon */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-gray-400"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <MobileBottomTabs />
+
         </>
     )
 }
