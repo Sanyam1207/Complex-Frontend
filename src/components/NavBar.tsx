@@ -42,7 +42,7 @@ export default function Navbar() {
         - First row: brand name centered
         - Second row: search bar (left) + mobileslider icon (right)
       */}
-      <div className="md:hidden w-full px-4 py-4 flex flex-col space-y-5">
+      <div className="md:hidden w-full px-4 py-4 rounded-t-3xl flex flex-col space-y-5">
         {/* 1) Brand in the middle */}
         <div className="flex items-center justify-center">
           {/* Blue circle + brand text */}
