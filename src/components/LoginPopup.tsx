@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const inter = Inter({
   subsets: ["latin"],

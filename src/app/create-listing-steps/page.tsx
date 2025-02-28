@@ -219,11 +219,6 @@ export default function Page() {
     const handleRemoveImage = (index: number) => {
         setImages((prev) => prev.filter((_, i) => i !== index));
     };
-    const handleAddMore = () => {
-        if (hiddenFileInputRef.current) {
-            hiddenFileInputRef.current.click();
-        }
-    };
 
 
     // Handler to add a new Walking Distance input
