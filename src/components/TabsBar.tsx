@@ -11,7 +11,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function TabsBar() {
   const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [showFilter, setShowFilter] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const selectedCategory = useSelector((state: any) => state.category.selectedCategory);
 
   // Define tab data

@@ -3,7 +3,6 @@
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import OfferChips from "./OfferChips";
 
 interface ShowListingCardProps {
   images: string[];
