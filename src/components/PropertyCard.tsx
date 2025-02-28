@@ -16,6 +16,7 @@ export default function PropertyCardCarousel({
     const [api, setApi] = useState<CarouselApi | null>(null);
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
+    console.log(count)
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {

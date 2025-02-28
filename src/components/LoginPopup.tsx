@@ -17,7 +17,6 @@ interface SignUpModalProps {
 
 const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
   // All hooks are called unconditionally at the top
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

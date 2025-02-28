@@ -167,7 +167,9 @@ export default function Page() {
     // State for toggle: "Couple-friendly".
     const [isCoupleFriendly, setIsCoupleFriendly] = useState(false);
     const [description, setDescription] = useState("");
+  
     const [walikingDistanceTo, setWalkingDistanceTo] = useState("");
+    console.log(`${description} ${isCoupleFriendly} ${setDescription} ${setIsCoupleFriendly} ${setWalkingDistanceTo} ${walikingDistanceTo} ${setWalkingDistanceTo}`);
 
     // List of possible amenities
     const availableAmenities = [
@@ -250,6 +252,7 @@ export default function Page() {
     // We'll use a hidden file input for the "Add More" button (when images.length >= 6).
     const hiddenFileInputRef = useRef<HTMLInputElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    console.log(`${activeIndex} - ${images.length} ${setActiveIndex}`);
 
     // Handle file input
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -705,7 +708,7 @@ export default function Page() {
                             {/* 4) Fourth Div: Caption + Continue Button */}
                             <div className="flex flex-col py-4 space-y-4">
                                 <p className="text-sm mb-2">
-                                    If you don't see an amenity listed, you can mention it in the next step.
+                                    If you don&apos;t see an amenity listed, you can mention it in the next step.
                                 </p>
                                 <button
                                     onClick={() => {

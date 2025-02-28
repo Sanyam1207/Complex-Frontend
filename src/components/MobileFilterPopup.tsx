@@ -11,10 +11,12 @@ interface MobileFilterModalProps {
 }
 
 const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
-
-    const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
-    const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  // Always call hooks at the top of the component
+  const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  
+  // Then conditionally return if not open
+  if (!isOpen) return null;
 
     const toggleFilter = (filterName: string) => {
         setSelectedFilters((prev) =>
