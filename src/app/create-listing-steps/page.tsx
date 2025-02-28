@@ -245,7 +245,6 @@ export default function Page() {
 
     const [images, setImages] = useState<string[]>([]);
     // We'll use a hidden file input for the "Add More" button (when images.length >= 6).
-    const hiddenFileInputRef = useRef<HTMLInputElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
     console.log(`${activeIndex} - ${images.length} ${setActiveIndex}`);
 
