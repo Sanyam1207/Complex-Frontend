@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCategory } from "@/redux/slices/categorySlice";
+import { Inter } from "next/font/google";
+import Image from "next/image";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import FilterModal from "./FilterPopup";
 
 const inter = Inter({ subsets: ["latin"] });
