@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import Navbar from "@/components/NavBar";
 import CreateListingStepper from "@/components/CreateListingStepper";
-import Image from "next/image";
+import Navbar from "@/components/NavBar";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
