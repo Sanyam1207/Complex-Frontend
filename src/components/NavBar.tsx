@@ -8,6 +8,7 @@ import SignUpModal from "./RegisterPopup";
 import LoginModal from "./LoginPopup";
 import MobileFilterModal from "./MobileFilterPopup";
 import { usePathname, useRouter } from "next/navigation";
+import LogoutModal from "./LogoutModal";
 
 // Fonts
 const knewave = Knewave({
@@ -26,6 +27,14 @@ export default function Navbar() {
   const [showSignUpModel, setShowSignUpModal] = useState(false);
   const [showLoginModel, setShowLoginModal] = useState(false);
   const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
+
+   const [showLogoutModal, setShowLogoutModal] = React.useState(false)
+  
+    // Handler for confirming deletion
+    const handleLogout = () => {
+      console.log('Listing deleted!')
+      setShowLogoutModal(false)
+    }
 
   return (
     <nav
@@ -260,7 +269,7 @@ export default function Navbar() {
                 <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Feedback
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {setShowLogoutModal(true)}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Logout
                 </li>
               </ul>
@@ -278,6 +287,12 @@ export default function Navbar() {
         isOpen={showLoginModel}
         onClose={() => setShowLoginModal(false)}
       />
+       <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
+      
     </nav>
   );
 }
