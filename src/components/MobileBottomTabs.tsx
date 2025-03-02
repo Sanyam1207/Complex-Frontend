@@ -26,7 +26,7 @@ export default function MobileBottomTabs() {
       `}
         >
             {/* Home */}
-            <button className="flex flex-col items-center text-white space-y-1">
+            <button onClick={() => {router.push('/home')}} className="flex flex-col items-center text-white space-y-1">
                 <Image
                     src="/icons/Home.svg"
                     alt="Home"
@@ -52,7 +52,7 @@ export default function MobileBottomTabs() {
             </button>
 
             {/* Wishlist */}
-            <button className="flex flex-col items-center text-white space-y-1">
+            <button onClick={() => {router.push('/wishlist')}} className="flex flex-col items-center text-white space-y-1">
                 <Image
                     className="text-white mb-2"
                     src="/icons/Wishlist.svg"
@@ -65,7 +65,7 @@ export default function MobileBottomTabs() {
             </button>
 
             {/* Messages */}
-            <button className="flex flex-col items-center text-white space-y-1">
+            <button onClick={() => {router.push('/messages')}} className="flex flex-col items-center text-white space-y-1">
                 <Image
                     src="/icons/Messages.svg"
                     alt="Messages"
@@ -78,7 +78,7 @@ export default function MobileBottomTabs() {
             </button>
 
             {/* Profile */}
-            <button onClick={() => {router.push("/complete-account")}} className="flex flex-col items-center justify-center text-white space-y-1">
+            <button onClick={() => {router.push("/profile")}} className="flex flex-col items-center justify-center text-white space-y-1">
                 <Image
                     src="/icons/Profile.svg"
                     alt="Profile"
