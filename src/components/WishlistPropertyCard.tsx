@@ -1,5 +1,6 @@
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function WishlistCardCarousel({
@@ -19,6 +20,7 @@ export default function WishlistCardCarousel({
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
     const [isClient, setIsClient] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         setIsClient(true); // Ensure it only renders on the client
@@ -36,7 +38,7 @@ export default function WishlistCardCarousel({
     if (!isClient) return null; // Prevent SSR mismatch
 
     return (
-        <div className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
+        <div onClick={() => {router.push('/show-listing')}} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
             {/* Cancel Icon (replaces the heart icon) */}
             <button
                 onClick={onCancel}

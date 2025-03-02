@@ -233,7 +233,7 @@ export default function Navbar() {
                 <li onClick={() => { router.push("/create-listing") }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   List your place
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/help-feedback')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Help center
                 </li>
               </ul>
@@ -251,22 +251,22 @@ export default function Navbar() {
               "
             >
               <ul className="flex flex-col py-2 text-[0.875rem]">
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/messages')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Messages
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/wishlist')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Wishlist
                 </li>
                 <li onClick={() => { router.push('/complete-account') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Create profile
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/notifications')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Notifications
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/personal-details')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Personal detail
                 </li>
-                <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => {router.push('/help-feedback')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Feedback
                 </li>
                 <li onClick={() => {setShowLogoutModal(true)}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">

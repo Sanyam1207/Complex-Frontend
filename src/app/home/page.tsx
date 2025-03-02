@@ -5,10 +5,12 @@ import Navbar from '@/components/NavBar';
 import PropertyCardCarousel from '@/components/PropertyCard';
 import TabsBar from '@/components/TabsBar';
 import { Inter } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
+    const router = useRouter()
     const dummyProperties = [
         {
             images: [
@@ -87,6 +89,7 @@ export default function Home() {
                 <div className="max-w-7xl mt-10 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
                     {dummyProperties.map((property, index) => (
                         <PropertyCardCarousel
+                            onClick={() => { router.push('show-listing') }}
                             key={index}
                             images={property.images}
                             address={property.address}

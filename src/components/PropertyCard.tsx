@@ -3,11 +3,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function PropertyCardCarousel({
+    onClick,
     images,
     address,
     price,
     date,
 }: {
+    onClick?: () => void;
     images: string[];
     address: string;
     price: number;
@@ -34,7 +36,7 @@ export default function PropertyCardCarousel({
     if (!isClient) return null; // Prevent SSR mismatch
 
     return (
-        <div className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
+        <div onClick={onClick} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
             {/* Heart Icon */}
             <button className="absolute top-4 right-4 flex items-center justify-center h-[2rem] w-[2rem] bg-white p-1 rounded-full shadow-md z-[1]">
                 <Image alt="Favourite" src="/icons/heart.svg" width={20} height={20} />
@@ -43,7 +45,7 @@ export default function PropertyCardCarousel({
             <Carousel setApi={setApi} className="relative w-full">
                 <CarouselContent>
                     {images.map((src, idx) => (
-                        <CarouselItem key={idx} className=" h-[16rem] w-[21.875rem]">
+                        <CarouselItem key={idx} className="h-[16rem] w-[21.875rem]">
                             <Image
                                 src={src}
                                 alt={`Slide ${idx}`}

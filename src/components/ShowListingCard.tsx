@@ -2,8 +2,8 @@
 
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import OfferChips from "./OfferChips";
 
 interface ShowListingCardProps {
   images: string[];
@@ -16,6 +16,7 @@ export default function ShowListingCard({
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     // Only render on the client to avoid SSR mismatch
@@ -74,7 +75,7 @@ export default function ShowListingCard({
         <button className="absolute top-4 right-16 flex items-center justify-center h-8 w-8 pr-2 bg-white p-1 rounded-full shadow-md z-[1]">
           <Image alt="Favourite" src="/icons/share.svg" width={18} height={20} />
         </button>
-        <button className="absolute top-4 left-4 flex items-center justify-center h-8 w-8  bg-white p-1 rounded-full shadow-md z-[1]">
+        <button onClick={() => {router.push('/home')}} className="absolute top-4 left-4 flex items-center justify-center h-8 w-8  bg-white p-1 rounded-full shadow-md z-[1]">
           <Image alt="Favourite" src="/icons/back.svg" className="text-black" width={20} height={20} />
         </button>
       </div>
