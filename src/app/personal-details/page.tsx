@@ -1,18 +1,21 @@
+'use client'
 import Navbar from '@/components/NavBar';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function PersonalDetails() {
+    const router = useRouter();
     return (
         <>
             {/* ==================== MOBILE VIEW (Android-style) ==================== */}
             <div className="block md:hidden bg-black min-h-screen w-full">
                 {/* Top bar: Back arrow + Title */}
                 <div className="flex flex-col items-center justify-center px-4 py-3 pt-10">
-                    <button className='absolute top-7 left-7 p-3 rounded-full bg-[#353537]'>
+                    <button onClick={() => {router.back()}} className='absolute top-7 left-7 p-3 rounded-full bg-[#353537]'>
                         <Image
                             src="/icons/backarrow.svg"
                             alt="Back"
