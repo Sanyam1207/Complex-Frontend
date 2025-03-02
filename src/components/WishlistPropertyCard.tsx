@@ -18,6 +18,7 @@ export default function WishlistCardCarousel({
 }) {
     const [api, setApi] = useState<CarouselApi | null>(null);
     const [current, setCurrent] = useState(0);
+    //eslint-disable-next-line
     const [count, setCount] = useState(0);
     const [isClient, setIsClient] = useState(false);
     const router = useRouter();
