@@ -1,11 +1,14 @@
+'use client'
 import Navbar from '@/components/NavBar';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Notifications() {
+    const router = useRouter();
     return (
         <>
             {/* 
@@ -16,7 +19,7 @@ export default function Notifications() {
             <div className={`${inter.className} min-h-screen md:hidden h-full bg-[#1F1F21]`}>
                 {/* Top bar */}
                 <div className="bg-[#1F1F21] h-14 p-14 flex items-center justify-center relative">
-                    <button className="absolute left-6 top-10 rounded-full bg-[#353537] p-3">
+                    <button onClick={() => {router.back()}} className="absolute left-6 top-10 rounded-full bg-[#353537] p-3">
                         <Image src={'/icons/backarrow.svg'} width={12} height={12} alt="back" />
                     </button>
                     <h1 className="text-white text-lg font-medium">

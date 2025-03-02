@@ -1,12 +1,16 @@
 "use client"; // If using Next.js 13 app router; remove if using pages router
+import LogoutModal from "@/components/LogoutModal";
 import MobileBottomTabs from "@/components/MobileBottomTabs";
 import { Inter } from "next/font/google";
 import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 const inter = Inter({
     subsets: ["latin"],
 })
 export default function ProfilePage() {
+    const router = useRouter();
+    const [logoutModal, setLogoutModal] = useState(false);
 
     return (
         <div className={`min-h-screen bg-[#1F1F21] ${inter.className}`}>
@@ -16,7 +20,7 @@ export default function ProfilePage() {
                 <p className="text-center text-sm font-medium">Profile</p>
 
                 {/* User Info Row */}
-                <div className="mt-4 flex items-center">
+                <div onClick={() => router.push('/personal-details')} className="mt-4 flex items-center">
                     {/* Avatar placeholder */}
                     <div className="w-12 h-12 bg-gray-300 rounded-full" />
                     {/* Name & Details */}
@@ -44,7 +48,7 @@ export default function ProfilePage() {
             {/* -- 2) MAIN WHITE CARD WITH ROUNDED TOP -- */}
             <div className="bg-white h-[100vh] text-[#2C3C4E] rounded-t-3xl  pt-2 px-6">
                 {/* A) Create Listing */}
-                <div className="flex items-center justify-between py-5">
+                <div onClick={() => { router.push('/create-listing') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Icon circle (plus sign) */}
                         <div className="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full mr-3">
@@ -67,7 +71,7 @@ export default function ProfilePage() {
                     <div className="flex items-center">
                         {/* Icon circle (user) */}
                         <div className="w-12 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
-                            <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27}/>
+                            <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
                         </div>
                         <div>
                             <p className="text-sm font-semibold">Renters profile</p>
@@ -85,7 +89,7 @@ export default function ProfilePage() {
                 <p className="mt-8 mb-4 text-sm ">Settings</p>
 
                 {/* C) Notifications */}
-                <div className="flex items-center justify-between py-5">
+                <div onClick={() => { router.push("/notifications") }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Bell icon */}
                         <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -100,7 +104,7 @@ export default function ProfilePage() {
                 <hr />
 
                 {/* D) Terms & conditions */}
-                <div className="flex items-center justify-between py-5">
+                <div onClick={() => { router.push('/home') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Document icon */}
                         <div className="w-12 p-3 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -115,7 +119,7 @@ export default function ProfilePage() {
                 <hr />
 
                 {/* E) Help & feedback */}
-                <div className="flex items-center justify-between py-5">
+                <div onClick={() => { router.push('/help-feedback') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Mail icon */}
                         <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -130,11 +134,17 @@ export default function ProfilePage() {
                 <hr />
 
                 {/* -- 3) LOGOUT BUTTON -- */}
-                <div className="flex justify-center mt-6 mb-6">
+                <div onClick={() => { setLogoutModal(true) }} className="flex justify-center mt-6 mb-6">
                     <button className="bg-[#007AFF] text-white px-6 py-2 rounded-full text-sm font-semibold">
                         Logout
                     </button>
                 </div>
+
+                {
+                    logoutModal && (
+                        <LogoutModal isOpen={logoutModal} onClose={() => { setLogoutModal(false) }} onConfirm={() => { alert('logged out') }} />
+                    )
+                }
             </div>
 
             <MobileBottomTabs />
