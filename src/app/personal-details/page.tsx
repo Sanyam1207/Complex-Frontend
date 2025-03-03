@@ -158,7 +158,7 @@ export default function PersonalDetails() {
                     <div className="w-full max-w-xs mt-6">
                         {/* Full name */}
                         <label className="block mb-1 text-sm font-medium text-gray-700">
-                            Full name
+                            Full Name
                         </label>
                         <input
                             type="text"
