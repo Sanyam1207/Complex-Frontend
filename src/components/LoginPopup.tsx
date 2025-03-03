@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,7 +16,6 @@ interface SignUpModalProps {
 
 const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
   // All hooks are called unconditionally at the top
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

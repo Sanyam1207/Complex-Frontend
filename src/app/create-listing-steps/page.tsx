@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import Navbar from "@/components/NavBar";
 import CreateListingStepper from "@/components/CreateListingStepper";
-import Image from "next/image";
+import Navbar from "@/components/NavBar";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -168,8 +168,11 @@ export default function Page() {
     const [isCoupleFriendly, setIsCoupleFriendly] = useState(false);
     // eslint-disable-next-line
     const [description, setDescription] = useState("");
+
     // eslint-disable-next-line
+
     const [walikingDistanceTo, setWalkingDistanceTo] = useState("");
+    console.log(`${description} ${isCoupleFriendly} ${setDescription} ${setIsCoupleFriendly} ${setWalkingDistanceTo} ${walikingDistanceTo} ${setWalkingDistanceTo}`);
 
     // List of possible amenities
     const availableAmenities = [
@@ -221,9 +224,6 @@ export default function Page() {
     };
 
 
-
-
-
     // Handler to add a new Walking Distance input
     const handleAddWalkingDistancePoint = () => {
         setWalkingDistancePoints((prev) => [...prev, ""]);
@@ -251,6 +251,7 @@ export default function Page() {
     const hiddenFileInputRef = useRef<HTMLInputElement>(null);
     // eslint-disable-next-line
     const [activeIndex, setActiveIndex] = useState(0);
+    console.log(`${activeIndex} - ${images.length} ${setActiveIndex}`);
 
     // Handle file input
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

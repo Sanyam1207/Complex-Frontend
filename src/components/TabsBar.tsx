@@ -1,18 +1,19 @@
 "use client";
 
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCategory } from "@/redux/slices/categorySlice";
+import { Inter } from "next/font/google";
+import Image from "next/image";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import FilterModal from "./FilterPopup";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function TabsBar() {
   const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [showFilter, setShowFilter] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const selectedCategory = useSelector((state: any) => state.category.selectedCategory);
 
   // Define tab data
