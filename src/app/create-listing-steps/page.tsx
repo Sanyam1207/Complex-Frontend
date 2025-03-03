@@ -5,7 +5,7 @@ import Navbar from "@/components/NavBar";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
