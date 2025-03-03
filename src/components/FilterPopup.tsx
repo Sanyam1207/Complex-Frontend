@@ -11,15 +11,17 @@ interface FilterModalProps {
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
-    // If not open, don't render anything
-    if (!isOpen) return null;
-
     // "lt6" = Less than 6 months, "gt6" = More than 6 months
     const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
 
     // Track which "Popular filters" are selected (multiple)
     // We'll store them in an array of strings
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+    // If not open, don't render anything
+    if (!isOpen) return null;
+
+
 
     // Toggle a filter in or out of the selectedFilters array
     const toggleFilter = (filterName: string) => {

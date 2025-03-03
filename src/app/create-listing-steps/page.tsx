@@ -166,7 +166,9 @@ export default function Page() {
 
     // State for toggle: "Couple-friendly".
     const [isCoupleFriendly, setIsCoupleFriendly] = useState(false);
+    // eslint-disable-next-line
     const [description, setDescription] = useState("");
+    // eslint-disable-next-line
     const [walikingDistanceTo, setWalkingDistanceTo] = useState("");
 
     // List of possible amenities
@@ -217,11 +219,9 @@ export default function Page() {
     const handleRemoveImage = (index: number) => {
         setImages((prev) => prev.filter((_, i) => i !== index));
     };
-    const handleAddMore = () => {
-        if (hiddenFileInputRef.current) {
-            hiddenFileInputRef.current.click();
-        }
-    };
+
+
+
 
 
     // Handler to add a new Walking Distance input
@@ -249,6 +249,7 @@ export default function Page() {
     const [images, setImages] = useState<string[]>([]);
     // We'll use a hidden file input for the "Add More" button (when images.length >= 6).
     const hiddenFileInputRef = useRef<HTMLInputElement>(null);
+    // eslint-disable-next-line
     const [activeIndex, setActiveIndex] = useState(0);
 
     // Handle file input
@@ -705,7 +706,7 @@ export default function Page() {
                             {/* 4) Fourth Div: Caption + Continue Button */}
                             <div className="flex flex-col py-4 space-y-4">
                                 <p className="text-sm mb-2">
-                                    If you don't see an amenity listed, you can mention it in the next step.
+                                    If you don&apos;t see an amenity listed, you can mention it in the next step.
                                 </p>
                                 <button
                                     onClick={() => {
