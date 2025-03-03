@@ -170,7 +170,6 @@ export default function Page() {
     const [description, setDescription] = useState("");
 
     // eslint-disable-next-line
-
     const [walikingDistanceTo, setWalkingDistanceTo] = useState("");
     console.log(`${description} ${isCoupleFriendly} ${setDescription} ${setIsCoupleFriendly} ${setWalkingDistanceTo} ${walikingDistanceTo} ${setWalkingDistanceTo}`);
 
@@ -208,7 +207,7 @@ export default function Page() {
         }
     };
 
-
+// eslint-disable-next-line
     const [descriptionPoints, setDescriptionPoints] = useState(["", ""]);
 
     // 2) Manage the "Walking Distance" points: each index is an independent text value
@@ -248,6 +247,7 @@ export default function Page() {
 
     const [images, setImages] = useState<string[]>([]);
     // We'll use a hidden file input for the "Add More" button (when images.length >= 6).
+    // eslint-disable-next-line
     const hiddenFileInputRef = useRef<HTMLInputElement>(null);
     // eslint-disable-next-line
     const [activeIndex, setActiveIndex] = useState(0);
