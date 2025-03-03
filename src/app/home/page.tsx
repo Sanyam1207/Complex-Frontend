@@ -80,6 +80,8 @@ export default function Home() {
         },
     ];
     return (
+        <div className={`bg-black ${inter.className}`}>
+
         <div className={`${inter.className} bg-black`}>
             <Navbar />
             <TabsBar />

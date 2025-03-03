@@ -11,11 +11,11 @@ interface FilterModalProps {
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
-    // Always call hooks at the top of the component
+
     const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
-    // Now conditionally return based on isOpen
+    // If not open, don't render anything
     if (!isOpen) return null;
 
     // Toggle a filter in or out of the selectedFilters array

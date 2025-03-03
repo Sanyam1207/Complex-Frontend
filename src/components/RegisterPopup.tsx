@@ -14,10 +14,11 @@ interface SignUpModalProps {
 }
 
 const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
-    // Call hooks unconditionally
+
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    if (!isOpen) return null;
 
     // Now conditionally return based on isOpen
     if (!isOpen) return null;

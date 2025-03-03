@@ -166,8 +166,11 @@ export default function Page() {
 
     // State for toggle: "Couple-friendly".
     const [isCoupleFriendly, setIsCoupleFriendly] = useState(false);
+    // eslint-disable-next-line
     const [description, setDescription] = useState("");
-  
+
+    // eslint-disable-next-line
+
     const [walikingDistanceTo, setWalkingDistanceTo] = useState("");
     console.log(`${description} ${isCoupleFriendly} ${setDescription} ${setIsCoupleFriendly} ${setWalkingDistanceTo} ${walikingDistanceTo} ${setWalkingDistanceTo}`);
 
@@ -245,6 +248,8 @@ export default function Page() {
 
     const [images, setImages] = useState<string[]>([]);
     // We'll use a hidden file input for the "Add More" button (when images.length >= 6).
+    const hiddenFileInputRef = useRef<HTMLInputElement>(null);
+    // eslint-disable-next-line
     const [activeIndex, setActiveIndex] = useState(0);
     console.log(`${activeIndex} - ${images.length} ${setActiveIndex}`);
 
