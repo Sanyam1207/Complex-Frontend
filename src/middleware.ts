@@ -6,6 +6,8 @@ export const config = {
   matcher: ["/"],
 };
 
+
+
 export async function middleware(request: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const token = await getToken({ req: request });
