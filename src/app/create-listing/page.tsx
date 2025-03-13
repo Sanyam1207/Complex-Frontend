@@ -81,7 +81,7 @@ export default function CreateListing() {
     return (
         <>
             {/* MOBILE LAYOUT */}
-            <div className={`${inter.className} block md:hidden fixed inset-0 z-50 bg-black`}>
+            <div className={`${inter.className} block md:hidden fixed inset-0 z-20 bg-black`}>
                 {/* Top Section: Black background */}
                 <div className="flex flex-col bg-[#1F1F21] text-white p-5 pb-10">
                     {/* Back arrow + Title */}
