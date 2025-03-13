@@ -81,26 +81,36 @@ export default function Home() {
     ];
     return (
 
-        <div className={`${inter.className} bg-black`}>
-            <Navbar />
-            <TabsBar />
-            {/* Main Content */}
-            <div className="min-h-screen -z-[400] bg-gray-100 rounded-t-3xl p-4">
-                {/* A responsive grid for the cards */}
-                <div className="max-w-7xl mt-10 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-                    {dummyProperties.map((property, index) => (
-                        <PropertyCardCarousel
-                            onClick={() => { router.push('show-listing') }}
-                            key={index}
-                            images={property.images}
-                            address={property.address}
-                            price={property.price}
-                            date={property.date}
-                        />
-                    ))}
+        <div className={`${inter.className} bg-black flex flex-col h-screen`}>
+            {/* Fixed header section */}
+            <div className="flex-none">
+                <Navbar />
+                <TabsBar />
+            </div>
+
+            {/* Scrollable content area */}
+            <div className="flex-grow overflow-y-auto rounded-t-3xl">
+                <div className="min-h-min bg-gray-100 p-4">
+                    {/* A responsive grid for the cards */}
+                    <div className="max-w-7xl  mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {dummyProperties.map((property, index) => (
+                            <PropertyCardCarousel
+                                onClick={() => { router.push('show-listing') }}
+                                key={index}
+                                images={property.images}
+                                address={property.address}
+                                price={property.price}
+                                date={property.date}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
-            <MobileBottomTabs />
+
+            {/* Fixed footer */}
+            <div className="flex-none">
+                <MobileBottomTabs />
+            </div>
         </div>
     );
 }

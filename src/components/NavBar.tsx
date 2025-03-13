@@ -28,13 +28,13 @@ export default function Navbar() {
   const [showLoginModel, setShowLoginModal] = useState(false);
   const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
 
-   const [showLogoutModal, setShowLogoutModal] = React.useState(false)
-  
-    // Handler for confirming deletion
-    const handleLogout = () => {
-      console.log('Listing deleted!')
-      setShowLogoutModal(false)
-    }
+  const [showLogoutModal, setShowLogoutModal] = React.useState(false)
+
+  // Handler for confirming deletion
+  const handleLogout = () => {
+    console.log('Listing deleted!')
+    setShowLogoutModal(false)
+  }
 
   return (
     <nav
@@ -51,7 +51,7 @@ export default function Navbar() {
         - First row: brand name centered
         - Second row: search bar (left) + mobileslider icon (right)
       */}
-      <div className="md:hidden w-full px-4 py-4 rounded-t-3xl flex flex-col space-y-5">
+      <div className="md:hidden w-full px-5 py-2 pt-3 rounded-t-3xl flex flex-col space-y-5">
         {/* 1) Brand in the middle */}
         <div className="flex items-center justify-center">
           {/* Blue circle + brand text */}
@@ -61,14 +61,14 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* 2) Search Bar + mobileslider icon in same row */}
+        {/* 2) Search Bar + filter icon as separate components */}
         {pathname === "/create-listing-steps" ? (
           <h1 className="text-base self-center text-white font-bold">Listing</h1>
         ) : (
-          <div className="flex items-center justify-between bg-[#2F2F2F] rounded-full px-4 py-2">
-            {/* Search Section */}
-            <div className="flex items-center">
-              <div className="bg-[#1c1c1c] p-2 rounded-full">
+          <div className="flex items-center justify-between">
+            {/* Search Section - completely separate */}
+            <div className="bg-[#2F2F2F] rounded-full flex items-center py-2.5 flex-1 mr-3">
+              <div className="bg-[#1c1c1c] p-2 rounded-full ml-2">
                 <Image
                   src="/icons/firrsearch.png"
                   height={15.43}
@@ -79,22 +79,24 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search location"
-                className="ml-2 w-full border-none outline-none bg-transparent text-[14px] text-white placeholder-white"
+                className={`ml-3 flex-1 border-none outline-none bg-transparent text-[14px] text-white font-light tracking-[-0.3px] ${inter.className}`}
               />
             </div>
 
-            {/* Mobile slider icon */}
-            <button
-              onClick={() => setShowMobileFilterModal(true)}
-              className="p-2 ml-2 rounded-full bg-[#353537]"
-            >
-              <Image
-                src="/icons/mobileslider.svg"
-                alt="Slider Icon"
-                width={20}
-                height={20}
-              />
-            </button>
+            {/* Mobile filter icon as completely separate element */}
+            <div className="flex-shrink-0">
+              <button
+                onClick={() => setShowMobileFilterModal(true)}
+                className="p-3.5 rounded-full bg-[#353537]"
+              >
+                <Image
+                  src="/icons/mobileslider.svg"
+                  alt="Slider Icon"
+                  width={18}
+                  height={18}
+                />
+              </button>
+            </div>
           </div>
         )}
         <MobileFilterModal isOpen={showMobileFilterModal} onClose={() => { setShowMobileFilterModal(false) }} />
@@ -233,7 +235,7 @@ export default function Navbar() {
                 <li onClick={() => { router.push("/create-listing") }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   List your place
                 </li>
-                <li onClick={() => {router.push('/help-feedback')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/help-feedback') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Help center
                 </li>
               </ul>
@@ -251,25 +253,25 @@ export default function Navbar() {
               "
             >
               <ul className="flex flex-col py-2 text-[0.875rem]">
-                <li onClick={() => {router.push('/messages')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/messages') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Messages
                 </li>
-                <li onClick={() => {router.push('/wishlist')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/wishlist') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Wishlist
                 </li>
                 <li onClick={() => { router.push('/complete-account') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Create profile
                 </li>
-                <li onClick={() => {router.push('/notifications')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/notifications') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Notifications
                 </li>
-                <li onClick={() => {router.push('/personal-details')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/personal-details') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Personal detail
                 </li>
-                <li onClick={() => {router.push('/help-feedback')}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { router.push('/help-feedback') }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Feedback
                 </li>
-                <li onClick={() => {setShowLogoutModal(true)}} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                <li onClick={() => { setShowLogoutModal(true) }} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                   Logout
                 </li>
               </ul>
@@ -287,12 +289,12 @@ export default function Navbar() {
         isOpen={showLoginModel}
         onClose={() => setShowLoginModal(false)}
       />
-       <LogoutModal
+      <LogoutModal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
         onConfirm={handleLogout}
       />
-      
+
     </nav>
   );
 }

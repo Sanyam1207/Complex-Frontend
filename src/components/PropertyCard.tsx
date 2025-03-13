@@ -40,8 +40,8 @@ export default function PropertyCardCarousel({
     return (
         <div onClick={onClick} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
             {/* Heart Icon */}
-            <button className="absolute top-4 right-4 flex items-center justify-center h-[2rem] w-[2rem] bg-white p-1 rounded-full shadow-md z-[1]">
-                <Image alt="Favourite" src="/icons/heart.svg" width={20} height={20} />
+            <button className="absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md z-[1]">
+                <Image alt="Favourite" src="/icons/heart2.svg" width={20} height={20} />
             </button>
 
             <Carousel setApi={setApi} className="relative w-full">
@@ -63,8 +63,8 @@ export default function PropertyCardCarousel({
                     {images.map((_, idx) => (
                         <span
                             key={idx}
-                            className={`h-1.5 w-1.5 rounded-full transition-all duration-300 
-                        ${current === idx + 1 ? "bg-white w-[1.188rem]" : "bg-[#000000] opacity-30"}`}
+                            className={`h-1 w-1.5 rounded-full transition-all duration-300 
+                        ${current === idx + 1 ? "bg-white w-5" : "bg-[#000000] opacity-30 w-2"}`}
                         />
                     ))}
                 </div>
@@ -75,10 +75,13 @@ export default function PropertyCardCarousel({
             {/* Property Info */}
             <div className="py-5 px-4">
                 <div className="flex justify-between items-center">
-                    <h2 className="font-semibold text-[#2C3C4E] text-[0.875rem]">{address}</h2>
-                    <p className="font-semibold text-[#2C3C4E] text-[0.875rem]">${price}/month</p>
+                    <h2 className="font-medium text-[#2C3C4E] text-sm">{address}</h2>
+                    <p className="font-medium text-[#2C3C4E] text-xs">${price}<span className="font-light">/month</span></p>
                 </div>
-                <p className="mt-1 text-[0.75rem] text-[#2C3C4E]">{date.toLocaleDateString()}</p>
+                <p className="mt-1 text-[0.75rem] text-[#2C3C4E] flex flex-row items-center">
+                    <Image src={'/icons/calender.svg'} alt="calender" height={12} width={12} className="mr-2"/>
+                    {date.toLocaleDateString()}
+                </p>
             </div>
 
         </div>

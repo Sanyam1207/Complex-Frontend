@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,12 +12,12 @@ interface MobileFilterModalProps {
 }
 
 const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }) => {
-  // Always call hooks at the top of the component
-  const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  
-  // Then conditionally return if not open
-  if (!isOpen) return null;
+    // Always call hooks at the top of the component
+    const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
+    const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+    // Then conditionally return if not open
+    if (!isOpen) return null;
 
     const toggleFilter = (filterName: string) => {
         setSelectedFilters((prev) =>
@@ -30,30 +31,53 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
     };
 
     return (
-        <div className={`fixed inset-0 z-50 flex flex-col text-[#2C3C4E] ${inter.className}`}>
+        <div className={`fixed inset-0  flex flex-col text-[#2C3C4E] ${inter.className}`}>
             {/* Dark overlay */}
             <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
 
             {/* Modal */}
             <div className="absolute bottom-0 w-full h-[94vh] bg-white rounded-t-2xl p-6 shadow-lg flex flex-col overflow-hidden">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl">
-                    ✕
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4"
+                    aria-label="Close"
+                >
+                    <Image src="/icons/close.svg" width={24} height={24} alt="" />
                 </button>
-                <h2 className="text-lg font-semibold text-center mb-4">Filter</h2>
+
+                <h2
+                    className="text-[14px] font-medium text-[#2C3C4E] text-center mb-6"
+                    style={{ lineHeight: '194%' }}
+                >
+                    Filter
+                </h2>
 
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto px-1">
                     {/* Price Range */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-2">Price range</label>
+                        <label
+                            className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                            style={{ lineHeight: '124%' }}
+                        >
+                            Price range
+                        </label>
                         <div className="flex space-x-3">
-                            <select className="border rounded-md px-3 py-5 w-32">
-                                <option className="text-sm">$0</option>
-                                <option className="text-sm">$100</option>
+                            <select
+                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                style={{ lineHeight: '194%' }}
+                            >
+                                <option>$0</option>
+                                <option>$100</option>
+                                <option>$500</option>
                             </select>
-                            <select className="border rounded-md px-3 py-5 w-44">
-                                <option className="text-sm">Max value</option>
-                                <option className="text-sm">$1000</option>
+                            <select
+                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                style={{ lineHeight: '194%' }}
+                            >
+                                <option>Max value</option>
+                                <option>$1000</option>
+                                <option>$2000</option>
                             </select>
                         </div>
                     </div>
@@ -61,15 +85,28 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
 
                     {/* Bedrooms & Bathrooms */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-2">Bedrooms & Bathrooms</label>
+                        <label
+                            className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                            style={{ lineHeight: '124%' }}
+                        >
+                            Number of bedrooms and bathrooms?
+                        </label>
                         <div className="flex space-x-3">
-                            <select className="border rounded-md px-3 py-5 w-44">
-                                <option className="text-sm">Bedrooms</option>
-                                <option className="text-sm">1</option>
+                            <select
+                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                style={{ lineHeight: '194%' }}
+                            >
+                                <option>Bedrooms</option>
+                                <option>1 Bedroom</option>
+                                <option>2 Bedrooms</option>
                             </select>
-                            <select className="border rounded-md px-3 py-5 w-44">
-                                <option className="text-sm">Bathrooms</option>
-                                <option className="text-sm">1</option>
+                            <select
+                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                style={{ lineHeight: '194%' }}
+                            >
+                                <option>Bathrooms</option>
+                                <option>1 Bathroom</option>
+                                <option>2 Bathrooms</option>
                             </select>
                         </div>
                     </div>
@@ -77,19 +114,32 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
 
                     {/* Stay Duration */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-3">Preferred stay duration</label>
+                        <label
+                            className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                            style={{ lineHeight: '124%' }}
+                        >
+                            Preferred stay duration?
+                        </label>
                         <div className="flex space-x-3">
                             <button
                                 onClick={() => setSelectedStayDuration("lt6")}
-                                className={`border rounded-full px-3 py-5 ${selectedStayDuration === "lt6" ? "bg-blue-500 text-white" : "border-gray-300"
+                                className={`border rounded-full px-4 py-4 text-[14px] transition
+                  ${selectedStayDuration === "lt6"
+                                        ? "bg-[#0A84FF] text-white border-transparent"
+                                        : "border-[#E3E2E0] text-[#2C3C4E]"
                                     }`}
+                                style={{ lineHeight: '16px' }}
                             >
                                 Less than 6 months
                             </button>
                             <button
                                 onClick={() => setSelectedStayDuration("gt6")}
-                                className={`border rounded-full px-4 py-2 ${selectedStayDuration === "gt6" ? "bg-blue-500 text-white" : "border-gray-300"
+                                className={`border rounded-full px-4 py-4 text-[14px] transition
+                  ${selectedStayDuration === "gt6"
+                                        ? "bg-[#0A84FF] text-white border-transparent"
+                                        : "border-[#E3E2E0] text-[#2C3C4E]"
                                     }`}
+                                style={{ lineHeight: '16px' }}
                             >
                                 More than 6 months
                             </button>
@@ -99,16 +149,24 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
 
                     {/* Popular Filters */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-2">Popular filters</label>
+                        <label
+                            className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                            style={{ lineHeight: '124%' }}
+                        >
+                            Popular filters
+                        </label>
                         <div className="flex flex-wrap gap-2">
                             {["Parking", "Pet friendly", "Couple"].map((filter) => (
                                 <button
                                     key={filter}
                                     onClick={() => toggleFilter(filter)}
-                                    className={`border rounded-full px-6 py-5 ${selectedFilters.includes(filter) ? "bg-blue-500 text-white" : "border-gray-300"
+                                    className={`border rounded-full px-6 py-4 text-[14px] transition
+                    ${selectedFilters.includes(filter)
+                                            ? "bg-[#0A84FF] text-white border-transparent"
+                                            : "border-[#E3E2E0] text-[#2C3C4E]"
                                         }`}
+                                    style={{ lineHeight: '16px' }}
                                 >
-                                    {/* Vihaan1234* */}
                                     {filter}
                                 </button>
                             ))}
@@ -118,40 +176,51 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
 
                     {/* Sort Listing */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-2">Sort listing</label>
-                        <div className="flex flex-col space-y-2 mb-4 mt-5 text-sm">
-                            <div className="">
-                                <label className="flex items-center space-x-2 ">
+                        <label
+                            className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                            style={{ lineHeight: '124%' }}
+                        >
+                            Sort listing
+                        </label>
+                        <div className="flex flex-col space-y-2 mb-4 mt-3 text-[14px] text-[#2C3C4E]" style={{ lineHeight: '194%' }}>
+                            <div>
+                                <label className="flex items-center space-x-4">
                                     <input type="radio" name="sort" className="accent-black" />
                                     <span>Price: low to high</span>
                                 </label>
                             </div>
 
-                            <div className="">
-                                <label className="flex items-center space-x-2 ">
+                            <div>
+                                <label className="flex items-center space-x-4">
                                     <input type="radio" name="sort" className="accent-black" />
                                     <span>Newest first</span>
                                 </label>
                             </div>
 
-                            <div className="">
-                                <label className="flex items-center space-x-2">
+                            <div>
+                                <label className="flex items-center space-x-4">
                                     <input type="radio" name="sort" className="accent-black" />
                                     <span>Most relevant</span>
                                 </label>
                             </div>
-
                         </div>
                     </div>
                 </div>
 
                 {/* Bottom Buttons */}
-                <div className="flex items-center justify-between mt-4 p-2 border-t">
-                    <button onClick={clearFilter} className="text-blue-500 p-3 text-sm rounded-full border border-gray-300 px-4">
+                <div className="flex items-center justify-between mt-4 p-2">
+                    <button
+                        onClick={clearFilter}
+                        className="text-[#0A84FF] py-4 px-7 text-[14px] rounded-full border border-slate-300 font-normal"
+                        style={{ lineHeight: '16px' }}
+                    >
                         Clear filter
                     </button>
-                    <button className="bg-black text-white text-sm rounded-full px-6 py-3 font-medium hover:bg-gray-800">
-                        View Rentals
+                    <button
+                        className="bg-black text-white text-[14px] rounded-full px-7 py-4 hover:bg-gray-800 transition"
+                        style={{ lineHeight: '16px' }}
+                    >
+                        View 27 rentals
                     </button>
                 </div>
             </div>

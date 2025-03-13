@@ -8,6 +8,7 @@ export default function ManageListingPage() {
       <div className="bg-black py-4 text-center">
         <h1 className="text-white font-medium">Manage listing</h1>
       </div>
+      
 
       {/* -- 2) LISTING CARD -- */}
       <div className="p-4">
