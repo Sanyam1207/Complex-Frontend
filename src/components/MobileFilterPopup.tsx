@@ -64,7 +64,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                         </label>
                         <div className="flex space-x-3">
                             <select
-                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
                                 style={{ lineHeight: '194%' }}
                             >
                                 <option>$0</option>
@@ -72,7 +72,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                                 <option>$500</option>
                             </select>
                             <select
-                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
                                 style={{ lineHeight: '194%' }}
                             >
                                 <option>Max value</option>
@@ -86,14 +86,14 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                     {/* Bedrooms & Bathrooms */}
                     <div className="mb-6">
                         <label
-                            className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                            className="block text-[14px] font-medium bg-white text-[#2C3C4E] mb-2"
                             style={{ lineHeight: '124%' }}
                         >
                             Number of bedrooms and bathrooms?
                         </label>
                         <div className="flex space-x-3">
                             <select
-                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
                                 style={{ lineHeight: '194%' }}
                             >
                                 <option>Bedrooms</option>
@@ -101,7 +101,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                                 <option>2 Bedrooms</option>
                             </select>
                             <select
-                                className="border border-[#E3E2E0] rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
+                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
                                 style={{ lineHeight: '194%' }}
                             >
                                 <option>Bathrooms</option>
