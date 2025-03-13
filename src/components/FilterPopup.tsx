@@ -37,12 +37,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     }
 
     return (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center ${inter.className}`}>
+        <div className={`fixed inset-0 flex items-center justify-center ${inter.className}`}>
             {/* Full-Screen Backdrop */}
             <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
 
             {/* Modal Content */}
-            <div className="relative z-50 w-[36rem] rounded-2xl bg-white px-8 py-6 shadow-lg">
+            <div className="relative w-[36rem] rounded-2xl bg-white px-8 py-6 shadow-lg">
                 {/* Close Button (top-right) */}
                 <button
                     onClick={onClose}
