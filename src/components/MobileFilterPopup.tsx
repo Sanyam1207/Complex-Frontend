@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Inter } from "next/font/google";
 import Image from "next/image";
+import SearchDropdown from "./SearchDropdown";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,11 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
     // Always call hooks at the top of the component
     const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+    const [bedrooms, setBedrooms] = useState("");
+    const [bathrooms, setBathrooms] = useState("");
+    const [minValue, setMinValue] = useState("");
+    const [maxValue, setMaxValue] = useState("");
 
     // Then conditionally return if not open
     if (!isOpen) return null;
@@ -63,22 +69,9 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                             Price range
                         </label>
                         <div className="flex space-x-3">
-                            <select
-                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
-                                style={{ lineHeight: '194%' }}
-                            >
-                                <option>$0</option>
-                                <option>$100</option>
-                                <option>$500</option>
-                            </select>
-                            <select
-                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
-                                style={{ lineHeight: '194%' }}
-                            >
-                                <option>Max value</option>
-                                <option>$1000</option>
-                                <option>$2000</option>
-                            </select>
+                            <SearchDropdown options={["$100", "$200", "$300", "$400"]} setValue={setMinValue} value={minValue} placeholder="Min Price" />
+
+                            <SearchDropdown options={["$1000", "$2000", "$3000", "$4000"]} setValue={setMaxValue} value={maxValue} placeholder="Max Price" />
                         </div>
                     </div>
                     <hr className="mb-4" />
@@ -92,25 +85,15 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                             Number of bedrooms and bathrooms?
                         </label>
                         <div className="flex space-x-3">
-                            <select
-                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
-                                style={{ lineHeight: '194%' }}
-                            >
-                                <option>Bedrooms</option>
-                                <option>1 Bedroom</option>
-                                <option>2 Bedrooms</option>
-                            </select>
-                            <select
-                                className="border border-[#E3E2E0] bg-white rounded-md px-4 py-4 text-[14px] text-[#2C3C4E] font-normal w-1/2"
-                                style={{ lineHeight: '194%' }}
-                            >
-                                <option>Bathrooms</option>
-                                <option>1 Bathroom</option>
-                                <option>2 Bathrooms</option>
-                            </select>
+                            <SearchDropdown options={["1 Bedroom", "2 Bedrooms"]} setValue={setBedrooms} value={bedrooms} placeholder="Bedrooms" />
+
+
+                            <SearchDropdown options={["1 Bathroom", "2 Bathrooms"]} setValue={setBathrooms} value={bathrooms} placeholder="Bathroom" />
                         </div>
                     </div>
                     <hr className="mb-4" />
+
+
 
                     {/* Stay Duration */}
                     <div className="mb-6">
