@@ -1,7 +1,10 @@
+import Image from "next/image";
 import React, { useState } from "react";
-
 interface OfferChipsProps {
-    features: string[];
+    features: {
+        label: string;
+        icon: string;
+    }[];
 }
 
 const OfferChips: React.FC<OfferChipsProps> = ({ features }) => {
@@ -16,9 +19,9 @@ const OfferChips: React.FC<OfferChipsProps> = ({ features }) => {
                 {visibleFeatures.map((feature, idx) => (
                     <div
                         key={idx}
-                        className="inline-flex items-center px-3 py-1.5 bg-[#F4F4F4] text-[#374957] rounded-full text-sm"
+                        className="inline-flex items-center px-3 py-1.5 font-medium bg-[#F4F4F4] text-[#2C3C4E] rounded-full text-xs"
                     >
-                        {feature}
+                        <span><Image src={feature.icon} alt="feature" height={12} width={12} className="object-scale-down mr-2 text-[#2C3C4E]" /></span>{feature.label}
                     </div>
                 ))}
             </div>
