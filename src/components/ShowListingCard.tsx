@@ -39,10 +39,10 @@ export default function ShowListingCard({
     <div className=" bg-white overflow-hidden">
       {/* Top Section (Carousel) */}
       <div className="relative">
-        <Carousel setApi={setCarouselApi} className="relative w-full h-64">
+        <Carousel setApi={setCarouselApi} className="relative w-full h-72">
           <CarouselContent>
             {images.map((src, idx) => (
-              <CarouselItem key={idx} className="w-full h-64">
+              <CarouselItem key={idx} className="w-full h-full">
                 <Image
                   src={src}
                   alt={`Slide ${idx}`}
@@ -55,13 +55,11 @@ export default function ShowListingCard({
           </CarouselContent>
 
           {/* Dot Indicators */}
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-2 left-10 transform -translate-x-1/2 flex space-x-1">
             {images.map((_, idx) => (
               <span
                 key={idx}
-                className={`h-2 w-2 rounded-full transition-all duration-300 ${currentSlide === idx
-                  ? "bg-white w-6"
-                  : "bg-black/30"
+                className={`h-1 w-1.5 rounded-full transition-all duration-300 ${currentSlide === idx ? "bg-white w-5" : "bg-[#000000] opacity-30 w-2"
                   }`}
               />
             ))}
@@ -70,13 +68,13 @@ export default function ShowListingCard({
 
         {/* Heart / Favorite Icon */}
         <button className="absolute top-4 right-4 flex items-center justify-center h-8 w-8 bg-white p-1 rounded-full shadow-md z-[1]">
-          <Image alt="Favourite" src="/icons/heart.svg" width={20} height={20} />
+          <Image alt="Favourite" src="/icons/heart2.svg" width={16} height={16} />
         </button>
-        <button className="absolute top-4 right-16 flex items-center justify-center h-8 w-8 pr-2 bg-white p-1 rounded-full shadow-md z-[1]">
-          <Image alt="Favourite" src="/icons/share.svg" width={18} height={20} />
+        <button className="absolute top-4 right-16 flex items-center justify-center h-8 w-8 pr-1 bg-white rounded-full shadow-md z-[1]">
+          <Image alt="Favourite" src="/icons/sharebutton.svg" width={16} height={16} />
         </button>
-        <button onClick={() => {router.push('/home')}} className="absolute top-4 left-4 flex items-center justify-center h-8 w-8  bg-white p-1 rounded-full shadow-md z-[1]">
-          <Image alt="Favourite" src="/icons/back.svg" className="text-black" width={20} height={20} />
+        <button onClick={() => { router.back() }} className="absolute top-4 left-4 flex items-center justify-center h-8 w-8  bg-white rounded-full shadow-sm z-[1]">
+          <Image alt="Favourite" src="/icons/backbutton.svg" className="text-black" width={32} height={32} />
         </button>
       </div>
 
