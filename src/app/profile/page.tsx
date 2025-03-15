@@ -20,27 +20,22 @@ export default function ProfilePage() {
                 <p className="text-center text-sm font-medium">Profile</p>
 
                 {/* User Info Row */}
-                <div onClick={() => router.push('/personal-details')} className="mt-4 flex items-center">
+                <div onClick={() => router.push('/personal-details')} className="mt-4 flex items-center justify-between">
                     {/* Avatar placeholder */}
-                    <div className="w-12 h-12 bg-gray-300 rounded-full" />
-                    {/* Name & Details */}
-                    <div className="ml-3">
-                        <p className="text-base font-semibold">John Doe</p>
-                        <p className="text-xs text-gray-300">Personal details</p>
+                    <div className="flex items-center">
+
+                        <div className="w-12 h-12 bg-gray-300 rounded-full" />
+                        {/* Name & Details */}
+                        <div className="ml-3">
+                            <p className="text-base font-semibold">John Doe</p>
+                            <p className="text-sm font-normal">Personal details</p>
+                        </div>
+
                     </div>
+
                     {/* Arrow on the right */}
-                    <div className="ml-auto">
-                        <svg
-                            className="w-5 h-5 text-gray-200"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            viewBox="0 0 24 24"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M9 5l7 7-7 7" />
-                        </svg>
+                    <div className="bg-[#353537] rounded-full h-8 w-8 flex items-center justify-center">
+                        <Image src={'/icons/forwardarrow.svg'} alt="go" height={20} width={20} />
                     </div>
                 </div>
             </div>
@@ -55,8 +50,8 @@ export default function ProfilePage() {
                             <Image alt="create listing" src={'/icons/createlisting.svg'} width={27} height={12} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold">Create listing</p>
-                            <p className="text-xs text-gray-500">List your space and start earning.</p>
+                            <p className="text-sm text-[#2C3C4E] font-semibold">Create listing</p>
+                            <p className="text-xs text-[#2C3C4E] font-normal">List your space and start earning.</p>
                         </div>
                     </div>
                     {/* Arrow */}
@@ -74,8 +69,8 @@ export default function ProfilePage() {
                             <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold">Renters profile</p>
-                            <p className="text-xs text-gray-500">Complete your profile to stand out.</p>
+                            <p className="text-sm text-[#2C3C4E] font-semibold">Renters profile</p>
+                            <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
                         </div>
                     </div>
                     {/* Arrow */}
@@ -83,10 +78,10 @@ export default function ProfilePage() {
                         <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
                     </div>
                 </div>
-                <hr />
+                
 
                 {/* Divider: "Settings" Label */}
-                <p className="mt-8 mb-4 text-sm ">Settings</p>
+                <p className="my-8 text-sm font-semibold">Settings</p>
 
                 {/* C) Notifications */}
                 <div onClick={() => { router.push("/notifications") }} className="flex items-center justify-between py-5">
@@ -95,7 +90,7 @@ export default function ProfilePage() {
                         <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
                             <Image height={27} width={27} src="/icons/notification.svg" alt="notification" />
                         </div>
-                        <p className="text-sm">Notifications</p>
+                        <p className="text-sm font-medium">Notifications</p>
                     </div>
                     <div className="rounded-full bg-[#F4F4F4] p-2">
                         <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
@@ -110,7 +105,7 @@ export default function ProfilePage() {
                         <div className="w-12 p-3 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
                             <Image alt="terms and conditions" src={'/icons/termsandconditions.svg'} height={27} width={27} />
                         </div>
-                        <p className="text-sm">Terms & conditions</p>
+                        <p className="text-sm font-medium">Terms & conditions</p>
                     </div>
                     <div className="rounded-full bg-[#F4F4F4] p-2">
                         <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
@@ -125,7 +120,7 @@ export default function ProfilePage() {
                         <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
                             <Image alt="help and feedback" src={'/icons/helpandfeedback.svg'} height={27} width={27} />
                         </div>
-                        <p className="text-sm">Help & feedback</p>
+                        <p className="text-sm font-medium">Help & feedback</p>
                     </div>
                     <div className="rounded-full bg-[#F4F4F4] p-2">
                         <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
