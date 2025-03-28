@@ -238,7 +238,7 @@ const Page = () => {
       </div>
 
       {/* --------------------------------- MOBILE VIEW --------------------------------- */}
-      <div className="flex md:hidden flex-col h-[100vh] bg-white text-[#2C3C4E]">
+      <div className="flex  md:hidden flex-col h-screen bg-white text-[#2C3C4E]">
         {/* 1) All Messages List (show if NOT showMessage) */}
         <div className={`w-full ${showMessage ? 'hidden' : 'block'}`}>
           <div className="bg-[#1c1c1c] flex flex-row px-5 py-5 pb-14">
@@ -250,7 +250,7 @@ const Page = () => {
             </button>
           </div>
 
-          <div className="flex flex-col absolute w-full -mt-8 rounded-t-3xl">
+          <div className="flex flex-col absolute w-full -mt-8 rounded-t-3xl overflow-scroll">
             {/* Example: First message */}
             <div
               className="flex py-8 items-start justify-between bg-white rounded-3xl p-3 cursor-pointer"

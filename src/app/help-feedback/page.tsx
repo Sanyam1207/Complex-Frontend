@@ -15,11 +15,11 @@ export default function HelpFeedback() {
             <div className={`${inter.className} md:hidden min-h-screen bg-[#1F1F21]`}>
                 {/* Top bar: black with back arrow + title */}
                 <div className="bg-[#1F1F21] h-14 p-14 flex items-center justify-center relative">
-                    <button onClick={() => {router.back()}} className="absolute left-6 top-10 rounded-full bg-[#353537] p-3">
+                    <button onClick={() => {router.back()}} className="absolute left-6 top-10 rounded-full bg-[#353537]">
                         <Image
-                            src="/icons/backarrow.svg"
-                            width={12}
-                            height={12}
+                            src="/icons/backbuttonn.svg"
+                            width={32}
+                            height={32}
                             alt="Back"
                         />
                     </button>

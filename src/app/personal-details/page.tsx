@@ -15,12 +15,12 @@ export default function PersonalDetails() {
             <div className="block md:hidden bg-black min-h-screen w-full">
                 {/* Top bar: Back arrow + Title */}
                 <div className="flex flex-col items-center justify-center px-4 py-3 pt-10">
-                    <button onClick={() => {router.back()}} className='absolute top-7 left-7 p-3 rounded-full bg-[#353537]'>
+                    <button onClick={() => {router.back()}} className='absolute top-7 left-7 rounded-full bg-[#353537]'>
                         <Image
-                            src="/icons/backarrow.svg"
+                            src="/icons/backbuttonn.svg"
                             alt="Back"
-                            width={18}
-                            height={12}
+                            width={34}
+                            height={34}
                             className=''
                         />
                     </button>
@@ -71,7 +71,7 @@ export default function PersonalDetails() {
                         <input
                             type="text"
                             placeholder="Prahlix Parmar"
-                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-3 text-sm 
+                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
@@ -82,7 +82,7 @@ export default function PersonalDetails() {
                         <input
                             type="email"
                             placeholder="Prahlixparmar@lfma.ca"
-                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-3 text-sm 
+                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
@@ -92,7 +92,7 @@ export default function PersonalDetails() {
                         </label>
                         <input
                             type="password"
-                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-3 text-sm 
+                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
@@ -103,7 +103,7 @@ export default function PersonalDetails() {
                         <input
                             type="tel"
                             placeholder="+1 555 555 5555"
-                            className="mb-8 bg-[#F4F4F4] w-full border rounded-md px-4 py-3 text-sm 
+                            className="mb-8 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
