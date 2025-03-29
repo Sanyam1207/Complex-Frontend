@@ -5,6 +5,7 @@ import "./globals.css";
 import '@mantine/core/styles.css';
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
+import MobileBottomTabs from "@/components/MobileBottomTabs";
 
 
 const geistSans = Geist({
@@ -39,6 +40,7 @@ export default function RootLayout({
           <Providers>
             {/* <Navbar /> */}
             {children}
+            {/* <MobileBottomTabs /> */}
           </Providers>
         </MantineProvider>
       </body>
