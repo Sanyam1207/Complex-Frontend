@@ -37,7 +37,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     }
 
     return (
-        <div className={`fixed inset-0 flex items-center justify-center ${inter.className}`}>
+        <div className={`fixed inset-0 flex items-center justify-center z-50 ${inter.className}`}>
             {/* Full-Screen Backdrop */}
             <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
 

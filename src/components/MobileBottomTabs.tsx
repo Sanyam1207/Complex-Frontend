@@ -19,7 +19,7 @@ export default function MobileBottomTabs() {
             className={`
         ${inter.className}
         md:hidden             /* Hide on desktop, show only on mobile */
-        sticky bottom-0
+        absolute bottom-0
         left-0 right-0
         w-full
         mx-auto
