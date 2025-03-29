@@ -1,11 +1,10 @@
 import { Providers } from "@/redux/Provider";
+import '@mantine/core/styles.css';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import '@mantine/core/styles.css';
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
-import MobileBottomTabs from "@/components/MobileBottomTabs";
 
 
 const geistSans = Geist({
