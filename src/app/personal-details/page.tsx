@@ -5,17 +5,17 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ["100", "200", "300", "400", "500", "600"] });
 
 export default function PersonalDetails() {
     const router = useRouter();
     return (
         <>
             {/* ==================== MOBILE VIEW (Android-style) ==================== */}
-            <div className="block md:hidden bg-black min-h-screen w-full">
+            <div className={`${inter.className} block md:hidden bg-black min-h-screen w-full`}>
                 {/* Top bar: Back arrow + Title */}
                 <div className="flex flex-col items-center justify-center px-4 py-3 pt-10">
-                    <button onClick={() => {router.back()}} className='absolute top-7 left-7 rounded-full bg-[#353537]'>
+                    <button onClick={() => { router.back() }} className='absolute top-9 left-7 rounded-full bg-[#353537]'>
                         <Image
                             src="/icons/backbuttonn.svg"
                             alt="Back"
@@ -24,12 +24,10 @@ export default function PersonalDetails() {
                             className=''
                         />
                     </button>
-                    <h1 className="text-white text-base font-medium">
+                    <h1 className="text-white text-sm font-medium">
                         Personal details
                     </h1>
 
-                    {/* Right side spacer (if you need an icon or want it empty) */}
-                    <div />
 
 
 
@@ -39,7 +37,7 @@ export default function PersonalDetails() {
                             <span className="text-3xl">😊</span>
                         </div>
                         {/* Small camera/plus icon circle on the bottom-right */}
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center border-2 border-white">
+                        <div className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center border-2 border-white">
                             <Image
                                 src="/icons/profile.svg"
                                 alt="camera"
@@ -49,10 +47,10 @@ export default function PersonalDetails() {
                         </div>
 
                     </div>
-                    
+
 
                     {/* Heading under the profile picture */}
-                    <p className=" font-medium text-base text-white">
+                    <p className=" font-medium text-sm mb-5 text-white">
                         Add your profile picture
                     </p>
                 </div>
@@ -119,7 +117,7 @@ export default function PersonalDetails() {
                     {/* Delete account link */}
                     <button
                         type="button"
-                        className="mt-6 text-sm text-gray-500 hover:text-red-500"
+                        className="mt-6 text-sm text-[#0A84FF] hover:text-red-500"
                     >
                         Delete account
                     </button>
@@ -211,7 +209,7 @@ export default function PersonalDetails() {
                     {/* Delete account link */}
                     <button
                         type="button"
-                        className="mt-6 text-sm text-gray-500 hover:text-red-500"
+                        className="mt-6 text-sm text-[#0A84FF] hover:text-red-500"
                     >
                         Delete account
                     </button>

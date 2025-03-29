@@ -41,7 +41,7 @@ export default function ProfilePage() {
             </div>
 
             {/* -- 2) MAIN WHITE CARD WITH ROUNDED TOP -- */}
-            <div className="bg-white h-[100vh] text-[#2C3C4E] rounded-t-3xl  pt-2 px-6">
+            <div className="bg-white h-[80vh] text-[#2C3C4E] rounded-t-3xl  pt-2 px-6">
                 {/* A) Create Listing */}
                 <div onClick={() => { router.push('/create-listing') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
@@ -81,7 +81,7 @@ export default function ProfilePage() {
                 
 
                 {/* Divider: "Settings" Label */}
-                <p className="my-8 text-sm font-semibold">Settings</p>
+                <p className="my-6 text-sm font-semibold text-[#2C3C4E]">Settings</p>
 
                 {/* C) Notifications */}
                 <div onClick={() => { router.push("/notifications") }} className="flex items-center justify-between py-5">
@@ -130,7 +130,7 @@ export default function ProfilePage() {
 
                 {/* -- 3) LOGOUT BUTTON -- */}
                 <div onClick={() => { setLogoutModal(true) }} className="flex justify-center mt-6 mb-6">
-                    <button className="bg-[#007AFF] text-white px-6 py-2 rounded-full text-sm font-semibold">
+                    <button className="bg-[#0A84FF] text-white px-6 py-3 rounded-full text-sm font-semibold">
                         Logout
                     </button>
                 </div>

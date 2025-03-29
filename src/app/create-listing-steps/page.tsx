@@ -105,12 +105,12 @@ const steps = [
 /** Reusable card for each property item */
 function PropertyCard({ item, setActiveStep }: { item: TypeItem, setActiveStep: (step: number) => void }) {
     return (
-        <div onClick={() => setActiveStep(2)} className="hover:cursor-pointer flex items-center space-x-4 bg-[#F4F4F4] p-4 rounded-md shadow">
+        <div onClick={() => setActiveStep(2)} className="hover:cursor-pointer flex items-center space-x-4 bg-[#F4F4F4] p-4 rounded-md ">
             <div className="w-10 h-10 bg-[#1F1F21] flex p-2 items-center justify-center rounded-full">
                 {item.icon}
             </div>
             <div className="flex flex-col">
-                <span className="font-semibold">{item.title}</span>
+                <span className="font-medium">{item.title}</span>
                 <span className="text-sm text-gray-500">{item.description}</span>
             </div>
         </div>
@@ -175,17 +175,17 @@ export default function Page() {
 
     // List of possible amenities
     const availableAmenities = [
-        "Pet Friendly",
-        "Parking",
-        "Utilities",
-        "Wi-Fi",
-        "Laundry",
-        "Air Conditioning",
-        "Furnished",
-        "Storage",
-        "Balcony",
-        "Heating",
-        "Dishwasher",
+        {title: "Pet Friendly", icon: '/icons/petfriendly.svg'},
+        {title: "Parking", icon: '/icons/amenetiesparking.svg'},
+        {title: "Utilities", icon: '/icons/amenetiesutilities.svg'},
+        {title: "Wi-Fi", icon: '/icons/amenetieswifi.svg'},
+        {title: "Laundry", icon: '/icons/amenetieslaundry.svg'},
+        {title: "Air Conditioning", icon: '/icons/amenetiesac.svg'},
+        {title: "Furnished", icon: '/icons/amenetiesfurnished.svg'},
+        {title: "Storage", icon: '/icons/amenetiesstorage.svg'},
+        {title: "Balcony", icon: '/icons/amenetiesbalconies.svg'},
+        {title: "Heating", icon: '/icons/amenetiesheating.svg'},
+        {title: "Dishwasher", icon: '/icons/amenetiesdishwasher.svg'},
     ];
 
     // State for selected amenities (array of strings).
@@ -205,9 +205,12 @@ export default function Page() {
         if (activeStep > 1) {
             setActiveStep((prev) => prev - 1);
         }
+        if (activeStep === 1) {
+            router.push("/home");
+        }
     };
 
-// eslint-disable-next-line
+    // eslint-disable-next-line
     const [descriptionPoints, setDescriptionPoints] = useState(["", ""]);
 
     // 2) Manage the "Walking Distance" points: each index is an independent text value
@@ -269,8 +272,8 @@ export default function Page() {
     return (
         <div className={`${inter.className} relative min-h-screen flex flex-col`}>
 
-            <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] p-3 rounded-full text-white z-50 top-8 left-8">
-                <Image src={'/icons/backarrow.svg'} alt="back" height={20} width={20} />
+            <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-8 left-8">
+                <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} />
             </button>
 
             {/* Navbar */}
@@ -287,8 +290,8 @@ export default function Page() {
 
                 {activeStep === 1 && (<div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 min-h-screen -mt-2">
 
-                    <h2 className="text-base font-semibold mb-4 md:hidden">
-                        Select the type of rental property.
+                    <h2 className="text-base font-medium mb-4 md:hidden">
+                        Select the type of rental property
                     </h2>
 
                     {/* Mobile-only tabs */}
@@ -492,7 +495,7 @@ export default function Page() {
                             <div className="space-y-6">
                                 {/* "Your location?" */}
                                 <div className="flex flex-col space-y-1">
-                                    <label className="text-sm font-semibold text-black">
+                                    <label className="text-sm font-medium text-[#2C3C4E]">
                                         Your location?
                                     </label>
                                     <input
@@ -502,7 +505,6 @@ export default function Page() {
                                         w-full
                                         border
                                         bg-[#F4F4F4]
-                                        border-gray-300
                                         rounded-lg
                                         p-3
                                         text-sm
@@ -521,7 +523,7 @@ export default function Page() {
 
                                 {/* "Nearest intersection" */}
                                 <div className="flex flex-col space-y-1">
-                                    <label className="text-sm font-semibold text-black">
+                                    <label className="text-sm font-medium text-[#2C3C4E]">
                                         Nearest intersection
                                     </label>
                                     <textarea
@@ -530,14 +532,13 @@ export default function Page() {
                                             w-full
                                             border
                                             bg-[#F4F4F4]
-                                            border-gray-300
                                             rounded-lg
                                             p-3
                                             text-sm
                                             focus:outline-none
                                             focus:ring-1
                                             focus:ring-black
-                                            h-24
+                                            h-12
                                                 "
                                     />
                                 </div>
@@ -571,37 +572,38 @@ export default function Page() {
                 {activeStep === 4 && (
                     <div
                         className="
-      bg-white 
-      md:flex 
-      md:justify-center 
-      md:items-center 
-      rounded-t-[2rem] 
-      p-6 
-      h-full 
-      -mt-2
-    "
+                        bg-white 
+                        md:flex 
+                        md:justify-center 
+                        md:items-center 
+                        rounded-t-[2rem] 
+                        p-2
+                        h-screen
+                        -mt-5
+                      "
                     >
                         <div
                             className="
-        flex 
-        flex-col 
-        space-y-2 
-        p-4 
-        w-full 
-        md:max-w-[450px] 
-      "
+                          flex 
+                          flex-col 
+                          space-y-2 
+                          p-4 
+                          
+                          w-full 
+                          md:max-w-[450px] 
+                        "
                         >
                             {/* 1) First Div: Title + Dropdowns */}
                             <div className="flex flex-col pb-4 space-y-4">
                                 <div>
-                                    <h2 className="text-base font-normal">
+                                    <h2 className="text-sm text-[#2C3C4E] font-medium">
                                         Total number of beds + baths in your house?
                                     </h2>
                                 </div>
                                 <div className="flex flex-row space-x-2">
                                     {/* Bedrooms Dropdown */}
                                     <select
-                                        className="border py-4 px-2 rounded"
+                                        className="border p-4 text-xs rounded"
                                         value={bedrooms}
                                         onChange={(e) => setBedrooms(e.target.value)}
                                     >
@@ -615,7 +617,7 @@ export default function Page() {
 
                                     {/* Bathrooms Dropdown */}
                                     <select
-                                        className="border p-2 rounded"
+                                        className="border p-4 text-xs rounded"
                                         value={bathrooms}
                                         onChange={(e) => setBathrooms(e.target.value)}
                                     >
@@ -634,9 +636,10 @@ export default function Page() {
                             {/* 2) Second Div: Couple-friendly Toggle */}
                             <div className="flex py-4 flex-row items-center justify-between">
                                 {/* Label + Sub-caption */}
-                                <div className="flex flex-col">
-                                    <span className="font-medium">Couple-friendly</span>
-                                    <span className="text-sm">
+                                <div className="flex flex-col space-y-2">
+                                    {/* Updated styling here */}
+                                    <span className="text-sm text-[#2C3C4E] font-medium">Couple-friendly</span>
+                                    <span className="text-sm font-normal text-[#2C3C4E]">
                                         Couple can share this private room
                                     </span>
                                 </div>
@@ -651,26 +654,26 @@ export default function Page() {
                                     />
                                     <div
                                         className="
-              w-11 h-6 
-              bg-gray-200 
-              peer-focus:outline-none 
-              rounded-full peer
-              dark:bg-gray-700 
-              peer-checked:bg-blue-600 
-              peer-checked:after:translate-x-full 
-              peer-checked:after:border-white 
-              after:content-[''] 
-              after:absolute 
-              after:top-[2px] 
-              after:left-[2px] 
-              after:bg-white 
-              after:border-gray-300 
-              after:border 
-              after:rounded-full 
-              after:h-5 
-              after:w-5 
-              after:transition-all
-            "
+                                w-11 h-6 
+                                bg-gray-200 
+                                peer-focus:outline-none 
+                                rounded-full peer
+                                dark:bg-gray-700 
+                                peer-checked:bg-blue-600 
+                                peer-checked:after:translate-x-full 
+                                peer-checked:after:border-white 
+                                after:content-[''] 
+                                after:absolute 
+                                after:top-[2px] 
+                                after:left-[2px] 
+                                after:bg-white 
+                                after:border-gray-300 
+                                after:border 
+                                after:rounded-full 
+                                after:h-5 
+                                after:w-5 
+                                after:transition-all
+                              "
                                     />
                                 </label>
                             </div>
@@ -680,27 +683,42 @@ export default function Page() {
                             {/* 3) Third Div: Amenities Title + Chips */}
                             <div className="flex py-4 flex-col space-y-2">
                                 <div>
-                                    <h2 className="text-base font-medium mb-3">
+                                    {/* Title */}
+                                    <h2 className="mb-3 text-sm text-[#2C3C4E] font-medium font-[Inter] leading-[124%]">
                                         Select all the amenities your rental offers
                                     </h2>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {availableAmenities.map((amenity) => (
-                                        <button
-                                            key={amenity}
-                                            type="button"
-                                            onClick={() => handleAmenityToggle(amenity)}
-                                            className={`px-3 py-2 border rounded-full transition 
-                ${selectedAmenities.includes(amenity)
-                                                    ? "bg-blue-500 text-white border-blue-500"
-                                                    : "hover:bg-gray-100"
-                                                }`}
-                                        >
-                                            {amenity}
-                                        </button>
-                                    ))}
+
+                                {/* 3 columns, auto rows */}
+                                <div className="flex flex-wrap space-x-2 space-y-2">
+                                    {availableAmenities.map((amenity) => {
+                                        const isSelected = selectedAmenities.includes(amenity.title);
+                                        return (
+                                            <button
+                                                key={amenity.title}
+                                                type="button"
+                                                onClick={() => handleAmenityToggle(amenity.title)}
+                                                className={`
+                                                    px-4 h-9  py-1 flex items-center justify-center space-x-1 
+                                                    transition border text-[12px] font-normal font-[Inter] 
+                                                    rounded-[42px] border-[#2C3C4E] 
+                                                    ${isSelected ? "bg-[#0A84FF] text-white" : "text-[#2C3C4E] hover:bg-gray-100"}
+                                                `}
+                                            >
+                                                {/* Example icon; adjust src, width, height, or remove if not needed */}
+                                                <Image
+                                                    alt={amenity.title}
+                                                    src={amenity.icon}
+                                                    width={16}
+                                                    height={16}
+                                                />
+                                                <span>{amenity.title}</span>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
+
 
                             <hr />
 
@@ -720,6 +738,7 @@ export default function Page() {
                             </div>
                         </div>
                     </div>
+
                 )}
 
                 {activeStep === 5 && (
@@ -741,12 +760,12 @@ export default function Page() {
                                                 placeholder={`Point ${index + 1}`}
                                                 value={point}
                                                 onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                                                className="border border-gray-300 rounded p-2 focus:outline-none flex-1"
+                                                className="border border-gray-300 bg-[#F4F4F4] rounded p-2 focus:outline-none flex-1"
                                             />
                                             {isLast && (
                                                 <button
                                                     onClick={handleAddDescriptionPoint}
-                                                    className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition mt-2 md:mt-0"
+                                                    className="bg-blue-500 text-white px-4 py-2 rounded-full w-1/3 hover:bg-blue-600 transition mt-3 md:mt-0"
                                                 >
                                                     Add +
                                                 </button>
@@ -774,12 +793,12 @@ export default function Page() {
                                                 onChange={(e) =>
                                                     handleWalkingDistanceChange(index, e.target.value)
                                                 }
-                                                className="border border-gray-300 rounded p-2 focus:outline-none flex-1"
+                                                className="border border-gray-300 bg-[#F4F4F4] rounded p-2 focus:outline-none flex-1"
                                             />
                                             {isLast && (
                                                 <button
                                                     onClick={handleAddWalkingDistancePoint}
-                                                    className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition mt-2 md:mt-0"
+                                                    className="bg-blue-500 text-white px-4 py-2 rounded-full w-1/3 hover:bg-blue-600 transition mt-3 md:mt-0"
                                                 >
                                                     Add +
                                                 </button>

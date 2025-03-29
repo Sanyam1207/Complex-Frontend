@@ -14,8 +14,8 @@ export default function HelpFeedback() {
             {/* ==================== MOBILE VIEW ==================== */}
             <div className={`${inter.className} md:hidden min-h-screen bg-[#1F1F21]`}>
                 {/* Top bar: black with back arrow + title */}
-                <div className="bg-[#1F1F21] h-14 p-14 flex items-center justify-center relative">
-                    <button onClick={() => {router.back()}} className="absolute left-6 top-10 rounded-full bg-[#353537]">
+                <div className="bg-[#1F1F21] h-14 p-14 py-10 flex items-center justify-center relative">
+                    <button onClick={() => {router.back()}} className="absolute left-6 top-[1.55rem] rounded-full bg-[#353537]">
                         <Image
                             src="/icons/backbuttonn.svg"
                             width={32}
@@ -23,7 +23,7 @@ export default function HelpFeedback() {
                             alt="Back"
                         />
                     </button>
-                    <h1 className="text-white text-lg font-medium">
+                    <h1 className="text-white text-sm font-medium">
                         Help & feedback
                     </h1>
                 </div>
@@ -53,7 +53,7 @@ export default function HelpFeedback() {
                         </label>
                         <textarea
                             placeholder="Add additional information"
-                            className="w-full h-24 border border-gray-300 rounded-md px-4 py-2 text-sm 
+                            className="w-full h-24 border border-gray-300 bg-[#F4F4F4] rounded-md px-4 py-2 text-sm 
                          focus:outline-none focus:ring-1 focus:ring-[#0A84FF] resize-none"
                         />
                     </div>

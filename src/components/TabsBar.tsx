@@ -29,7 +29,7 @@ export default function TabsBar() {
     <div
       className={`
       ${inter.className} flex items-center justify-between 
-      bg-[#1C1C1C] px-4 pt-4 md:px-[7.25rem] md:pt-[1.5rem]
+      bg-[#1C1C1C] px-4 pt-4 md:px-[7.25rem]
     `}
     >
       {/* Left: Icon + text tabs */}
