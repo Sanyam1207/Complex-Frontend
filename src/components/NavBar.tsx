@@ -75,8 +75,8 @@ export default function Navbar() {
         - First row: brand name centered
         - Second row: search bar (left) + mobileslider icon (right)
       */}
-      <div className={`md:hidden w-full px-5 py-2 pt-3 rounded-t-3xl flex flex-col space-y-5`}>   
-             {/* 1) Brand in the middle */}
+      <div className={`md:hidden sticky top-0 w-full px-5 py-2 pt-3 rounded-t-3xl flex flex-col space-y-5`}>
+        {/* 1) Brand in the middle */}
         <div className={`${shouldHide ? 'hidden' : 'flex'} items-center justify-center`}>
           {/* Blue circle + brand text */}
           <div className="mr-2 h-4 w-4 rounded-full bg-[#0A84FF]" />
@@ -110,7 +110,7 @@ export default function Navbar() {
             </div>
             <input
               type="text"
-              placeholder="Search location"
+              placeholder={`${pathname === "/messages" ? "Search messages" : "Search location"}`}
               className={`ml-3 flex-1 border-none outline-none bg-transparent text-[14px] text-white font-light tracking-[-0.3px] ${inter.className}`}
             />
           </div>

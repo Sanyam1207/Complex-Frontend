@@ -46,7 +46,7 @@ export default function ProfilePage() {
                 <div onClick={() => { router.push('/create-listing') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Icon circle (plus sign) */}
-                        <div className="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full mr-3">
+                        <div className="w-12 h-12 flex items-center justify-center bg-[#0A84FF] rounded-full mr-3">
                             <Image alt="create listing" src={'/icons/createlisting.svg'} width={27} height={12} />
                         </div>
                         <div>
