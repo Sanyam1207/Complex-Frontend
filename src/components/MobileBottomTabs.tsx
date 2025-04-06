@@ -21,6 +21,7 @@ export default function MobileBottomTabs() {
         md:hidden             /* Hide on desktop, show only on mobile */
         sticky
         left-0 right-0
+        bottom-0
         w-full
         mx-auto
         bg-[#1F1F21]

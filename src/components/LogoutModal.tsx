@@ -71,9 +71,9 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
       {/* =======================
           MOBILE VIEW
       ======================= */}
-      <div className="block md:hidden absolute -bottom-0 z-50 w-full max-w-md mx-auto rounded-t-2xl bg-white px-6 py-8 shadow-lg">
+      <div className="block md:hidden absolute -bottom-0 z-50 w-full max-w-md mx-auto rounded-t-3xl bg-white px-6 py-8 shadow-lg">
         {/* Close Button */}
-        <div className="absolute top-10 right-10 rounded-full">
+        <div className="absolute top-5 right-5 rounded-full">
           <button onClick={onClose} aria-label="Close">
             <Image src={'/icons/cancelbutton.png'} alt="cancel" height={30} width={30} />
           </button>

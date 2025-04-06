@@ -1,16 +1,16 @@
-'use client'; // Only needed if you're using Next.js App Router
+'use client';
 
+import { Inter } from 'next/font/google';
 import MobileBottomTabs from '@/components/MobileBottomTabs';
 import Navbar from '@/components/NavBar';
-import PropertyCardCarousel from '@/components/PropertyCard';
 import TabsBar from '@/components/TabsBar';
-import { Inter } from 'next/font/google';
+import PropertyCardCarousel from '@/components/PropertyCard';
 import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-    const router = useRouter()
+    const router = useRouter();
     const dummyProperties = [
         {
             images: [
@@ -41,7 +41,7 @@ export default function Home() {
                 "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
                 "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
             ],
-            address: "267 Mainstreet, Toronto",
+            address: "266 Mainstreet, Toronto",
             price: 1200,
             date: new Date(),
         },
@@ -52,65 +52,41 @@ export default function Home() {
                 "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
                 "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
             ],
-            address: "268 Mainstreet, Toronto",
-            price: 1200,
-            date: new Date(),
-        },
-        {
-            images: [
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-            ],
-            address: "269 Mainstreet, Toronto",
-            price: 1200,
-            date: new Date(),
-        },
-        {
-            images: [
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-                "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-            ],
-            address: "270 Mainstreet, Toronto",
+            address: "266 Mainstreet, Toronto",
             price: 1200,
             date: new Date(),
         },
     ];
-    return (
 
-        <div className={`${inter.className} bg-black flex flex-col h-screen`}>
+    return (
+        <div className={`${inter.className} flex flex-col h-screen bg-[#1F1F21]`}>
             {/* Fixed header section */}
-            <div className="flex-none">
+            <header className="flex-none sticky top-0 z-10">
                 <Navbar />
                 <TabsBar />
-            </div>
+            </header>
 
             {/* Scrollable content area */}
-            <div className="flex-grow overflow-y-auto rounded-t-3xl">
-                <div className="min-h-min bg-gray-100 p-4">
-                    {/* A responsive grid for the cards */}
-                    <div className="max-w-7xl  mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {dummyProperties.map((property, index) => (
-                            <PropertyCardCarousel
-                                onClick={() => { router.push('show-listing') }}
-                                key={index}
-                                images={property.images}
-                                address={property.address}
-                                price={property.price}
-                                date={property.date}
-                            />
-                        ))}
-                    </div>
+            <main className="flex-grow overflow-y-auto bg-gray-100 p-4 rounded-t-3xl">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {dummyProperties.map((property, index) => (
+                        <PropertyCardCarousel
+                            key={index}
+                            images={property.images}
+                            address={property.address}
+                            price={property.price}
+                            date={property.date}
+                            onClick={() => router.push('show-listing')}
+                        />
+                    ))}
                 </div>
-            </div>
+            </main>
 
-            {/* Fixed footer */}
-            <div className="flex-none">
+            {/* Fixed mobile bottom tabs */}
+            <footer className="flex-none sticky bottom-0">
                 <MobileBottomTabs />
-            </div>
+            </footer>
         </div>
+
     );
 }

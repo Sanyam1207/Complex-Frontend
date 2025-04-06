@@ -22,9 +22,11 @@ const Page = () => {
 
 
       {/* --------------------------------- DESKTOP VIEW --------------------------------- */}
-
-      <div className=''>
+      <div className='sticky top-0'>
         <Navbar />
+      </div>
+      <div className=''>
+
         <div className="bg-[#1c1c1c] hidden md:flex h-screen text-[#2C3C4E]  flex-col pt-10">
           {/* Top Bar */}
           <div className="flex flex-row justify-between px-14 items-center">
@@ -243,89 +245,102 @@ const Page = () => {
 
 
       {/* --------------------------------- MOBILE VIEW --------------------------------- */}
-      <div className="flex relative md:hidden flex-col h-full  text-[#2C3C4E]">
-        <div className={`w-full ${showMessage ? 'hidden' : 'block'}`}>
-          <div className="bg-[#1c1c1c] flex flex-row px-5 py-5 pb-14">
-            <button className="bg-[#2F2F2F] mr-5 text-white px-6 py-3 rounded-full">
-              Renter
-            </button>
-            <button className="bg-[#2F2F2F] text-white px-6 py-3 rounded-full">
-              Landlord
-            </button>
-          </div>
+      <div className="flex relative md:hidden flex-col h-screen  text-[#2C3C4E]">
 
-          <div className="flex flex-col absolute w-full -mt-8 rounded-t-3xl overflow-scroll">
-            {/* Example: First message */}
-            <div
-              className="flex py-8 items-start justify-between bg-white rounded-3xl p-3 cursor-pointer"
-              onClick={() => setShowMessage(true)}
-            >
-              <div className="flex justify-center items-center">
-                <Image
-                  src="/icons/similarlisting.png"
-                  alt="Thumbnail"
-                  width={32}
-                  height={32}
-                  className="rounded-full mr-3 h-10 w-10"
-                />
-                <div className="flex flex-col">
-                  <span className="font-semibold">265 Main St</span>
-                  <span className="text-sm text-[#2C3C4E]">
-                    This is the count of total char . . . 45
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-400">Just now</span>
-                <div className="mt-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
-                  </svg>
-                </div>
-              </div>
+        <div className={`w-full ${showMessage ? 'hidden' : 'block'} h-screen flex flex-col bg-[#1c1c1c]`}>
+          {/* Fixed header with Renter and Landlord buttons */}
+          <header className="flex-none sticky top-0 z-10">
+            <div className="bg-[#1c1c1c] flex flex-row px-5 py-5">
+              <button className="bg-[#2F2F2F] mr-5 text-white px-6 py-3 rounded-full">
+                Renter
+              </button>
+              <button className="bg-[#2F2F2F] text-white px-6 py-3 rounded-full">
+                Landlord
+              </button>
             </div>
-            <hr />
+          </header>
 
-            {/* Example: Second message */}
-            <div
-              className="flex items-start justify-between bg-white rounded-md p-3 cursor-pointer"
-              onClick={() => setShowMessage(true)}
-            >
-              <div className="flex justify-center items-center">
-                <Image
-                  src="/icons/similarlisting.png"
-                  alt="Thumbnail"
-                  width={32}
-                  height={32}
-                  className="rounded-full mr-3 h-10 w-10"
-                />
-                <div className="flex flex-col">
-                  <span className="font-semibold">265 Main St</span>
-                  <span className="text-sm text-[#2C3C4E]">
-                    This is the count of total char . . . 45
-                  </span>
+          {/* Scrollable messages area contained in a white, rounded container */}
+          <main className="flex-grow overflow-y-auto bg-white rounded-t-3xl">
+            <div className="flex flex-col w-full">
+              {/* Example: First message */}
+              <div
+                className="flex py-8 items-start justify-between bg-white rounded-3xl p-3 cursor-pointer"
+                onClick={() => setShowMessage(true)}
+              >
+                <div className="flex justify-center items-center">
+                  <Image
+                    src="/icons/similarlisting.png"
+                    alt="Thumbnail"
+                    width={32}
+                    height={32}
+                    className="rounded-full mr-3 h-10 w-10"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-semibold">265 Main St</span>
+                    <span className="text-sm text-[#2C3C4E]">
+                      This is the count of total char . . . 45
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs text-gray-400">Just now</span>
+                  <div className="mt-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-400">Just now</span>
-                <div className="mt-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
-                  </svg>
+              <hr />
+
+              {/* Example: Second message */}
+              <div
+                className="flex items-start justify-between bg-white rounded-md p-3 cursor-pointer"
+                onClick={() => setShowMessage(true)}
+              >
+                <div className="flex justify-center items-center">
+                  <Image
+                    src="/icons/similarlisting.png"
+                    alt="Thumbnail"
+                    width={32}
+                    height={32}
+                    className="rounded-full mr-3 h-10 w-10"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-semibold">265 Main St</span>
+                    <span className="text-sm text-[#2C3C4E]">
+                      This is the count of total char . . . 45
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs text-gray-400">Just now</span>
+                  <div className="mt-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
+              {/* Add more messages as needed */}
             </div>
-          </div>
+          </main>
+
+          {/* Fixed mobile bottom navigation */}
+          <footer className="flex-none sticky bottom-0 z-10">
+            <MobileBottomTabs />
+          </footer>
         </div>
 
         {/* 2) Current Chat Detail (show if showMessage) */}
@@ -409,7 +424,7 @@ const Page = () => {
         </div>
       </div>
 
-      <MobileBottomTabs />
+
 
       {/* ==================== Delete Listing Modal Integration ==================== */}
       <DeleteListingModal
