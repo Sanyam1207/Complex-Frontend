@@ -47,25 +47,25 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="absolute bottom-0 w-full h-[94vh] bg-white rounded-t-2xl p-6 shadow-lg flex flex-col overflow-hidden"
+            className="absolute bottom-0 w-full h-[95%] bg-white rounded-t-2xl py-6 px-2 shadow-lg flex flex-col overflow-hidden"
           >
             <button onClick={onClose} className="absolute top-4 right-4" aria-label="Close">
               <Image src="/icons/close.svg" width={24} height={24} alt="" />
             </button>
 
             <h2
-              className="text-[14px] font-medium text-[#2C3C4E] text-center mb-6"
+              className="text-base font-medium text-[#2C3C4E] text-center mb-6"
               style={{ lineHeight: "194%" }}
             >
               Filter
             </h2>
 
-            {/* Scrollable Content */}
+
             <div className="flex-1 overflow-y-auto px-1">
               {/* Price Range */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <label
-                  className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                  className="block text-sm font-medium text-[#2C3C4E] mb-2"
                   style={{ lineHeight: "124%" }}
                 >
                   Price range
@@ -88,9 +88,10 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
               <hr className="mb-4" />
 
               {/* Bedrooms & Bathrooms */}
-              <div className="mb-6">
+
+              <div className="mb-4">
                 <label
-                  className="block text-[14px] font-medium bg-white text-[#2C3C4E] mb-2"
+                  className="block text-sm font-medium bg-white text-[#2C3C4E] mb-2"
                   style={{ lineHeight: "124%" }}
                 >
                   Number of bedrooms and bathrooms?
@@ -113,9 +114,9 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
               <hr className="mb-4" />
 
               {/* Stay Duration */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <label
-                  className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
+                  className="block text-sm font-medium text-[#2C3C4E] mb-2"
                   style={{ lineHeight: "124%" }}
                 >
                   Preferred stay duration?
@@ -124,10 +125,9 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                   <button
                     onClick={() => setSelectedStayDuration("lt6")}
                     className={`border rounded-full px-4 py-4 text-[14px] transition
-                      ${
-                        selectedStayDuration === "lt6"
-                          ? "bg-[#0A84FF] text-white border-transparent"
-                          : "border-[#E3E2E0] text-[#2C3C4E]"
+                      ${selectedStayDuration === "lt6"
+                        ? "bg-[#0A84FF] text-white border-transparent"
+                        : "border-[#E3E2E0] text-[#2C3C4E]"
                       }`}
                     style={{ lineHeight: "16px" }}
                   >
@@ -136,10 +136,9 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                   <button
                     onClick={() => setSelectedStayDuration("gt6")}
                     className={`border rounded-full px-4 py-4 text-[14px] transition
-                      ${
-                        selectedStayDuration === "gt6"
-                          ? "bg-[#0A84FF] text-white border-transparent"
-                          : "border-[#E3E2E0] text-[#2C3C4E]"
+                      ${selectedStayDuration === "gt6"
+                        ? "bg-[#0A84FF] text-white border-transparent"
+                        : "border-[#E3E2E0] text-[#2C3C4E]"
                       }`}
                     style={{ lineHeight: "16px" }}
                   >
@@ -150,7 +149,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
               <hr className="mb-4" />
 
               {/* Popular Filters */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <label
                   className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
                   style={{ lineHeight: "124%" }}
@@ -163,10 +162,9 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                       key={filter}
                       onClick={() => toggleFilter(filter)}
                       className={`border rounded-full px-6 py-4 text-[14px] transition
-                        ${
-                          selectedFilters.includes(filter)
-                            ? "bg-[#0A84FF] text-white border-transparent"
-                            : "border-[#E3E2E0] text-[#2C3C4E]"
+                        ${selectedFilters.includes(filter)
+                          ? "bg-[#0A84FF] text-white border-transparent"
+                          : "border-[#E3E2E0] text-[#2C3C4E]"
                         }`}
                       style={{ lineHeight: "16px" }}
                     >
@@ -186,7 +184,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                   Sort listing
                 </label>
                 <div
-                  className="flex flex-col space-y-2 mb-4 mt-3 text-[14px] text-[#2C3C4E]"
+                  className="flex flex-col space-y-1 mb-4 mt-3 text-sm text-[#2C3C4E]"
                   style={{ lineHeight: "194%" }}
                 >
                   <div>
@@ -214,16 +212,16 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
             </div>
 
             {/* Bottom Buttons */}
-            <div className="flex items-center justify-between mt-4 p-2">
+            <div className="flex items-center justify-between mt-4 ">
               <button
                 onClick={clearFilter}
-                className="text-[#0A84FF] py-4 px-7 text-[14px] rounded-full border border-slate-300 font-normal"
+                className="text-[#0A84FF] py-4 px-10 text-sm rounded-full border border-slate-300 font-normal"
                 style={{ lineHeight: "16px" }}
               >
                 Clear filter
               </button>
               <button
-                className="bg-black text-white text-[14px] rounded-full px-7 py-4 hover:bg-gray-800 transition"
+                className="bg-black text-white text-sm rounded-full py-4 px-10 hover:bg-gray-800 transition"
                 style={{ lineHeight: "16px" }}
               >
                 View 27 rentals
