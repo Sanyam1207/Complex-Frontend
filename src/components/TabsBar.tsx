@@ -33,7 +33,7 @@ export default function TabsBar() {
     `}
     >
       {/* Left: Icon + text tabs */}
-      <div className="flex space-x-3 md:space-x-8 overflow-x-auto md:overflow-x-visible whitespace-nowrap">
+      <div className="flex space-x-2 md:space-x-8 overflow-x-auto md:overflow-x-visible whitespace-nowrap">
         {tabs.map((tab) => (
           <div
             key={tab.value}
