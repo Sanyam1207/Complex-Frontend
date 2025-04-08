@@ -47,7 +47,7 @@ export default function TabsBar() {
               src={selectedCategory === tab.value ? `${tab.activeIcon}` : `${tab.icon}`}
               width={27}
               height={27}
-              className="mb-2 md:mb-4 w-[1.6875rem] h-[1.6875rem] flex-shrink-0"
+              className="mb-2 md:mb-4 w-auto h-auto flex-shrink-0"
             />
             <span className="text-[#F4F4F4] text-center text-xs mb-2 font-normal leading-[1.5rem]">
               {tab.label}

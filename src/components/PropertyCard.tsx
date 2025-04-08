@@ -39,10 +39,6 @@ export default function PropertyCardCarousel({
 
     return (
         <div onClick={onClick} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
-            {/* Heart Icon */}
-            <button className="absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md z-[1]">
-                <Image alt="Favourite" src="/icons/heart2.svg" width={20} height={20} />
-            </button>
 
             <Carousel setApi={setApi} className="relative w-full">
                 <CarouselContent>
@@ -79,9 +75,14 @@ export default function PropertyCardCarousel({
                     <p className="font-medium text-[#2C3C4E] text-xs">${price}<span className="font-light">/month</span></p>
                 </div>
                 <p className="mt-1 text-[0.75rem] text-[#2C3C4E] flex flex-row items-center">
-                    <Image src={'/icons/calender.svg'} alt="calender" height={12} width={12} className="mr-2"/>
+                    <Image src={'/icons/calender.svg'} alt="calender" height={12} width={12} className="mr-2" />
                     {date.toLocaleDateString()}
                 </p>
+                {/* Heart Icon */}
+                <button className="absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md z-[1]">
+                    <Image alt="Favourite" src="/icons/heart2.svg" width={20} height={20} />
+                </button>
+
             </div>
 
         </div>
