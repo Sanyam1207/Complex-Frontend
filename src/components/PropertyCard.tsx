@@ -79,7 +79,7 @@ export default function PropertyCardCarousel({
                     {date.toLocaleDateString()}
                 </p>
                 {/* Heart Icon */}
-                <button className="absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md z-[1]">
+                <button className="absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md">
                     <Image alt="Favourite" src="/icons/heart2.svg" width={20} height={20} />
                 </button>
 
