@@ -1,10 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import SearchDropdown from "./SearchDropdown";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../redux/store/store";
+import {
+  setSelectedStayDuration,
+  toggleSelectedFilter,
+  setBedrooms,
+  setBathrooms,
+  setMinValue,
+  setMaxValue,
+  setSelectedSort,
+  resetFilters,
+} from "../redux/slices/filterSlice";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,43 +26,43 @@ interface MobileFilterModalProps {
 }
 
 const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }) => {
-  // Always call hooks at the top of the component
-  const [selectedStayDuration, setSelectedStayDuration] = useState<"lt6" | "gt6" | null>(null);
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  const {
+    selectedStayDuration,
+    selectedFilters,
+    bedrooms,
+    bathrooms,
+    minValue,
+    maxValue,
+    selectedSort,
+  } = useSelector((state: RootState) => state.filter);
 
-  const [bedrooms, setBedrooms] = useState("");
-  const [bathrooms, setBathrooms] = useState("");
-  const [minValue, setMinValue] = useState("");
-  const [maxValue, setMaxValue] = useState("");
-
-  const toggleFilter = (filterName: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(filterName) ? prev.filter((f) => f !== filterName) : [...prev, filterName]
-    );
+  // Event Handlers
+  const handleToggleFilter = (filterName: string) => {
+    dispatch(toggleSelectedFilter(filterName));
   };
 
-  const clearFilter = () => {
-    setSelectedStayDuration(null);
-    setSelectedFilters([]);
+  const handleClearFilter = () => {
+    dispatch(resetFilters());
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className={`fixed inset-0 flex flex-col text-[#2C3C4E] ${inter.className}`}>
+        <div className={`fixed inset-0 flex flex-col text-[#2C3C4E] ${inter.className} z-40`}>
           {/* Dark overlay */}
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose} />
 
-          {/* Modal with slide in/out animation */}
+          {/* Modal */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="absolute bottom-0 w-full h-[95%] bg-white rounded-t-2xl py-6 px-2 shadow-lg flex flex-col overflow-hidden"
+            className="absolute bottom-0 w-full h-[95%] bg-white rounded-t-2xl py-6 px-2 shadow-lg flex flex-col overflow-hidden z-50"
           >
             <button onClick={onClose} className="absolute top-4 right-4" aria-label="Close">
-              <Image src="/icons/close.svg" width={24} height={24} alt="" />
+              <Image src="/icons/close.svg" width={24} height={24} alt="Close" />
             </button>
 
             <h2
@@ -59,7 +71,6 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
             >
               Filter
             </h2>
-
 
             <div className="flex-1 overflow-y-auto px-1">
               {/* Price Range */}
@@ -71,24 +82,38 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                   Price range
                 </label>
                 <div className="flex space-x-3">
-                  <SearchDropdown
-                    options={["$100", "$200", "$300", "$400"]}
-                    setValue={setMinValue}
-                    value={minValue}
-                    placeholder="Min Price"
-                  />
-                  <SearchDropdown
-                    options={["$1000", "$2000", "$3000", "$4000"]}
-                    setValue={setMaxValue}
-                    value={maxValue}
-                    placeholder="Max Price"
-                  />
+                  {/* Min Price */}
+                  <div className="relative w-full">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2C3C4E]">
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      placeholder="Min Price"
+                      value={minValue}
+                      onChange={(e) => dispatch(setMinValue(e.target.value))}
+                      className="w-full p-2 py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
+                    />
+                  </div>
+
+                  {/* Max Price */}
+                  <div className="relative w-full">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2C3C4E]">
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      placeholder="Max Price"
+                      value={maxValue}
+                      onChange={(e) => dispatch(setMaxValue(e.target.value))}
+                      className="w-full p-2 py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
+                    />
+                  </div>
                 </div>
               </div>
               <hr className="mb-4" />
 
               {/* Bedrooms & Bathrooms */}
-
               <div className="mb-4">
                 <label
                   className="block text-sm font-medium bg-white text-[#2C3C4E] mb-2"
@@ -99,13 +124,13 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 <div className="flex space-x-3">
                   <SearchDropdown
                     options={["1 Bedroom", "2 Bedrooms"]}
-                    setValue={setBedrooms}
+                    setValue={(val: string) => dispatch(setBedrooms(val))}
                     value={bedrooms}
                     placeholder="Bedrooms"
                   />
                   <SearchDropdown
                     options={["1 Bathroom", "2 Bathrooms"]}
-                    setValue={setBathrooms}
+                    setValue={(val: string) => dispatch(setBathrooms(val))}
                     value={bathrooms}
                     placeholder="Bathroom"
                   />
@@ -123,26 +148,26 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 </label>
                 <div className="flex space-x-3">
                   <button
-                    onClick={() => setSelectedStayDuration("lt6")}
-                    className={`border rounded-full px-4 py-4 text-[14px] transition
-                      ${selectedStayDuration === "lt6"
+                    onClick={() => dispatch(setSelectedStayDuration("lt6"))}
+                    className={`border border-[#2C3D4F] rounded-full px-4 py-4 text-[14px] transition ${
+                      selectedStayDuration === "lt6"
                         ? "bg-[#0A84FF] text-white border-transparent"
                         : "border-[#E3E2E0] text-[#2C3C4E]"
-                      }`}
+                    }`}
                     style={{ lineHeight: "16px" }}
                   >
-                    Less than 6 months
+                    1 - 6 months
                   </button>
                   <button
-                    onClick={() => setSelectedStayDuration("gt6")}
-                    className={`border rounded-full px-4 py-4 text-[14px] transition
-                      ${selectedStayDuration === "gt6"
+                    onClick={() => dispatch(setSelectedStayDuration("gt6"))}
+                    className={`border border-[#2C3D4F] rounded-full px-4 py-4 text-[14px] transition ${
+                      selectedStayDuration === "gt6"
                         ? "bg-[#0A84FF] text-white border-transparent"
                         : "border-[#E3E2E0] text-[#2C3C4E]"
-                      }`}
+                    }`}
                     style={{ lineHeight: "16px" }}
                   >
-                    More than 6 months
+                    6+ months
                   </button>
                 </div>
               </div>
@@ -160,12 +185,12 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                   {["Parking", "Pet friendly", "Couple"].map((filter) => (
                     <button
                       key={filter}
-                      onClick={() => toggleFilter(filter)}
-                      className={`border rounded-full px-6 py-4 text-[14px] transition
-                        ${selectedFilters.includes(filter)
+                      onClick={() => handleToggleFilter(filter)}
+                      className={`border border-[#2C3D4F] rounded-full px-6 py-4 text-[14px] transition ${
+                        selectedFilters.includes(filter)
                           ? "bg-[#0A84FF] text-white border-transparent"
                           : "border-[#E3E2E0] text-[#2C3C4E]"
-                        }`}
+                      }`}
                       style={{ lineHeight: "16px" }}
                     >
                       {filter}
@@ -175,7 +200,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
               </div>
               <hr className="mb-4" />
 
-              {/* Sort Listing */}
+              {/* Sort Listing with Custom Radio Options */}
               <div className="mb-6">
                 <label
                   className="block text-[14px] font-medium text-[#2C3C4E] mb-2"
@@ -183,38 +208,72 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 >
                   Sort listing
                 </label>
-                <div
-                  className="flex flex-col space-y-1 mb-4 mt-3 text-sm text-[#2C3C4E]"
-                  style={{ lineHeight: "194%" }}
-                >
-                  <div>
-                    <label className="flex items-center space-x-4">
-                      <input type="radio" name="sort" className="accent-black" />
-                      <span>Price: low to high</span>
-                    </label>
-                  </div>
+                <div className="flex flex-col space-y-3 mt-4">
+                  {/* Price: low to high */}
+                  <label className="flex items-center justify-between flex-row-reverse cursor-pointer gap-3">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="price"
+                      className="hidden peer"
+                      checked={selectedSort === "price"}
+                      onChange={() => dispatch(setSelectedSort("price"))}
+                    />
+                    {/* Circle Indicator */}
+                    <div className="w-5 h-5 rounded-full border border-gray-300 
+                      peer-checked:border-blue-600 peer-checked:border-[7px] 
+                      peer-checked:bg-white"
+                    />
+                    <span className="text-sm text-[#2C3C4E]">
+                      Price: low to high
+                    </span>
+                  </label>
 
-                  <div>
-                    <label className="flex items-center space-x-4">
-                      <input type="radio" name="sort" className="accent-black" />
-                      <span>Newest first</span>
-                    </label>
-                  </div>
+                  {/* Newest first */}
+                  <label className="flex items-center justify-between flex-row-reverse cursor-pointer gap-3">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="newest"
+                      className="hidden peer"
+                      checked={selectedSort === "newest"}
+                      onChange={() => dispatch(setSelectedSort("newest"))}
+                    />
+                    <div className="w-5 h-5 rounded-full border border-gray-300 
+                      peer-checked:border-blue-600 peer-checked:border-[7px] 
+                      peer-checked:bg-white"
+                    />
+                    <span className="text-sm text-[#2C3C4E]">
+                      Newest first
+                    </span>
+                  </label>
 
-                  <div>
-                    <label className="flex items-center space-x-4">
-                      <input type="radio" name="sort" className="accent-black" />
-                      <span>Most relevant</span>
-                    </label>
-                  </div>
+                  {/* Most relevant */}
+                  <label className="flex items-center justify-between flex-row-reverse cursor-pointer gap-3">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="relevant"
+                      className="hidden peer"
+                      checked={selectedSort === "relevant"}
+                      onChange={() => dispatch(setSelectedSort("relevant"))}
+                    />
+                    <div className="w-5 h-5 rounded-full border border-gray-300 
+                      peer-checked:border-blue-600 peer-checked:border-[7px] 
+                      peer-checked:bg-white"
+                    />
+                    <span className="text-sm text-[#2C3C4E]">
+                      Most relevant
+                    </span>
+                  </label>
                 </div>
               </div>
             </div>
 
             {/* Bottom Buttons */}
-            <div className="flex items-center justify-between mt-4 ">
+            <div className="flex items-center justify-between mt-4">
               <button
-                onClick={clearFilter}
+                onClick={handleClearFilter}
                 className="text-[#0A84FF] py-4 px-10 text-sm rounded-full border border-slate-300 font-normal"
                 style={{ lineHeight: "16px" }}
               >
