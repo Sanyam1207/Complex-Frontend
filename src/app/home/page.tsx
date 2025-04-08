@@ -68,7 +68,7 @@ export default function Home() {
 
             {/* Scrollable content area */}
             <main className="flex-grow overflow-y-auto bg-gray-100 p-4 rounded-t-3xl">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="max-w-7xl overflow-y-scroll mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {dummyProperties.map((property, index) => (
                         <PropertyCardCarousel
                             key={index}
