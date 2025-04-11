@@ -1,439 +1,558 @@
-'use client'
-import React from 'react'
-import MobileBottomTabs from '@/components/MobileBottomTabs'
-import Navbar from '@/components/NavBar'
-import Image from 'next/image'
-import DeleteListingModal from '@/components/DeleteListingModal'
+"use client";
+import MobileBottomTabs from "@/components/MobileBottomTabs";
+import MobileMessagesNavbar from "@/components/MobileMessageNavbar";
+import { Inter } from "next/font/google";
+import Image from "next/image";
+import { useState } from "react";
 
-const Page = () => {
-  const [showMessage, setShowMessage] = React.useState(false)
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+});
 
-  // State to control DeleteListingModal
-  const [showDeleteModal, setShowDeleteModal] = React.useState(false)
+// Define the Chat type
+interface Chat {
+  id: number;
+  title: string;
+  subtitle: string;
+  time: string;
+}
 
-  // Handler for confirming deletion
-  const handleConfirmDelete = () => {
-    console.log('Listing deleted!')
-    setShowDeleteModal(false)
-  }
+// Define a Message type for the conversation view
+interface Message {
+  id: number;
+  text: string;
+  sender: "user" | "other";
+  time?: string;
+}
+
+// Dummy data for chats
+const dummyChats: Chat[] = [
+  {
+    id: 1,
+    title: "265 Mainstreet, To...",
+    subtitle: "This is the total number …",
+    time: "Just now",
+  },
+  {
+    id: 2,
+    title: "123 Elm St",
+    subtitle: "Another chat preview message …",
+    time: "2 min ago",
+  },
+  {
+    id: 4,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+  },
+  {
+    id: 5,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+  },
+  {
+    id: 6,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+  },
+  {
+    id: 7,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+  },
+];
+
+// Dummy data for conversation messages
+const dummyMessages: Message[] = [
+  {
+    id: 1,
+    text: "Hello, how can I help you?",
+    sender: "other",
+    time: "10:00 AM",
+  },
+  {
+    id: 2,
+    text: "I have a question regarding my rental.",
+    sender: "user",
+    time: "10:01 AM",
+  },
+  {
+    id: 3,
+    text: "Sure, please ask your question.",
+    sender: "other",
+    time: "10:02 AM",
+  },
+];
+
+export default function ChatList() {
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+
+  const handleChatClick = (chat: Chat) => {
+    setSelectedChat(chat);
+  };
+
+  const handleBackClick = () => {
+    setSelectedChat(null);
+  };
 
   return (
-    <>
-
-
-      {/* --------------------------------- DESKTOP VIEW --------------------------------- */}
-      <div className='sticky top-0'>
-        <Navbar />
-      </div>
-      <div className=''>
-
-        <div className="bg-[#1c1c1c] hidden md:flex h-screen text-[#2C3C4E]  flex-col pt-10">
-          {/* Top Bar */}
-          <div className="flex flex-row justify-between px-14 items-center">
-            {/* Left Section: Search Bar & Sort Button */}
-            <div className="flex flex-row space-x-3">
-              {/* Search Bar */}
-              <div className="flex items-center justify-center bg-[#2F2F2F] rounded-full px-4 py-2 w-[20.18rem]">
-                <div className="bg-[#1c1c1c] p-2 rounded-full">
-                  <Image
-                    src="/icons/firrsearch.png"
-                    height={15.43}
-                    width={15.43}
-                    alt="search-icon"
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search location"
-                  className="ml-2 w-full border-none outline-none bg-transparent text-[14px] text-white placeholder-white"
-                />
-              </div>
-
-              {/* Sort Button */}
-              <div>
-                <button className="bg-[#2F2F2F] text-white px-6 py-2 rounded-full">
-                  Sort
-                </button>
-              </div>
-            </div>
-
-            {/* Middle Section: Address & Rounded Image */}
-            <div className="flex flex-row items-center space-x-3">
-              <Image
-                src="/icons/similarlisting.png"
-                height={32}
-                width={32}
-                alt="user-avatar"
-                className="rounded-full"
-              />
-              <span className="text-white text-sm">2958 Main Street</span>
-            </div>
-
-            {/* View Button */}
-            <div>
-              <button className="bg-[#2F2F2F] text-white px-6 py-2 rounded-full">
-                View
-              </button>
-            </div>
-
-            {/* Renter / Landlord Buttons */}
-            <div className="flex flex-row items-center space-x-2">
-              <button className="bg-[#2F2F2F] text-white px-6 py-2 rounded-full">
-                Renter
-              </button>
-              <button className="bg-[#2F2F2F] text-white px-6 py-2 rounded-full">
-                Landlord
-              </button>
-            </div>
-          </div>
-
-          {/* Main Section: 3 Columns => [All Chats] | [Opened Chat] | [Profile] */}
-          <div className="flex h-screen mt-10 px-10 bg-white rounded-t-3xl flex-row justify-between">
-            {/* 1) All Chats Section */}
-            <div className="w-full flex justify-center flex-row">
-              <div className="h-full overflow-y-auto p-5">
-                {/* Example Chat */}
-                <div className="flex items-start justify-between bg-white rounded-md p-3 cursor-pointer">
-                  <div className="flex justify-center items-center">
-                    <Image
-                      src="/icons/similarlisting.png"
-                      alt="Thumbnail"
-                      width={32}
-                      height={32}
-                      className="rounded-full mr-3 h-10 w-10"
-                    />
-                    <div className="flex flex-col">
-                      <span className="font-semibold">265 Main St</span>
-                      <span className="text-sm text-[#2C3C4E]">
-                        This is the count of total char . . . 45
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs text-gray-400">Just now</span>
-                    <div className="mt-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-gray-400"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                {/* Repeat for other chats as needed... */}
-              </div>
-            </div>
-
-            {/* 2) Opened Current Chat */}
-            <div className="w-full flex flex-col justify-between border-x border-gray-200">
-              {/* Chat Messages */}
-              <div className="p-4 overflow-y-auto flex flex-col space-y-6">
-                {/* Left Bubble (black) */}
-                <div className="max-w-[60%]">
-                  <div className="bg-[#353537] text-white rounded-lg px-4 py-2">
-                    Hello, Is this available.
-                  </div>
-                  <span className="text-xs text-gray-500">2:50 pm</span>
-                </div>
-
-                {/* Right Bubble (light background) */}
-                <div className="max-w-[60%] ml-auto text-right">
-                  <div className="bg-gray-100 text-black rounded-lg px-4 py-2 inline-block">
-                    Hello, Is this available.
-                  </div>
-                  <span className="text-xs text-gray-500 block mt-1">2:50 pm</span>
-                </div>
-              </div>
-
-              {/* Message Input */}
-              <div className="p-4 border-t bg-[#F4F4F4] py-10 border-gray-200">
-                <div className="flex items-center space-x-2">
-                  {/* Plus Icon */}
-                  <button className="bg-white py-2 px-3 rounded-full">+</button>
-
-                  {/* Text Input */}
-                  <input
-                    type="text"
-                    placeholder="Type your message"
-                    className="flex-1 border border-gray-300 rounded-xl px-4 py-2 focus:outline-none"
-                  />
-
-                  {/* Send Button */}
-                  <button className="bg-blue-500 text-white rounded-full p-3">
-                    <Image src="/icons/send.svg" width={20} height={20} alt="Send" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 3) Profile Section */}
-            <div className="w-full flex justify-center flex-col p-6">
-              {/* Section Title */}
-              <div className="flex flex-col items-center justify-center">
-                <h2 className="text-lg font-medium mb-4">Candidate Profile</h2>
-
-                {/* Avatar + Name */}
-                <div className="flex flex-col items-center mb-6">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-b from-pink-400 to-pink-200 flex items-center justify-center mb-2">
-                    <Image
-                      src="/icons/profile.svg"
-                      alt="John Doe"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                  </div>
-                  <p className="font-medium text-base">John Doe</p>
-                </div>
-              </div>
-
-              <div className="w-5/6">
-                {/* Gender */}
-                <div className="mb-8">
-                  <p className="text-sm font-medium">
-                    <span>Gender:</span> Male
-                  </p>
-                </div>
-
-                {/* Languages */}
-                <div className="mb-8">
-                  <p className="text-sm font-medium mb-3">Languages:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {["French", "Hindi", "Gujarati", "Punjabi", "Mandarin", "Telugu"].map(
-                      (lang) => (
-                        <span
-                          key={lang}
-                          className="px-4 py-2 rounded-full text-sm border border-gray-500"
-                        >
-                          {lang}
-                        </span>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {/* About */}
-                <div>
-                  <p className="text-sm font-medium mb-2">About John Doe:</p>
-                  <p className="text-sm">
-                    Once you login, you will find the messages here. I am looking
-                    for 2 Bedroom apartment for rent can you please help me to find
-                    this character limit. let it flow down
-                  </p>
-                  <p className="text-sm mt-3">
-                    Incase if its second paragraph how thats going to look.
-                  </p>
-                </div>
-              </div>
-
-              {/* Example: Trigger Delete Listing Modal */}
-              <div className="mt-8">
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="bg-red-500 text-white px-6 py-2 rounded-full"
-                >
-                  Delete Listing
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      {/* --------------------------------- MOBILE VIEW --------------------------------- */}
-      <div className="flex relative md:hidden flex-col h-screen  text-[#2C3C4E]">
-
-        <div className={`w-full ${showMessage ? 'hidden' : 'block'} h-screen flex flex-col bg-[#1c1c1c]`}>
-          {/* Fixed header with Renter and Landlord buttons */}
-          <header className="flex-none sticky top-0 z-10">
-            <div className="bg-[#1c1c1c] flex flex-row px-5 py-5">
-              <button className="bg-[#2F2F2F] mr-5 text-white px-6 py-3 rounded-full">
-                Renter
-              </button>
-              <button className="bg-[#2F2F2F] text-white px-6 py-3 rounded-full">
-                Landlord
-              </button>
-            </div>
-          </header>
-
-          {/* Scrollable messages area contained in a white, rounded container */}
-          <main className="flex-grow overflow-y-auto bg-white rounded-t-3xl">
-            <div className="flex flex-col w-full">
-              {/* Example: First message */}
-              <div
-                className="flex py-8 items-start justify-between bg-white rounded-3xl p-3 cursor-pointer"
-                onClick={() => setShowMessage(true)}
-              >
-                <div className="flex justify-center items-center">
-                  <Image
-                    src="/icons/similarlisting.png"
-                    alt="Thumbnail"
-                    width={32}
-                    height={32}
-                    className="rounded-full mr-3 h-10 w-10"
-                  />
-                  <div className="flex flex-col">
-                    <span className="font-semibold">265 Main St</span>
-                    <span className="text-sm text-[#2C3C4E]">
-                      This is the count of total char . . . 45
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-xs text-gray-400">Just now</span>
-                  <div className="mt-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-gray-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <hr />
-
-              {/* Example: Second message */}
-              <div
-                className="flex items-start justify-between bg-white rounded-md p-3 cursor-pointer"
-                onClick={() => setShowMessage(true)}
-              >
-                <div className="flex justify-center items-center">
-                  <Image
-                    src="/icons/similarlisting.png"
-                    alt="Thumbnail"
-                    width={32}
-                    height={32}
-                    className="rounded-full mr-3 h-10 w-10"
-                  />
-                  <div className="flex flex-col">
-                    <span className="font-semibold">265 Main St</span>
-                    <span className="text-sm text-[#2C3C4E]">
-                      This is the count of total char . . . 45
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-xs text-gray-400">Just now</span>
-                  <div className="mt-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-gray-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.563 4.83c.07.214.257.361.48.395l5.036.732c.96.139 1.341 1.316.647 1.99l-3.64 3.547c-.166.162-.241.397-.203.626l.859 5.013c.163.953-.84 1.68-1.68 1.23L10 18.347l-4.501 2.367c-.84.45-1.843-.277-1.68-1.23l.859-5.013c.038-.229-.037-.464-.203-.626l-3.64-3.547c-.695-.674-.312-1.85.647-1.99l5.036-.732c.224-.034.41-.181.48-.395l1.563-4.83z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              {/* Add more messages as needed */}
-            </div>
-          </main>
-
-          {/* Fixed mobile bottom navigation */}
-          <footer className="flex-none sticky bottom-0 z-10">
-            <MobileBottomTabs />
-          </footer>
-        </div>
-
-        {/* 2) Current Chat Detail (show if showMessage) */}
-        <div
-          className={`flex-col absolute h-screen -top-32 z-20 w-full bg-[#1F1F21] ${showMessage ? 'flex' : 'hidden'
-            }`}
-        >
-          {/* 1. Top bar */}
-          <div className="flex flex-row items-center justify-around px-4 py-5 bg-[#1c1c1c]">
-            {/* Left side: back arrow + address */}
-            <div className="flex flex-row items-center space-x-2">
-              {/* Back arrow => go back to message list */}
-              <div
-                className="p-3 rounded-full bg-[#353537] cursor-pointer"
-                onClick={() => setShowMessage(false)}
-              >
+    <div className="h-screen flex flex-col">
+      {/* =======================
+          MOBILE VIEW
+          - Uses "md:hidden" to hide on larger screens
+         ======================= */}
+      <div className="md:hidden flex flex-col bg-[#1c1c1c] h-full">
+        {/* Header (Mobile) */}
+        {selectedChat ? (
+          <header
+            className={`sticky ${inter.className} top-0 z-10 bg-[#1F1F21] p-5 flex items-center justify-between`}
+          >
+            <div className="flex items-center">
+              {/* Back Button */}
+              <button onClick={handleBackClick} className="mr-4">
                 <Image
-                  src="/icons/backarrow.svg"
+                  src="/icons/backbuttonn.svg"
                   alt="Back"
                   width={32}
                   height={32}
-                  className="w-5 h-5"
+                  className="w-8 h-8"
                 />
-              </div>
+              </button>
 
-              <span className="text-white px-6 py-3 text-sm">
-                265 Mainstreet, Townsville
+              {/* Main Image */}
+              <Image
+                src="/icons/placeholderimageformessage.svg"
+                alt="Main"
+                width={30}
+                height={30}
+                className="w-[30px] h-[30px] mr-2 ml-3"
+              />
+
+              {/* Chat Title */}
+              <span className="text-white font-inter text-[14px] font-medium leading-[194%]">
+                {selectedChat.title}
               </span>
             </div>
-            {/* Right side: "View" button */}
-            <div className="text-white text-sm bg-[#353537] px-5 py-3 rounded-full">
-              View
-            </div>
-          </div>
 
-          {/* 2. Messages area */}
-          <div className="flex-1 overflow-y-auto p-4 bg-white">
-            {/* Example of a sent message (aligned to the right) */}
-            <div className="flex justify-end mb-2">
-              <div className="bg-[#F1F1F1] p-3 rounded-lg max-w-[70%]">
-                <p className="text-sm text-[#2C3C4E]">
-                  Hello, Is this available.
-                </p>
-                <p className="text-right text-xs text-gray-500 mt-1">2:50 pm</p>
+            {/* View Button */}
+            <button className="rounded-[57px] bg-[#353537] px-5 py-1">
+              <span className="text-white text-center text-[12px] font-medium leading-[194%]">
+                view
+              </span>
+            </button>
+          </header>
+        ) : (
+          // If no chat selected: show the Mobile Messages Navbar
+          <header className="flex-none sticky top-0 z-10">
+            <MobileMessagesNavbar />
+          </header>
+        )}
+
+        {/* MAIN CONTENT (Mobile) */}
+        {selectedChat ? (
+          // Conversation view
+          <main className="flex-grow rounded-t-3xl flex flex-col overflow-y-auto bg-white p-5">
+            {dummyMessages.map((message) => (
+              <div
+                key={message.id}
+                className={`mb-3 max-w-64 ${
+                  message.sender === "user" ? "self-end" : "self-start"
+                }`}
+              >
+                <div
+                  className={`max-w-64 p-3 ${
+                    message.sender === "user" ? "self-end" : "self-start"
+                  }`}
+                  style={{
+                    borderRadius: "12px 12px 0px 12px",
+                    background: "#F4F4F4",
+                  }}
+                >
+                  <p
+                    style={{
+                      color: "#2C3C4E",
+                      fontFamily: "Inter",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      lineHeight: "150%",
+                    }}
+                  >
+                    {message.text}
+                  </p>
+                </div>
+                {message.time && (
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "rgba(44, 60, 78, 0.80)",
+                      textAlign: "right",
+                      fontFamily: "Inter",
+                      fontWeight: 400,
+                      lineHeight: "194%",
+                      display: "block",
+                    }}
+                  >
+                    {message.time}
+                  </span>
+                )}
               </div>
-            </div>
-            {/* Add more sent/received messages here as needed */}
-          </div>
+            ))}
+          </main>
+        ) : (
+          // Chat list (Mobile)
+          <main className="flex-grow overflow-y-auto bg-white mt-5 rounded-t-3xl">
+            {dummyChats.map((chat) => (
+              <div
+                key={chat.id}
+                className="flex justify-between items-start bg-white p-5 cursor-pointer"
+                onClick={() => handleChatClick(chat)}
+              >
+                <div className="flex items-center">
+                  <Image
+                    src="/icons/similarlisting.png"
+                    alt="Thumbnail"
+                    width={40}
+                    height={40}
+                    className="rounded-full w-9 h-9 mr-3"
+                  />
+                  <div className="flex flex-col">
+                    <div className="flex items-center">
+                      <span
+                        style={{
+                          color: "#2C3C4E",
+                          fontFamily: "Inter",
+                          fontSize: "14px",
+                          fontWeight: 600,
+                          lineHeight: "124%",
+                        }}
+                      >
+                        {chat.title}
+                      </span>
+                      <span
+                        style={{
+                          color: "#2C3C4E",
+                          fontFamily: "Inter",
+                          fontSize: "10px",
+                          fontWeight: 400,
+                          lineHeight: "120%",
+                        }}
+                        className="ml-4"
+                      >
+                        {chat.time}
+                      </span>
+                    </div>
+                    <span
+                      style={{
+                        color: "#2C3C4E",
+                        fontFamily: "Inter",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "120%",
+                      }}
+                    >
+                      {chat.subtitle}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <div className="mt-1">
+                    <Image
+                      src="/icons/staricon.svg"
+                      height={48}
+                      width={48}
+                      className="h-6 w-6"
+                      alt="Star"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </main>
+        )}
 
-          {/* 3. Input section */}
-          <div className="flex flex-row items-center px-4 py-5 justify-center bg-[#1c1c1c]">
-            {/* Plus icon */}
-            <div className="mr-5 bg-white p-3 rounded-full">
-              <Image
-                height={32}
-                width={32}
-                src="/icons/plusiconblack.svg"
-                alt="Add attachment"
-                className="w-5 h-5 text-black"
-              />
-            </div>
-            {/* Text input */}
-            <div className="flex-1">
+        {/* FOOTER (Mobile) */}
+        {selectedChat ? (
+          // Conversation view: sticky input
+          <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] py-6 px-4">
+            <div className="flex items-center space-x-4">
+              <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                <Image src={"/icons/plusiconsend.svg"} alt="add" height={12} width={12} />
+              </button>
               <input
                 type="text"
                 placeholder="Type your message"
-                className="w-full px-3 py-4 rounded-lg outline-none"
+                className="flex-grow rounded-md px-3 py-4 bg-white text-[#7D7D7D] text-sm placeholder-[#7D7D7D] outline-none"
+                style={{
+                  fontFamily: "Inter",
+                  fontWeight: 400,
+                }}
               />
+              <button className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center">
+                <Image
+                  src="/icons/sendicon.svg"
+                  alt="Send"
+                  width={16}
+                  height={16}
+                  className="h-4 w-4"
+                />
+              </button>
             </div>
-            {/* Send icon */}
-            <div className="ml-5 p-3 rounded-full bg-blue-600">
-              <Image
-                width={32}
-                height={32}
-                src="/icons/send.svg"
-                alt="Send message"
-                className="w-5 h-5"
-              />
-            </div>
-          </div>
-        </div>
+          </footer>
+        ) : (
+          // Chat list footer on Mobile
+          <footer className="flex-none bottom-0 sticky">
+            <MobileBottomTabs />
+          </footer>
+        )}
       </div>
 
+      {/* =======================
+          DESKTOP VIEW
+          - Uses "hidden md:flex" to appear only on md+ screens
+         ======================= */}
+      <div className="hidden md:flex flex-row h-full bg-[#1c1c1c]">
+        {/* Left Column: Chat List */}
+        <div className="min-w-[320px] max-w-[360px] h-full bg-white flex flex-col">
+          {/* Optional top bar in the chat list (e.g. "Unread" or filters) */}
+          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+            <span
+              style={{
+                fontSize: "16px",
+                color: "#2C3C4E",
+                fontFamily: "Inter",
+                fontWeight: 600,
+              }}
+            >
+              Chats
+            </span>
+            {/* Example dropdown or button */}
+            <button className="px-3 py-1 bg-gray-100 text-black rounded hover:opacity-80">
+              Unread
+            </button>
+          </div>
 
+          {/* Scrollable list */}
+          <div className="flex-grow overflow-y-auto">
+            {dummyChats.map((chat) => (
+              <div
+                key={chat.id}
+                className="flex items-start justify-between cursor-pointer px-4 py-3 hover:bg-gray-100"
+                onClick={() => setSelectedChat(chat)}
+              >
+                <div className="flex items-center">
+                  <Image
+                    src="/icons/similarlisting.png"
+                    alt="Thumb"
+                    width={40}
+                    height={40}
+                    className="rounded-full w-9 h-9 mr-3"
+                  />
+                  <div>
+                    <div className="flex items-center">
+                      <span className="text-[#2C3C4E] font-semibold text-sm">
+                        {chat.title}
+                      </span>
+                      <span className="ml-2 text-[10px] text-gray-500">
+                        {chat.time}
+                      </span>
+                    </div>
+                    <span className="text-[#2C3C4E] text-sm font-medium">
+                      {chat.subtitle}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <Image
+                    src="/icons/staricon.svg"
+                    alt="Star"
+                    width={20}
+                    height={20}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      {/* ==================== Delete Listing Modal Integration ==================== */}
-      <DeleteListingModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleConfirmDelete}
-      />
-    </>
-  )
+        {/* Middle Column: Conversation */}
+        <div className="flex flex-col flex-grow bg-white">
+          {/* Header for the conversation */}
+          {selectedChat ? (
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center">
+                <Image
+                  src="/icons/placeholderimageformessage.svg"
+                  alt="Main"
+                  width={40}
+                  height={40}
+                  className="rounded-full mr-3"
+                />
+                <div>
+                  <h2 className="text-[#2C3C4E] text-sm font-semibold">
+                    {selectedChat.title}
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    {selectedChat.subtitle}
+                  </p>
+                </div>
+              </div>
+              <button className="rounded-full bg-[#353537] px-5 py-1 text-white text-sm font-medium hover:opacity-80">
+                View
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200">
+              <span className="text-gray-500 text-sm font-medium">
+                Select a chat to start messaging
+              </span>
+            </div>
+          )}
+
+          {/* Messages */}
+          <div className="flex-grow overflow-y-auto px-6 py-4">
+            {selectedChat ? (
+              dummyMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`mb-3 max-w-[70%] ${
+                    msg.sender === "user" ? "ml-auto" : ""
+                  }`}
+                >
+                  <div
+                    className={`p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg ${
+                      msg.sender === "user" ? "bg-blue-100" : "bg-gray-100"
+                    }`}
+                  >
+                    <p className="text-sm text-[#2C3C4E] leading-snug">
+                      {msg.text}
+                    </p>
+                  </div>
+                  {msg.time && (
+                    <div
+                      className={`text-[12px] mt-1 ${
+                        msg.sender === "user" ? "text-right" : "text-left"
+                      } text-gray-400`}
+                    >
+                      {msg.time}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-400">
+                No chat selected
+              </div>
+            )}
+          </div>
+
+          {/* Footer - message input */}
+          {selectedChat && (
+            <div className="px-6 py-4 border-t border-gray-200">
+              <div className="flex items-center space-x-4">
+                <button className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                  <Image
+                    src="/icons/plusiconsend.svg"
+                    alt="Add"
+                    height={12}
+                    width={12}
+                  />
+                </button>
+                <input
+                  type="text"
+                  placeholder="Type your message"
+                  className="flex-grow border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+                />
+                <button className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center hover:opacity-80">
+                  <Image
+                    src="/icons/sendicon.svg"
+                    alt="Send"
+                    width={16}
+                    height={16}
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column: "Complete your profile" example */}
+        <div className="hidden lg:flex flex-col w-[320px] bg-white border-l border-gray-200 p-5 overflow-y-auto">
+          <h3 className="text-lg font-semibold text-[#2C3C4E] mb-3">
+            Complete your profile!
+          </h3>
+
+          {/* Profile Picture */}
+          <div className="flex flex-col items-center mb-4">
+            <div className="w-20 h-20 rounded-full bg-pink-200 overflow-hidden mb-2">
+              {/* Replace with actual user avatar if available */}
+              <Image
+                src="/icons/userIcon.png"
+                alt="User Icon"
+                width={80}
+                height={80}
+                className="object-cover"
+              />
+            </div>
+            <button className="text-sm text-blue-600 hover:underline">
+              Add your profile picture
+            </button>
+          </div>
+
+          {/* Gender */}
+          <label className="text-sm text-gray-600 mb-1" htmlFor="gender">
+            Gender
+          </label>
+          <select
+            id="gender"
+            className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full text-sm focus:outline-none"
+          >
+            <option value="">Select</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            {/* etc... */}
+          </select>
+
+          {/* Languages */}
+          <label className="text-sm text-gray-600 mb-1" htmlFor="languages">
+            Select the languages you speak
+          </label>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            {/* Example language chips / checkboxes */}
+            <button className="border border-gray-300 rounded-full px-2 py-1 text-xs hover:bg-gray-200">
+              English
+            </button>
+            <button className="border border-gray-300 rounded-full px-2 py-1 text-xs hover:bg-gray-200">
+              Spanish
+            </button>
+            <button className="border border-gray-300 rounded-full px-2 py-1 text-xs hover:bg-gray-200">
+              German
+            </button>
+            {/* Extend or make them checkboxes, etc. */}
+          </div>
+
+          {/* Bio / Hobby / About */}
+          <label className="text-sm text-gray-600 mb-1" htmlFor="bio">
+            About you
+          </label>
+          <textarea
+            id="bio"
+            rows={3}
+            className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full text-sm focus:outline-none"
+            placeholder="e.g. work, hobby, lifestyle, anything"
+          ></textarea>
+
+          {/* Save button */}
+          <button className="rounded-md bg-[#007AFF] text-white text-sm font-semibold py-2 px-4 hover:opacity-80">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default Page

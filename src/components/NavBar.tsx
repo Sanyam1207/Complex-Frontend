@@ -132,9 +132,8 @@ export default function Navbar() {
           <div className="relative flex-shrink-0">
             <button
               onClick={() => setShowMobileFilterModal(true)}
-              className={`p-3.5 rounded-full relative ${
-                compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
-              }`}
+              className={`p-3.5 rounded-full relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
+                }`}
             >
               <Image
                 src="/icons/mobileslider.svg"
@@ -206,9 +205,8 @@ export default function Navbar() {
           </button>
 
           <div
-            className={`${pathname === "/create-listing-steps" ? "hidden" : "flex"} relative flex items-center px-3 py-2 rounded-full transition-all duration-200 ${
-              menuOpen || profileMenuOpen ? "bg-[#0A84FF]" : "bg-[#353537]"
-            }`}
+            className={`${pathname === "/create-listing-steps" ? "hidden" : "flex"} relative flex items-center px-3 py-2 rounded-full transition-all duration-200 ${menuOpen || profileMenuOpen ? "bg-[#0A84FF]" : "bg-[#353537]"
+              }`}
           >
             <button
               className="mr-4"

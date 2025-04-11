@@ -49,7 +49,7 @@ export default function TabsBar() {
               height={27}
               className="mb-2 md:mb-4 w-auto h-auto flex-shrink-0"
             />
-            <span className="text-[#F4F4F4] text-center text-xs mb-2 font-normal leading-[1.5rem]">
+            <span className={`text-[#F4F4F4] ${selectedCategory === tab.value ? 'font-semibold' : 'font-light'} text-center text-xs mb-2 leading-[1.5rem]`}>
               {tab.label}
             </span>
             {selectedCategory === tab.value && (
