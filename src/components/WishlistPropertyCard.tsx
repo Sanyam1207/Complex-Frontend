@@ -39,7 +39,7 @@ export default function WishlistCardCarousel({
     if (!isClient) return null; // Prevent SSR mismatch
 
     return (
-        <div onClick={() => { router.push('/show-listing') }} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
+        <div onClick={() => { router.push('/show-listing') }} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-white">
 
 
             <Carousel setApi={setApi} className="relative w-full">
@@ -77,7 +77,7 @@ export default function WishlistCardCarousel({
                 </div>
                 <p className="mt-1 text-[0.75rem] text-[#2C3C4E] flex flex-row items-center">
                     <Image src={'/icons/calender.svg'} alt="calender" height={12} width={12} className="mr-2" />
-                    {date.toLocaleDateString()}
+                    {new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
                 </p>
             </div>
             {/* Cancel Icon (replaces the heart icon) */}

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import OfferChips from '@/components/OfferChips';
 import Navbar from '@/components/NavBar';
 import SimilarPropertyListing from '@/components/SimilarPropertyListing';
+import { useState } from 'react';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -66,6 +67,7 @@ const features = [
 ];
 
 export default function ShowListing() {
+  const [sendMessage, setSendMessage] = useState<string>("Hello, is this available?");
   return (
     <div className={`${inter.className}`}>
       {/* Desktop View */}
@@ -438,7 +440,7 @@ export default function ShowListing() {
             Send message to <span className='text-sm font-semibold'>Pratik Parmar</span>
           </div>
           <div className="flex space-x-2 pb-5">
-            <input className="flex-1 text-sm font-normal flex items-center bg-white text-[#2C3C4E] px-4 py-3 rounded-md" placeholder='Hello, is this available?'>
+            <input className="flex-1 text-sm font-normal flex items-center bg-white text-[#2C3C4E] px-4 py-3 rounded-md" value={sendMessage} onChange={(e) => setSendMessage(e.target.value)} placeholder='Hello, is this available?'>
             </input>
             <div className="bg-blue-600 text-white px-5 py-3 rounded-3xl">
               Send

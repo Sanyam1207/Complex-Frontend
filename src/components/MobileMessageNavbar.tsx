@@ -60,10 +60,10 @@ export default function MobileMessagesNavbar() {
   return (
     <nav className={`sticky top-0 z-10 bg-[#1c1c1c] text-white ${inter.className}`}>
       {/* MOBILE VIEW (remains unchanged) */}
-      <div className="md:hidden w-full mt-4 px-5 py-2 pt-3 rounded-t-3xl flex flex-col space-y-5">
+      <div className="md:hidden w-full mt-2 px-5 py-0 pt-2 rounded-t-3xl flex flex-col space-y-5">
         <h1 className="text-sm self-center text-white font-medium">Message</h1>
         <div className="flex items-center justify-between">
-          <div className="bg-[#2F2F2F] rounded-full flex items-center py-2.5 flex-1 mr-3">
+          <div className="bg-[#2F2F2F] rounded-full flex items-center py-2 flex-1 mr-3">
             <div className="bg-[#1c1c1c] p-2 rounded-full ml-2">
               <Image
                 src="/icons/firrsearch.png"
@@ -75,13 +75,13 @@ export default function MobileMessagesNavbar() {
             <input
               type="text"
               placeholder="Search messages"
-              className="ml-3 flex-1 border-none outline-none bg-transparent text-[14px] text-white font-light tracking-[-0.3px]"
+              className="ml-3 flex-1 border-none outline-none bg-transparent text-[14px] text-white font-light tracking-[-0.3px] placeholder:text-white"
             />
           </div>
           <div className="relative flex-shrink-0">
             <button
               onClick={() => setShowMobileFilterModal(true)}
-              className={`p-4 rounded-full relative ${
+              className={`p-3 rounded-full relative ${
                 compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
               }`}
             >
@@ -258,7 +258,7 @@ export default function MobileMessagesNavbar() {
               <input
                 type="text"
                 placeholder="Search messages"
-                className="ml-2 w-full border-none outline-none font-light bg-transparent text-[14px] text-white placeholder-white"
+                className="ml-2 w-full border-none outline-none font-normal bg-transparent text-[14px] text-white placeholder-white"
               />
             </div>
             <button className="bg-[#353537] text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition-all">
