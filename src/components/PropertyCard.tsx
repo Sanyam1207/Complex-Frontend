@@ -76,7 +76,8 @@ export default function PropertyCardCarousel({
                 </div>
                 <p className="mt-1 text-[0.75rem] text-[#2C3C4E] flex flex-row items-center">
                     <Image src={'/icons/calender.svg'} alt="calender" height={12} width={12} className="mr-2" />
-                    {date.toLocaleDateString()}
+                    {new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+
                 </p>
                 {/* Heart Icon */}
                 <button className="absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md">

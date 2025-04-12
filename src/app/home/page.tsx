@@ -63,12 +63,13 @@ export default function Home() {
             {/* Fixed header section */}
             <header className="flex-none sticky top-0 z-10">
                 <Navbar />
-                <TabsBar />
+                
             </header>
 
             {/* Scrollable content area */}
-            <main className="flex-grow overflow-y-auto bg-gray-100 p-4 rounded-t-3xl">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <main className="flex-grow overflow-y-auto bg-[#1F1F21]  rounded-t-3xl">
+            <TabsBar />
+                <div className="max-w-7xl rounded-t-3xl bg-gray-100 mx-auto grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {dummyProperties.map((property, index) => (
                         <PropertyCardCarousel
                             key={index}

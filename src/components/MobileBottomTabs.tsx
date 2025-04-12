@@ -39,9 +39,9 @@ export default function MobileBottomTabs() {
                     alt="Home"
                     width={20}
                     height={20}
-                    className="mb-2"
+                    className={`mb-2`}
                 />
-                <span className="text-white text-xs font-semibold leading-[151.688%]">Home</span>
+                <span className={`text-white text-xs leading-[151.688%] ${isActive('/home') ? "font-bold" : "font-normal"}`}>Home</span>
             </button>
 
             {/* Maps */}
@@ -53,7 +53,7 @@ export default function MobileBottomTabs() {
                     height={20}
                     className="mb-2"
                 />
-                <span className="text-white text-xs font-semibold leading-[151.688%]">Maps</span>
+                <span className={`text-white text-xs leading-[151.688%] ${isActive('/maps') ? "font-bold" : "font-normal"}`}>Maps</span>
             </button>
 
             {/* Wishlist */}
@@ -65,7 +65,7 @@ export default function MobileBottomTabs() {
                     height={20}
                     className="mb-2"
                 />
-                <span className="text-white text-xs font-semibold leading-[151.688%]">Wishlist</span>
+                <span className={`text-white text-xs font-semibold leading-[151.688%] ${isActive('/wishlist') ? "font-bold" : "font-normal"}`}>Wishlist</span>
             </button>
 
             {/* Messages */}
@@ -77,7 +77,7 @@ export default function MobileBottomTabs() {
                     height={20}
                     className="mb-2"
                 />
-                <span className="text-white text-xs font-semibold leading-[151.688%]">Messages</span>
+                <span className={`text-white text-xs font-semibold leading-[151.688%]  ${isActive('/messages') ? "font-bold" : "font-normal"}`}>Messages</span>
             </button>
 
             {/* Profile */}
@@ -89,7 +89,7 @@ export default function MobileBottomTabs() {
                     height={20}
                     className="mb-2"
                 />
-                <span className="text-white text-xs font-semibold leading-[151.688%]">Profile</span>
+                <span className={`text-white text-xs font-semibold leading-[151.688%]  ${isActive('/profile') ? "font-bold" : "font-normal"}`}>Profile</span>
             </button>
         </div>
     );

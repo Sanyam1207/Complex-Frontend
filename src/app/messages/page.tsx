@@ -17,6 +17,7 @@ interface Chat {
   title: string;
   subtitle: string;
   time: string;
+  read: boolean;
 }
 
 // Define a Message type for the conversation view
@@ -34,36 +35,42 @@ const dummyChats: Chat[] = [
     title: "265 Mainstreet, To...",
     subtitle: "This is the total number …",
     time: "Just now",
+    read: false,
   },
   {
     id: 2,
     title: "123 Elm St",
     subtitle: "Another chat preview message …",
     time: "2 min ago",
+    read: false,
   },
   {
     id: 4,
     title: "456 Oak Ave",
     subtitle: "Lorem ipsum dolor sit amet …",
     time: "5 min ago",
+    read: true,
   },
   {
     id: 5,
     title: "456 Oak Ave",
     subtitle: "Lorem ipsum dolor sit amet …",
     time: "5 min ago",
+    read: true,
   },
   {
     id: 6,
     title: "456 Oak Ave",
     subtitle: "Lorem ipsum dolor sit amet …",
     time: "5 min ago",
+    read: false,
   },
   {
     id: 7,
     title: "456 Oak Ave",
     subtitle: "Lorem ipsum dolor sit amet …",
     time: "5 min ago",
+    read: true,
   },
 ];
 
@@ -140,9 +147,9 @@ export default function ChatList() {
             </div>
 
             {/* View Button */}
-            <button className="rounded-[57px] bg-[#353537] px-5 py-1">
+            <button className="rounded-[57px] bg-[#353537] px-6 py-1.5">
               <span className="text-white text-center text-[12px] font-medium leading-[194%]">
-                view
+                View
               </span>
             </button>
           </header>
@@ -160,37 +167,28 @@ export default function ChatList() {
             {dummyMessages.map((message) => (
               <div
                 key={message.id}
-                className={`mb-3 max-w-64 ${
-                  message.sender === "user" ? "self-end" : "self-start"
-                }`}
+                className={`mb-3 max-w-64 ${message.sender === "user" ? "self-end" : "self-start"
+                  }`}
               >
                 <div
-                  className={`max-w-64 p-3 ${
-                    message.sender === "user" ? "self-end" : "self-start"
-                  }`}
+                  className={`max-w-64 p-3 ${message.sender === "user" ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl self-end bg-[#0A84FF] " : "self-start rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
+                    }`}
                   style={{
-                    borderRadius: "12px 12px 0px 12px",
-                    background: "#F4F4F4",
+
+
                   }}
                 >
                   <p
-                    style={{
-                      color: "#2C3C4E",
-                      fontFamily: "Inter",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      lineHeight: "150%",
-                    }}
+                    className={`${message.sender === "user" ? 'text-white' : ' text-[#2C3C4E]'}  font-inter text-sm font-normal leading-relaxed`}
                   >
                     {message.text}
                   </p>
                 </div>
                 {message.time && (
-                  <span
+                  <span className={`${message.sender === "user" ? 'text-right' : 'text-left'}`}
                     style={{
                       fontSize: "12px",
                       color: "rgba(44, 60, 78, 0.80)",
-                      textAlign: "right",
                       fontFamily: "Inter",
                       fontWeight: 400,
                       lineHeight: "194%",
@@ -207,69 +205,71 @@ export default function ChatList() {
           // Chat list (Mobile)
           <main className="flex-grow overflow-y-auto bg-white mt-5 rounded-t-3xl">
             {dummyChats.map((chat) => (
-              <div
-                key={chat.id}
-                className="flex justify-between items-start bg-white p-5 cursor-pointer"
-                onClick={() => handleChatClick(chat)}
-              >
-                <div className="flex items-center">
-                  <Image
-                    src="/icons/similarlisting.png"
-                    alt="Thumbnail"
-                    width={40}
-                    height={40}
-                    className="rounded-full w-9 h-9 mr-3"
-                  />
-                  <div className="flex flex-col">
-                    <div className="flex items-center">
+              <div key={chat.id}>
+                <div
+                  className={`${chat.read ? 'bg-white' : 'bg-[#F9F9F9]'} flex justify-between items-start p-5 cursor-pointer`}
+                  onClick={() => handleChatClick(chat)}
+                >
+                  <div className="flex items-center">
+                    <Image
+                      src="/icons/similarlisting.png"
+                      alt="Thumbnail"
+                      width={40}
+                      height={40}
+                      className="rounded-full w-9 h-9 mr-3"
+                    />
+                    <div className="flex space-y-2 flex-col">
+                      <div className="flex items-center">
+                        <span
+                          style={{
+                            color: "#2C3C4E",
+                            fontFamily: "Inter",
+                            fontSize: "14px",
+                            fontWeight: 600,
+                            lineHeight: "124%",
+                          }}
+                        >
+                          {chat.title}
+                        </span>
+                        <span
+                          style={{
+                            color: "#2C3C4E",
+                            fontFamily: "Inter",
+                            fontSize: "10px",
+                            fontWeight: 400,
+                            lineHeight: "120%",
+                          }}
+                          className="ml-4"
+                        >
+                          {chat.time}
+                        </span>
+                      </div>
                       <span
                         style={{
                           color: "#2C3C4E",
                           fontFamily: "Inter",
                           fontSize: "14px",
-                          fontWeight: 600,
-                          lineHeight: "124%",
-                        }}
-                      >
-                        {chat.title}
-                      </span>
-                      <span
-                        style={{
-                          color: "#2C3C4E",
-                          fontFamily: "Inter",
-                          fontSize: "10px",
-                          fontWeight: 400,
+                          fontWeight: 500,
                           lineHeight: "120%",
                         }}
-                        className="ml-4"
                       >
-                        {chat.time}
+                        {chat.subtitle}
                       </span>
                     </div>
-                    <span
-                      style={{
-                        color: "#2C3C4E",
-                        fontFamily: "Inter",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "120%",
-                      }}
-                    >
-                      {chat.subtitle}
-                    </span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <div className="mt-1">
+                      <Image
+                        src="/icons/staricon.svg"
+                        height={48}
+                        width={48}
+                        className="h-6 w-6"
+                        alt="Star"
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
-                  <div className="mt-1">
-                    <Image
-                      src="/icons/staricon.svg"
-                      height={48}
-                      width={48}
-                      className="h-6 w-6"
-                      alt="Star"
-                    />
-                  </div>
-                </div>
+                <hr />
               </div>
             ))}
           </main>
@@ -281,7 +281,7 @@ export default function ChatList() {
           <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] py-6 px-4">
             <div className="flex items-center space-x-4">
               <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Image src={"/icons/plusiconsend.svg"} alt="add" height={12} width={12} />
+                <Image src={"/icons/plusiconsend.svg"} alt="add" height={120} width={120} className="w-3 h-3"/>
               </button>
               <input
                 type="text"
@@ -296,8 +296,8 @@ export default function ChatList() {
                 <Image
                   src="/icons/sendicon.svg"
                   alt="Send"
-                  width={16}
-                  height={16}
+                  width={120}
+                  height={120}
                   className="h-4 w-4"
                 />
               </button>
@@ -420,14 +420,12 @@ export default function ChatList() {
               dummyMessages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`mb-3 max-w-[70%] ${
-                    msg.sender === "user" ? "ml-auto" : ""
-                  }`}
+                  className={`mb-3 max-w-[70%] ${msg.sender === "user" ? "ml-auto" : ""
+                    }`}
                 >
                   <div
-                    className={`p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg ${
-                      msg.sender === "user" ? "bg-blue-100" : "bg-gray-100"
-                    }`}
+                    className={`p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg ${msg.sender === "user" ? "bg-blue-100" : "bg-gray-100"
+                      }`}
                   >
                     <p className="text-sm text-[#2C3C4E] leading-snug">
                       {msg.text}
@@ -435,9 +433,8 @@ export default function ChatList() {
                   </div>
                   {msg.time && (
                     <div
-                      className={`text-[12px] mt-1 ${
-                        msg.sender === "user" ? "text-right" : "text-left"
-                      } text-gray-400`}
+                      className={`text-[12px] mt-1 ${msg.sender === "user" ? "text-right" : "text-left"
+                        } text-gray-400`}
                     >
                       {msg.time}
                     </div>
