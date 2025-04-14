@@ -17,7 +17,7 @@ const inter = Inter({
 });
 const knewave = Knewave({ weight: "400", subsets: ["latin"] });
 
-export default function MobileMessagesNavbar() {
+export default function MessagesNavbar() {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -58,7 +58,7 @@ export default function MobileMessagesNavbar() {
   };
 
   return (
-    <nav className={`sticky top-0 z-10 bg-[#1c1c1c] text-white ${inter.className}`}>
+    <nav className={`sticky w-full top-0 z-10 bg-[#1c1c1c] text-white ${inter.className}`}>
       {/* MOBILE VIEW (remains unchanged) */}
       <div className="md:hidden w-full mt-2 px-5 py-0 pt-2 rounded-t-3xl flex flex-col space-y-5">
         <h1 className="text-sm self-center text-white font-medium">Message</h1>
@@ -81,9 +81,8 @@ export default function MobileMessagesNavbar() {
           <div className="relative flex-shrink-0">
             <button
               onClick={() => setShowMobileFilterModal(true)}
-              className={`p-3 rounded-full relative ${
-                compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
-              }`}
+              className={`p-3 rounded-full relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
+                }`}
             >
               <Image
                 src="/icons/mobileslider.svg"
@@ -107,9 +106,9 @@ export default function MobileMessagesNavbar() {
       />
 
       {/* DESKTOP VIEW */}
-      <div className="hidden md:flex  flex-col w-full">
+      <div className="hidden md:flex p-0  flex-col w-full">
         {/* TOP ROW: Logo, Brand, "Messages," "Create listing," and User/Hamburger menus */}
-        <div className="flex w-full py-8 items-center justify-between px-32">
+        <div className="flex w-full py-5 items-center justify-between px-32">
           <div className="flex items-center">
             <div className="mr-4 h-[32px] w-[32px] rounded-full bg-[#0A84FF]" />
             <div
@@ -126,16 +125,14 @@ export default function MobileMessagesNavbar() {
             <button
               onClick={() => router.push("/create-listing")}
               type="button"
-              className={`${
-                pathname === "/create-listing-steps" ? "hidden" : "flex"
-              } text-sm font-semibold bg-transparent text-white hover:underline hover:opacity-80 transition-all`}
+              className={`${pathname === "/create-listing-steps" ? "hidden" : "flex"
+                } text-sm font-semibold bg-transparent text-white hover:underline hover:opacity-80 transition-all`}
             >
               Create listing
             </button>
             <div
-              className={`relative flex items-center px-3 py-2 rounded-full transition-all duration-200 ${
-                menuOpen || profileMenuOpen ? "bg-[#0A84FF]" : "bg-[#353537]"
-              }`}
+              className={`relative flex items-center px-3 py-2 rounded-full transition-all duration-200 ${menuOpen || profileMenuOpen ? "bg-[#0A84FF]" : "bg-[#353537]"
+                }`}
             >
               <button
                 className="mr-4"
@@ -243,7 +240,7 @@ export default function MobileMessagesNavbar() {
         </div>
 
         {/* SECOND ROW: Three grouped sections */}
-        <div className="flex w-full items-center justify-between px-32 py-8 border-t border-[#2F2F2F]">
+        <div className="flex w-full items-center justify-between px-32 py-5 border-t border-[#2F2F2F]">
           {/* Group 1: Search messages input and Sort button */}
           <div className="flex items-center grow space-x-6">
             <div className="flex items-center bg-[#2F2F2F] rounded-full px-4 py-2 w-[17.18rem]">
