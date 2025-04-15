@@ -66,7 +66,7 @@ export default function MessagesNavbar() {
           <div className="bg-[#2F2F2F] rounded-full flex items-center py-2 flex-1 mr-3">
             <div className="bg-[#1c1c1c] p-2 rounded-full ml-2">
               <Image
-                src="/icons/firrsearch.png"
+                src="/icons/search-icon.svg"
                 height={15.43}
                 width={15.43}
                 alt="search-icon"

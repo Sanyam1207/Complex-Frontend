@@ -12,10 +12,10 @@ export default function PersonalDetails() {
     return (
         <>
             {/* ==================== MOBILE VIEW (Android-style) ==================== */}
-            <div className={`${inter.className} block md:hidden bg-black min-h-screen w-full`}>
+            <div className={`${inter.className} flex flex-col md:hidden bg-black h-screen w-full`}>
                 {/* Top bar: Back arrow + Title */}
-                <div className="flex flex-col items-center justify-center px-4 py-3 pt-10">
-                    <button onClick={() => { router.back() }} className='absolute top-9 left-7 rounded-full bg-[#353537]'>
+                <div className="flex flex-col items-center justify-center px-4 py-3 pt-6">
+                    <button onClick={() => { router.back() }} className='absolute top-[18px] left-7 rounded-full bg-[#353537]'>
                         <Image
                             src="/icons/backbuttonn.svg"
                             alt="Back"
@@ -28,21 +28,19 @@ export default function PersonalDetails() {
                         Personal details
                     </h1>
 
-
-
-
-                    <div className="relative w-24 h-24 mb-4  mt-4">
+                    <div className="relative w-24 h-24 mb-4  mt-2">
                         {/* Large circle with a placeholder face */}
-                        <div className="w-24 h-24 rounded-full bg-pink-200 flex items-center justify-center overflow-hidden">
-                            <span className="text-3xl">😊</span>
+                        <div className="w-24 h-24 rounded-full  flex items-center p-0 justify-center overflow-hidden">
+                            <Image src={"/icons/personaldetailplaceholder.svg"} alt='placeholder' height={120} width={120} className='h-full w-full' />
                         </div>
                         {/* Small camera/plus icon circle on the bottom-right */}
-                        <div className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center border-2 border-white">
+                        <div className="absolute flex items-center justify-center bottom-1 right-1 w-6 h-6 rounded-full bg-white ">
                             <Image
-                                src="/icons/profile.svg"
+                                src="/icons/addprofilepic.svg"
                                 alt="camera"
-                                width={12}
-                                height={12}
+                                width={24}
+                                height={24}
+                                className='h-[34.3px]  object-cover'
                             />
                         </div>
 
@@ -56,52 +54,53 @@ export default function PersonalDetails() {
                 </div>
 
                 {/* White container with rounded top corners */}
-                <div className="bg-white h-screen rounded-t-3xl p-4 flex flex-col items-center">
+                <div className="bg-white overflow-y-scroll h-full rounded-t-3xl p-4 flex flex-col items-center">
                     {/* Profile picture container */}
 
 
                     {/* Form fields */}
                     <div className="w-full mt-6">
                         {/* Full name */}
-                        <label className="block mb-4 text-sm font-medium text-gray-700">
+                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
                             Full name
                         </label>
                         <input
                             type="text"
-                            placeholder="Prahlix Parmar"
-                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
+                            placeholder="Pratik Parmar"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
                         {/* Email */}
-                        <label className="block mb-4 text-sm font-medium text-gray-700">
+                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
                             Email
                         </label>
                         <input
                             type="email"
-                            placeholder="Prahlixparmar@lfma.ca"
-                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
+                            placeholder="Pratikparmar@fmr.ca"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
                         {/* Change password */}
-                        <label className="block mb-4 text-sm font-medium text-gray-700">
+                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
                             Change password
                         </label>
                         <input
+                        placeholder='findmyrentals'
                             type="password"
-                            className="mb-7 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
                         {/* Phone number */}
-                        <label className="block mb-4 text-sm font-medium text-gray-700">
+                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
                             Phone number
                         </label>
                         <input
                             type="tel"
-                            placeholder="+1 555 555 5555"
-                            className="mb-8 bg-[#F4F4F4] w-full border rounded-md px-4 py-4 text-sm 
+                            placeholder="647-772-4334"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
                          focus:outline-dashed"
                         />
 
@@ -117,7 +116,7 @@ export default function PersonalDetails() {
                     {/* Delete account link */}
                     <button
                         type="button"
-                        className="mt-6 text-sm text-[#0A84FF] hover:text-red-500"
+                        className="mt-6 text-sm text-[#0A84FF]b"
                     >
                         Delete account
                     </button>
@@ -133,7 +132,7 @@ export default function PersonalDetails() {
                     <div className="relative w-24 h-24">
                         {/* Large circle with a placeholder face */}
                         <div className="w-24 h-24 rounded-full bg-pink-200 flex items-center justify-center overflow-hidden">
-                            <span className="text-3xl">😊</span>
+                            <Image src={"/icons/personaldetailplaceholder.svg"} alt='placeholder' height={120} width={120} className='h-full' />
                         </div>
 
                         {/* Small camera icon circle on top-right corner */}

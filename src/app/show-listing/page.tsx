@@ -435,12 +435,12 @@ export default function ShowListing() {
           </div><br />
         </div>
 
-        <div className="bg-black py-3 sticky bottom-0 px-8">
+        <div className="bg-black flex justify-center flex-col py-5 sticky bottom-0 px-8">
           <div className="text-sm font-normal text-white mb-3">
             Send message to <span className='text-sm font-semibold'>Pratik Parmar</span>
           </div>
-          <div className="flex space-x-2 pb-5">
-            <input className="flex-1 text-sm font-normal flex items-center bg-white text-[#2C3C4E] px-4 py-3 rounded-md" value={sendMessage} onChange={(e) => setSendMessage(e.target.value)} placeholder='Hello, is this available?'>
+          <div className="flex space-x-4">
+            <input className="flex-1 text-sm font-semibold flex items-center bg-white text-[#2C3C4E] px-4 py-3 rounded-md" value={sendMessage} onChange={(e) => setSendMessage(e.target.value)} placeholder='Hello, is this available?'>
             </input>
             <div className="bg-blue-600 text-white px-5 py-3 rounded-3xl">
               Send

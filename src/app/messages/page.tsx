@@ -18,6 +18,7 @@ interface Chat {
   subtitle: string;
   time: string;
   read: boolean;
+  starred?: boolean; // Add this new property
 }
 
 // Define a Message type for the conversation view
@@ -36,6 +37,7 @@ const dummyChats: Chat[] = [
     subtitle: "This is the total number …",
     time: "Just now",
     read: false,
+    starred: true // Mark this chat as starred
   },
   {
     id: 2,
@@ -109,6 +111,7 @@ const dummyMessages: Message[] = [
     text: "Hello, how can I help you?",
     sender: "other",
     time: "10:00 AM",
+
   },
   {
     id: 2,
@@ -149,6 +152,7 @@ const dummyMessages: Message[] = [
 ];
 
 export default function ChatList() {
+  const [chats, setChats] = useState<Chat[]>(dummyChats);
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 
   const handleChatClick = (chat: Chat) => {
@@ -157,6 +161,14 @@ export default function ChatList() {
 
   const handleBackClick = () => {
     setSelectedChat(null);
+  };
+
+  const handleStarToggle = (chatId: number) => {
+    setChats(prevChats => 
+      prevChats.map(chat => 
+        chat.id === chatId ? { ...chat, starred: !chat.starred } : chat
+      )
+    );
   };
 
   return (
@@ -256,7 +268,7 @@ export default function ChatList() {
         ) : (
           // Chat list (Mobile)
           <main className="flex-grow overflow-y-auto bg-white mt-5 rounded-t-3xl">
-            {dummyChats.map((chat) => (
+            {chats.map((chat) => (
               <div key={chat.id}>
                 <div
                   className={`${chat.read ? 'bg-white' : 'bg-[#F9F9F9]'} flex justify-between items-start p-5 cursor-pointer`}
@@ -272,12 +284,11 @@ export default function ChatList() {
                     />
                     <div className="flex space-y-2 flex-col">
                       <div className="flex items-center">
-                        <span
+                        <span className={`font-medium ${chat.read ? "text-[#2C3C4E]" : "text-[#2463EB]"}`}
                           style={{
-                            color: "#2C3C4E",
+                       
                             fontFamily: "Inter",
                             fontSize: "14px",
-                            fontWeight: 600,
                             lineHeight: "124%",
                           }}
                         >
@@ -301,7 +312,7 @@ export default function ChatList() {
                           color: "#2C3C4E",
                           fontFamily: "Inter",
                           fontSize: "14px",
-                          fontWeight: 500,
+                          fontWeight: 400,
                           lineHeight: "120%",
                         }}
                       >
@@ -311,13 +322,21 @@ export default function ChatList() {
                   </div>
                   <div className="flex flex-col items-end">
                     <div className="mt-1">
-                      <Image
-                        src="/icons/staricon.svg"
-                        height={48}
-                        width={48}
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 20 18"
                         className="h-6 w-6"
-                        alt="Star"
-                      />
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the chat click
+                          handleStarToggle(chat.id);
+                        }}
+                      >
+                        <path
+                          d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
+                          fill={chat.starred ? "#FFE000" : "#D9D9D9"}
+                        />
+                      </svg>
                     </div>
                   </div>
                 </div>

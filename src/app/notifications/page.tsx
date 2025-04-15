@@ -36,7 +36,7 @@ export default function Notifications() {
                                 New Listings
                             </span>
                             <span className="text-sm font-normal text-[#2C3C4E] mt-1">
-                                Stay updated with notifications for new listings in your recent search.
+                                Stay updated with notifications for <br /> new listings in your recent search.
                             </span>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer ml-2">
@@ -45,7 +45,7 @@ export default function Notifications() {
                   peer-focus:outline-none peer-checked:bg-[#0A84FF] 
                   peer-checked:after:translate-x-5
                   after:content-[''] after:absolute after:top-0.5 after:left-0.5
-                  after:bg-white after:border-gray-300 after:border 
+                  after:bg-white 
                   after:rounded-full after:h-4 after:w-4 after:transition-all 
                   peer-checked:after:border-white" />
                         </label>
@@ -67,7 +67,7 @@ export default function Notifications() {
                   peer-focus:outline-none peer-checked:bg-[#0A84FF] 
                   peer-checked:after:translate-x-5
                   after:content-[''] after:absolute after:top-0.5 after:left-0.5
-                  after:bg-white after:border-gray-300 after:border 
+                  after:bg-white 
                   after:rounded-full after:h-4 after:w-4 after:transition-all 
                   peer-checked:after:border-white" />
                         </label>
@@ -89,7 +89,7 @@ export default function Notifications() {
                   peer-focus:outline-none peer-checked:bg-[#0A84FF] 
                   peer-checked:after:translate-x-5
                   after:content-[''] after:absolute after:top-0.5 after:left-0.5
-                  after:bg-white after:border-gray-300 after:border 
+                  after:bg-white  
                   after:rounded-full after:h-4 after:w-4 after:transition-all 
                   peer-checked:after:border-white" />
                         </label>
@@ -102,7 +102,7 @@ export default function Notifications() {
                                 Sold out
                             </span>
                             <span className="text-sm text-[#2C3C4E] mt-1">
-                                Stay informed when a rental of your interest is sold.
+                                Stay informed when a rental of your <br /> interest is sold.
                             </span>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer ml-2">
@@ -111,7 +111,7 @@ export default function Notifications() {
                   peer-focus:outline-none peer-checked:bg-[#0A84FF] 
                   peer-checked:after:translate-x-5
                   after:content-[''] after:absolute after:top-0.5 after:left-0.5
-                  after:bg-white after:border-gray-300 after:border 
+                  after:bg-white 
                   after:rounded-full after:h-4 after:w-4 after:transition-all 
                   peer-checked:after:border-white" />
                         </label>

@@ -115,16 +115,16 @@ export default function Navbar() {
           <div className="bg-[#2F2F2F] rounded-full flex items-center py-2.5 flex-1 mr-3">
             <div className="bg-[#1c1c1c] p-2 rounded-full ml-2">
               <Image
-                src="/icons/firrsearch.png"
-                height={15.43}
-                width={15.43}
+                src="/icons/search-icon.svg"
+                height={12}
+                width={12}
                 alt="search-icon"
               />
             </div>
             <input
               type="text"
               placeholder={`${pathname === "/messages" ? "Search messages" : "Search location"}`}
-              className={`ml-3 flex-1 border-none outline-none bg-transparent text-[14px] text-white font-light tracking-[-0.3px] ${inter.className}`}
+              className={`ml-3 flex-1 border-none outline-none bg-transparent text-[14px] text-white placeholder:text-white font-light tracking-[-0.3px] ${inter.className}`}
             />
           </div>
 
