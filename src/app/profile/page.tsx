@@ -24,11 +24,14 @@ export default function ProfilePage() {
                     {/* Avatar placeholder */}
                     <div className="flex items-center">
 
-                        <div className="w-12 h-12 bg-gray-300 rounded-full" />
+                        <div className="w-12 h-12 flex items-center justify-center bg-[#353537] rounded-full" >
+                            <Image src={"/icons/profilepic.svg"} height={120} width={120} className="w-10  flex items-center justify-center mt-2" alt="profile" />
+
+                        </div>
                         {/* Name & Details */}
                         <div className="ml-3">
                             <p className="text-base font-semibold">John Doe</p>
-                            <p className="text-sm font-normal">Personal details</p>
+                            <p className="text-sm font-normal">Login details</p>
                         </div>
 
                     </div>
@@ -69,7 +72,7 @@ export default function ProfilePage() {
                             <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
                         </div>
                         <div>
-                            <p className="text-sm text-[#2C3C4E] font-semibold">Renters profile</p>
+                            <p className="text-sm text-[#2C3C4E] font-semibold">About you</p>
                             <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
                         </div>
                     </div>
@@ -78,7 +81,7 @@ export default function ProfilePage() {
                         <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
                     </div>
                 </div>
-                
+
 
                 {/* Divider: "Settings" Label */}
                 <p className="my-6 text-sm font-semibold text-[#2C3C4E]">Settings</p>

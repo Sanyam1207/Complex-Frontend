@@ -1,6 +1,6 @@
 "use client";
 import MobileBottomTabs from "@/components/MobileBottomTabs";
-import MobileMessagesNavbar from "@/components/MobileMessageNavbar";
+import MessagesNavbar from "@/components/MobileMessageNavbar";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
@@ -18,6 +18,7 @@ interface Chat {
   subtitle: string;
   time: string;
   read: boolean;
+  starred?: boolean; // Add this new property
 }
 
 // Define a Message type for the conversation view
@@ -36,6 +37,7 @@ const dummyChats: Chat[] = [
     subtitle: "This is the total number …",
     time: "Just now",
     read: false,
+    starred: true // Mark this chat as starred
   },
   {
     id: 2,
@@ -72,6 +74,34 @@ const dummyChats: Chat[] = [
     time: "5 min ago",
     read: true,
   },
+  {
+    id: 53,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+    read: true,
+  },
+  {
+    id: 6432,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+    read: false,
+  },
+  {
+    id: 76523,
+    title: "456 Oak Ave",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+    read: true,
+  },
+  {
+    id: 764523,
+    title: "45",
+    subtitle: "Lorem ipsum dolor sit amet …",
+    time: "5 min ago",
+    read: true,
+  },
 ];
 
 // Dummy data for conversation messages
@@ -81,6 +111,7 @@ const dummyMessages: Message[] = [
     text: "Hello, how can I help you?",
     sender: "other",
     time: "10:00 AM",
+
   },
   {
     id: 2,
@@ -89,7 +120,31 @@ const dummyMessages: Message[] = [
     time: "10:01 AM",
   },
   {
-    id: 3,
+    id: 323432423,
+    text: "Sure, please ask your question.",
+    sender: "other",
+    time: "10:02 AM",
+  },
+  {
+    id: 343245,
+    text: "Sure, please ask your question.",
+    sender: "other",
+    time: "10:02 AM",
+  },
+  {
+    id: 398765,
+    text: "Sure, please ask your question.",
+    sender: "other",
+    time: "10:02 AM",
+  },
+  {
+    id: 368,
+    text: "Sure, please ask your question.",
+    sender: "other",
+    time: "10:02 AM",
+  },
+  {
+    id: 3808,
     text: "Sure, please ask your question.",
     sender: "other",
     time: "10:02 AM",
@@ -97,6 +152,7 @@ const dummyMessages: Message[] = [
 ];
 
 export default function ChatList() {
+  const [chats, setChats] = useState<Chat[]>(dummyChats);
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 
   const handleChatClick = (chat: Chat) => {
@@ -105,6 +161,14 @@ export default function ChatList() {
 
   const handleBackClick = () => {
     setSelectedChat(null);
+  };
+
+  const handleStarToggle = (chatId: number) => {
+    setChats(prevChats => 
+      prevChats.map(chat => 
+        chat.id === chatId ? { ...chat, starred: !chat.starred } : chat
+      )
+    );
   };
 
   return (
@@ -156,7 +220,7 @@ export default function ChatList() {
         ) : (
           // If no chat selected: show the Mobile Messages Navbar
           <header className="flex-none sticky top-0 z-10">
-            <MobileMessagesNavbar />
+            <MessagesNavbar />
           </header>
         )}
 
@@ -204,7 +268,7 @@ export default function ChatList() {
         ) : (
           // Chat list (Mobile)
           <main className="flex-grow overflow-y-auto bg-white mt-5 rounded-t-3xl">
-            {dummyChats.map((chat) => (
+            {chats.map((chat) => (
               <div key={chat.id}>
                 <div
                   className={`${chat.read ? 'bg-white' : 'bg-[#F9F9F9]'} flex justify-between items-start p-5 cursor-pointer`}
@@ -220,12 +284,11 @@ export default function ChatList() {
                     />
                     <div className="flex space-y-2 flex-col">
                       <div className="flex items-center">
-                        <span
+                        <span className={`font-medium ${chat.read ? "text-[#2C3C4E]" : "text-[#2463EB]"}`}
                           style={{
-                            color: "#2C3C4E",
+                       
                             fontFamily: "Inter",
                             fontSize: "14px",
-                            fontWeight: 600,
                             lineHeight: "124%",
                           }}
                         >
@@ -249,7 +312,7 @@ export default function ChatList() {
                           color: "#2C3C4E",
                           fontFamily: "Inter",
                           fontSize: "14px",
-                          fontWeight: 500,
+                          fontWeight: 400,
                           lineHeight: "120%",
                         }}
                       >
@@ -259,13 +322,21 @@ export default function ChatList() {
                   </div>
                   <div className="flex flex-col items-end">
                     <div className="mt-1">
-                      <Image
-                        src="/icons/staricon.svg"
-                        height={48}
-                        width={48}
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 20 18"
                         className="h-6 w-6"
-                        alt="Star"
-                      />
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the chat click
+                          handleStarToggle(chat.id);
+                        }}
+                      >
+                        <path
+                          d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
+                          fill={chat.starred ? "#FFE000" : "#D9D9D9"}
+                        />
+                      </svg>
                     </div>
                   </div>
                 </div>
@@ -281,7 +352,7 @@ export default function ChatList() {
           <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] py-6 px-4">
             <div className="flex items-center space-x-4">
               <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Image src={"/icons/plusiconsend.svg"} alt="add" height={120} width={120} className="w-3 h-3"/>
+                <Image src={"/icons/plusiconsend.svg"} alt="add" height={120} width={120} className="w-3 h-3" />
               </button>
               <input
                 type="text"
@@ -315,239 +386,196 @@ export default function ChatList() {
           DESKTOP VIEW
           - Uses "hidden md:flex" to appear only on md+ screens
          ======================= */}
-      <div className="hidden md:flex flex-row h-full bg-[#1c1c1c]">
-        {/* Left Column: Chat List */}
-        <div className="min-w-[320px] max-w-[360px] h-full bg-white flex flex-col">
-          {/* Optional top bar in the chat list (e.g. "Unread" or filters) */}
-          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-            <span
-              style={{
-                fontSize: "16px",
-                color: "#2C3C4E",
-                fontFamily: "Inter",
-                fontWeight: 600,
-              }}
-            >
-              Chats
-            </span>
-            {/* Example dropdown or button */}
-            <button className="px-3 py-1 bg-gray-100 text-black rounded hover:opacity-80">
-              Unread
-            </button>
-          </div>
-
-          {/* Scrollable list */}
-          <div className="flex-grow overflow-y-auto">
-            {dummyChats.map((chat) => (
-              <div
-                key={chat.id}
-                className="flex items-start justify-between cursor-pointer px-4 py-3 hover:bg-gray-100"
-                onClick={() => setSelectedChat(chat)}
-              >
-                <div className="flex items-center">
-                  <Image
-                    src="/icons/similarlisting.png"
-                    alt="Thumb"
-                    width={40}
-                    height={40}
-                    className="rounded-full w-9 h-9 mr-3"
-                  />
-                  <div>
-                    <div className="flex items-center">
-                      <span className="text-[#2C3C4E] font-semibold text-sm">
-                        {chat.title}
-                      </span>
-                      <span className="ml-2 text-[10px] text-gray-500">
-                        {chat.time}
-                      </span>
-                    </div>
-                    <span className="text-[#2C3C4E] text-sm font-medium">
-                      {chat.subtitle}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <Image
-                    src="/icons/staricon.svg"
-                    alt="Star"
-                    width={20}
-                    height={20}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="hidden md:flex flex-col h-screen bg-[#1c1c1c]">
+        <div className="h-full">
+          <MessagesNavbar />
         </div>
 
-        {/* Middle Column: Conversation */}
-        <div className="flex flex-col flex-grow bg-white">
-          {/* Header for the conversation */}
-          {selectedChat ? (
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center">
-                <Image
-                  src="/icons/placeholderimageformessage.svg"
-                  alt="Main"
-                  width={40}
-                  height={40}
-                  className="rounded-full mr-3"
-                />
-                <div>
-                  <h2 className="text-[#2C3C4E] text-sm font-semibold">
-                    {selectedChat.title}
-                  </h2>
-                  <p className="text-xs text-gray-500">
-                    {selectedChat.subtitle}
-                  </p>
-                </div>
-              </div>
-              <button className="rounded-full bg-[#353537] px-5 py-1 text-white text-sm font-medium hover:opacity-80">
-                View
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200">
-              <span className="text-gray-500 text-sm font-medium">
-                Select a chat to start messaging
-              </span>
-            </div>
-          )}
 
-          {/* Messages */}
-          <div className="flex-grow overflow-y-auto px-6 py-4">
-            {selectedChat ? (
-              dummyMessages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`mb-3 max-w-[70%] ${msg.sender === "user" ? "ml-auto" : ""
-                    }`}
-                >
+        {/* Desktop View - Replace the empty div in your existing code */}
+        <div className="hidden md:flex h-full bg-white rounded-t-3xl">
+          {/* Left sidebar - Message list */}
+          {/* Left sidebar - Message list */}
+          <div className="w-full h-full border-r rounded-tl-3xl overflow-y-auto bg-white flex justify-end">
+            <div className="w-96 h-full">
+              {dummyChats.map((chat) => (
+                <div key={chat.id}>
                   <div
-                    className={`p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg ${msg.sender === "user" ? "bg-blue-100" : "bg-gray-100"
-                      }`}
+                    className={`${selectedChat?.id === chat.id ? '' : ''
+                      } flex justify-between items-start h-20 p-5 cursor-pointer`}
+                    onClick={() => handleChatClick(chat)}
                   >
-                    <p className="text-sm text-[#2C3C4E] leading-snug">
-                      {msg.text}
-                    </p>
-                  </div>
-                  {msg.time && (
-                    <div
-                      className={`text-[12px] mt-1 ${msg.sender === "user" ? "text-right" : "text-left"
-                        } text-gray-400`}
-                    >
-                      {msg.time}
+                    <div className="flex items-start">
+                      <Image
+                        src="/icons/similarlisting.png"
+                        alt="Thumbnail"
+                        width={40}
+                        height={40}
+                        className="rounded-full w-10 h-10 mr-3"
+                      />
+                      <div className="flex flex-col">
+                        <div className="flex items-center">
+                          <span className="text-[#2C3C4E] font-inter text-[14px] font-semibold leading-[124%]">
+                            {chat.title}
+                          </span>
+                          <span className="text-[#2C3C4E] text-[10px] font-normal ml-2">
+                            Just now
+                          </span>
+                        </div>
+                        <div className="mt-1">
+                          <span className="text-[#2C3C4E] font-inter text-[14px] font-medium leading-[120%]">
+                            This is the count of total char . .
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  )}
+                    <div className="ml-auto">
+                      <Image
+                        src="/icons/staricon.svg"
+                        height={48}
+                        width={48}
+                        className="h-6 w-6 text-yellow-400"
+                        alt="Star"
+                      />
+                    </div>
+                  </div>
                 </div>
-              ))
+              ))}
+            </div>
+          </div>
+
+          {/* Middle section - Chat/Message view */}
+          <div className="w-full flex flex-col border-r">
+            {selectedChat ? (
+              <>
+                {/* Chat messages */}
+                <div className="flex-grow overflow-y-auto p-6">
+                  {dummyMessages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`mb-4 max-w-52 ${message.sender === "user" ? "ml-auto" : "mr-auto"
+                        }`}
+                    >
+                      <div
+                        className={`p-4 ${message.sender === "user"
+                          ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl bg-[#F4F4F4] text-[#2C3C4E]"
+                          : "rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#353537] text-white"
+                          } `}
+                      >
+                        <p className="font-inter text-[15px] font-normal leading-relaxed">
+                          {message.text}
+                        </p>
+                      </div>
+                      {message.time && (
+                        <span
+                          className={`text-xs text-[rgba(44,60,78,0.8)] mt-1 ${message.sender === "user" ? "text-right" : "text-left"
+                            }`}
+                        >
+                          {message.time}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Chat input */}
+                <div className="p-4 border-t flex items-center">
+                  <button className="w-10 h-10 rounded-full bg-[#F4F4F4] flex items-center justify-center mr-3">
+                    <Image
+                      src="/icons/plusiconsend.svg"
+                      alt="add"
+                      height={120}
+                      width={120}
+                      className="w-3 h-3"
+                    />
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Type your message"
+                    className="flex-grow rounded-md px-4 py-3 bg-[#F4F4F4] text-[#7D7D7D] text-sm placeholder-[#7D7D7D] outline-none"
+                    style={{
+                      fontFamily: "Inter",
+                      fontWeight: 400,
+                    }}
+                  />
+                  <button className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center ml-3">
+                    <Image
+                      src="/icons/sendicon.svg"
+                      alt="Send"
+                      width={120}
+                      height={120}
+                      className="h-4 w-4"
+                    />
+                  </button>
+                </div>
+              </>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400">
-                No chat selected
+              /* Empty state when no chat selected */
+              <div className="flex flex-col items-center justify-center h-full">
+                <p className="text-gray-500">Select a conversation to start chatting</p>
               </div>
             )}
           </div>
 
-          {/* Footer - message input */}
-          {selectedChat && (
-            <div className="px-6 py-4 border-t border-gray-200">
-              <div className="flex items-center space-x-4">
-                <button className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                  <Image
-                    src="/icons/plusiconsend.svg"
-                    alt="Add"
-                    height={12}
-                    width={12}
-                  />
-                </button>
-                <input
-                  type="text"
-                  placeholder="Type your message"
-                  className="flex-grow border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-                />
-                <button className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center hover:opacity-80">
-                  <Image
-                    src="/icons/sendicon.svg"
-                    alt="Send"
-                    width={16}
-                    height={16}
-                  />
+          {/* Right section - Profile completion */}
+          <div className="w-full rounded-tr-3xl bg-white">
+            <div className="flex flex-col items-center p-6 h-full">
+              <h2 className="text-xl font-semibold mb-4">Complete your profile!</h2>
+              <p className="text-base mb-6">Stand out and Shine ✨</p>
+
+              <div className="w-20 h-20 rounded-full bg-[#FFF0F0] flex items-center justify-center mb-6 relative">
+                <span className="text-2xl">😊</span>
+                <div className="absolute bottom-0 right-0 bg-[#007AFF] text-white rounded-full w-5 h-5 flex items-center justify-center">
+                  <span>+</span>
+                </div>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-6">Add your profile picture</p>
+
+              <div className="w-full space-y-5">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Gender</label>
+                  <select className="w-full p-2 border rounded-lg">
+                    <option>Select</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Select the languages that apply</label>
+                  <div className="flex flex-wrap gap-2">
+                    <button className="rounded-full bg-[#007AFF] text-white px-3 py-1 text-xs">English</button>
+                    <button className="rounded-full border px-3 py-1 text-xs">French</button>
+                    <button className="rounded-full border px-3 py-1 text-xs">Hindi</button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <button className="rounded-full border px-3 py-1 text-xs">Gujarati</button>
+                    <button className="rounded-full border px-3 py-1 text-xs">Punjabi</button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <button className="rounded-full border px-3 py-1 text-xs">Mandarin</button>
+                    <button className="rounded-full border px-3 py-1 text-xs">Telugu</button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <button className="rounded-full border px-3 py-1 text-xs">Urdu</button>
+                    <button className="rounded-full border px-3 py-1 text-xs">Spanish</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">About you?</label>
+                  <textarea
+                    className="w-full p-2 border rounded-lg"
+                    rows={4}
+                    placeholder="Eg: work, hobby, lifestyle, anything"
+                  ></textarea>
+                </div>
+
+                <button className="w-full bg-black text-white rounded-full py-2 font-medium mt-6">
+                  Save
                 </button>
               </div>
             </div>
-          )}
-        </div>
-
-        {/* Right Column: "Complete your profile" example */}
-        <div className="hidden lg:flex flex-col w-[320px] bg-white border-l border-gray-200 p-5 overflow-y-auto">
-          <h3 className="text-lg font-semibold text-[#2C3C4E] mb-3">
-            Complete your profile!
-          </h3>
-
-          {/* Profile Picture */}
-          <div className="flex flex-col items-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-pink-200 overflow-hidden mb-2">
-              {/* Replace with actual user avatar if available */}
-              <Image
-                src="/icons/userIcon.png"
-                alt="User Icon"
-                width={80}
-                height={80}
-                className="object-cover"
-              />
-            </div>
-            <button className="text-sm text-blue-600 hover:underline">
-              Add your profile picture
-            </button>
           </div>
-
-          {/* Gender */}
-          <label className="text-sm text-gray-600 mb-1" htmlFor="gender">
-            Gender
-          </label>
-          <select
-            id="gender"
-            className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full text-sm focus:outline-none"
-          >
-            <option value="">Select</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            {/* etc... */}
-          </select>
-
-          {/* Languages */}
-          <label className="text-sm text-gray-600 mb-1" htmlFor="languages">
-            Select the languages you speak
-          </label>
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            {/* Example language chips / checkboxes */}
-            <button className="border border-gray-300 rounded-full px-2 py-1 text-xs hover:bg-gray-200">
-              English
-            </button>
-            <button className="border border-gray-300 rounded-full px-2 py-1 text-xs hover:bg-gray-200">
-              Spanish
-            </button>
-            <button className="border border-gray-300 rounded-full px-2 py-1 text-xs hover:bg-gray-200">
-              German
-            </button>
-            {/* Extend or make them checkboxes, etc. */}
-          </div>
-
-          {/* Bio / Hobby / About */}
-          <label className="text-sm text-gray-600 mb-1" htmlFor="bio">
-            About you
-          </label>
-          <textarea
-            id="bio"
-            rows={3}
-            className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full text-sm focus:outline-none"
-            placeholder="e.g. work, hobby, lifestyle, anything"
-          ></textarea>
-
-          {/* Save button */}
-          <button className="rounded-md bg-[#007AFF] text-white text-sm font-semibold py-2 px-4 hover:opacity-80">
-            Save
-          </button>
         </div>
       </div>
     </div>
