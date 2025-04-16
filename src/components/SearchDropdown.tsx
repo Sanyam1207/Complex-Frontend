@@ -47,7 +47,7 @@ export default function SearchDropdown({
       <input
         type="text"
         placeholder={placeholder}
-        className="w-full p-2 py-3.5 border border-[#E3E2E0] text-[#2C3C4E] rounded-md  outline-none cursor-pointer"
+        className="w-full p-2 py-3.5 border border-[#E3E2E0] text-[#2C3C4E] rounded-md  outline-none cursor-pointer placeholder:text-[#2C3C4E]"
         value={query}
         onFocus={() => setIsOpen(true)}
         onChange={(e) => {

@@ -67,8 +67,7 @@ export default function PersonalDetails() {
                         <input
                             type="text"
                             placeholder="Pratik Parmar"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
-                         focus:outline-dashed"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
                         />
 
                         {/* Email */}
@@ -78,8 +77,7 @@ export default function PersonalDetails() {
                         <input
                             type="email"
                             placeholder="Pratikparmar@fmr.ca"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
-                         focus:outline-dashed"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
                         />
 
                         {/* Change password */}
@@ -89,8 +87,7 @@ export default function PersonalDetails() {
                         <input
                         placeholder='findmyrentals'
                             type="password"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
-                         focus:outline-dashed"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
                         />
 
                         {/* Phone number */}
@@ -100,8 +97,8 @@ export default function PersonalDetails() {
                         <input
                             type="tel"
                             placeholder="647-772-4334"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full border rounded-lg px-5 py-4 text-sm 
-                         focus:outline-dashed"
+                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm 
+                         "
                         />
 
                         {/* Save button */}
@@ -116,7 +113,7 @@ export default function PersonalDetails() {
                     {/* Delete account link */}
                     <button
                         type="button"
-                        className="mt-6 text-sm text-[#0A84FF]b"
+                        className="mt-6 text-sm text-[#de4b4b]"
                     >
                         Delete account
                     </button>

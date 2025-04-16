@@ -102,7 +102,7 @@ export default function Notifications() {
                                 Sold out
                             </span>
                             <span className="text-sm text-[#2C3C4E] mt-1">
-                                Stay informed when a rental of your <br /> interest is sold.
+                                Stay informed when a rental of your <br /> interest is unavailable.
                             </span>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer ml-2">

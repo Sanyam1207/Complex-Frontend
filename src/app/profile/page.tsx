@@ -25,7 +25,7 @@ export default function ProfilePage() {
                     <div className="flex items-center">
 
                         <div className="w-12 h-12 flex items-center justify-center bg-[#353537] rounded-full" >
-                            <Image src={"/icons/profilepic.svg"} height={120} width={120} className="w-10  flex items-center justify-center mt-2" alt="profile" />
+                            <Image src={"/icons/personaldetailplaceholder.svg"} height={120} width={120} className="w-14  flex items-center justify-center" alt="profile" />
 
                         </div>
                         {/* Name & Details */}

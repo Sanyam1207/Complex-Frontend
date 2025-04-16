@@ -89,24 +89,24 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                     </span>
                     <input
                       type="number"
-                      placeholder="Min Price"
+                      placeholder="Min price"
                       value={minValue}
                       onChange={(e) => dispatch(setMinValue(e.target.value))}
-                      className="w-full p-2 py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
+                      className="w-full placeholder:text-[#2C3C4E] p-2 py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
                     />
                   </div>
 
                   {/* Max Price */}
                   <div className="relative w-full">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2C3C4E]">
+                    <span className="absolute  left-3 top-1/2 transform -translate-y-1/2 text-[#2C3C4E]">
                       $
                     </span>
                     <input
                       type="number"
-                      placeholder="Max Price"
+                      placeholder="Max price"
                       value={maxValue}
                       onChange={(e) => dispatch(setMaxValue(e.target.value))}
-                      className="w-full p-2 py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
+                      className="w-full p-2  placeholder:text-[#2C3C4E] py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
                     />
                   </div>
                 </div>
@@ -146,26 +146,26 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 >
                   Preferred stay duration?
                 </label>
-                <div className="flex space-x-3">
+                <div className="flex space-x-3 items-center">
                   <button
                     onClick={() => dispatch(setSelectedStayDuration("lt6"))}
-                    className={`border border-[#2C3D4F] rounded-full px-4 py-4 text-[14px] transition ${
+                    className={`border border-[#2D3D4E] rounded-full px-4 h-fit py-1.5 text-[14px] transition ${
                       selectedStayDuration === "lt6"
                         ? "bg-[#0A84FF] text-white border-transparent"
                         : "border-[#E3E2E0] text-[#2C3C4E]"
                     }`}
-                    style={{ lineHeight: "16px" }}
+             
                   >
                     1 - 6 months
                   </button>
                   <button
                     onClick={() => dispatch(setSelectedStayDuration("gt6"))}
-                    className={`border border-[#2C3D4F] rounded-full px-4 py-4 text-[14px] transition ${
+                    className={`border border-[#2D3D4E] rounded-full h-fit py-1.5 px-4 text-[14px] transition ${
                       selectedStayDuration === "gt6"
                         ? "bg-[#0A84FF] text-white border-transparent"
                         : "border-[#E3E2E0] text-[#2C3C4E]"
-                    }`}
-                    style={{ lineHeight: "16px" }}
+                    } `}
+                
                   >
                     6+ months
                   </button>
@@ -181,12 +181,12 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 >
                   Popular filters
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {["Parking", "Pet friendly", "Couple"].map((filter) => (
                     <button
                       key={filter}
                       onClick={() => handleToggleFilter(filter)}
-                      className={`border border-[#2C3D4F] rounded-full px-6 py-4 text-[14px] transition ${
+                      className={`border border-[#2D3D4E] rounded-full px-6 py-2 h-fit text-[14px] transition ${
                         selectedFilters.includes(filter)
                           ? "bg-[#0A84FF] text-white border-transparent"
                           : "border-[#E3E2E0] text-[#2C3C4E]"

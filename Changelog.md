@@ -7,3 +7,8 @@ ___________________________________________________________________
 --> corrected notification page 
 
 ____________________________________________________________________
+
+16 April, 2025
+
+--> Corrected the messages page (slight design change)
+--> Corrected the profile page (slight design change)
