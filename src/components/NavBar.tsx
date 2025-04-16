@@ -130,24 +130,24 @@ export default function Navbar() {
 
           {/* Mobile filter icon with chip indicator and conditional background */}
           <div className="relative flex-shrink-0">
-            <button
-              onClick={() => setShowMobileFilterModal(true)}
-              className={`p-3.5 rounded-full relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
-                }`}
-            >
-              <Image
-                src="/icons/mobileslider.svg"
-                alt="Slider Icon"
-                width={18}
-                height={18}
-              />
-              {compositeCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {compositeCount}
-                </span>
-              )}
-            </button>
-          </div>
+                     <button
+                       onClick={() => setShowMobileFilterModal(true)}
+                       className={`h-11 w-11 rounded-full flex items-center justify-center relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
+                         }`}
+                     >
+                       <Image
+                         src="/icons/mobileslider.svg"
+                         alt="Slider Icon"
+                         width={15}
+                         height={12}
+                       />
+                       {compositeCount > 0 && (
+                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                           {compositeCount}
+                         </span>
+                       )}
+                     </button>
+                   </div>
         </div>
 
         <MobileFilterModal
