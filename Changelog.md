@@ -12,3 +12,4 @@ ____________________________________________________________________
 
 --> Corrected the messages page (slight design change)
 --> Corrected the profile page (slight design change)
+--> fixed bugs for deployment (build errors)
