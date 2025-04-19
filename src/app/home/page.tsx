@@ -7,6 +7,7 @@ import TabsBar from '@/components/TabsBar';
 import PropertyCardCarousel from '@/components/PropertyCard';
 import { useRouter } from 'next/navigation';
 import AuthCallback from '@/components/AuthCallback';
+import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -61,7 +62,10 @@ export default function Home() {
 
     return (
         <div className={`${inter.className} flex flex-col h-screen bg-[#1F1F21]`}>
-            <AuthCallback />
+            <Suspense fallback={null}>
+                <AuthCallback />
+            </Suspense>
+
             {/* Fixed header section */}
             <header className="flex-none sticky top-0 z-10">
                 <Navbar />
@@ -69,7 +73,7 @@ export default function Home() {
 
             {/* Scrollable content area */}
             <main className="flex-grow overflow-y-auto bg-[#1F1F21] ">
-            <TabsBar />
+                <TabsBar />
                 <div className="max-w-7xl md:max-w-full rounded-t-3xl bg-gray-100 mx-auto grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:px-20">
                     {dummyProperties.map((property, index) => (
                         <PropertyCardCarousel

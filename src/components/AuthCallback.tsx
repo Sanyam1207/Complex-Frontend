@@ -1,4 +1,3 @@
-// components/AuthCallback.tsx
 'use client';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/axios';
