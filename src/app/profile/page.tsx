@@ -72,7 +72,7 @@ export default function ProfilePage() {
                             <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
                         </div>
                         <div>
-                            <p className="text-sm text-[#2C3C4E] font-semibold">About you</p>
+                            <p onClick={() => {router.push('/about')}} className="text-sm text-[#2C3C4E] font-semibold">About you</p>
                             <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
                         </div>
                     </div>

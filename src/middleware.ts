@@ -1,26 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-export { default } from 'next-auth/middleware';
-import { getToken } from 'next-auth/jwt';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export const config = {
-  matcher: ["/"],
-};
-
-
-
-export async function middleware(request: NextRequest) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const token = await getToken({ req: request });
-  const url = request.nextUrl;
-
-  console.log("Middleware triggered")
-
-
-  if (
-    (url.pathname.startsWith('/'))
-  ) {
-    return NextResponse.redirect(new URL('/home', request.url));
+export function middleware(request: NextRequest) {
+  // Get token from cookies or headers
+  const token = request.cookies.get('token')?.value;
+  
+  // Get the pathname of the request
+  const { pathname } = request.nextUrl;
+  
+  // Define public routes that don't require authentication
+  const publicRoutes = ['/','/home', '/login', '/register', '/api/auth']; 
+  const isPublicRoute = publicRoutes.some(route => 
+    pathname === route || pathname.startsWith(route + '/')
+  );
+  
+  // If no token and trying to access protected route, redirect to homepage
+  if (!token && !isPublicRoute) {
+    // Create URL for the destination (homepage with a query param to show login)
+    const url = request.nextUrl.clone();
+    url.pathname = '/home';
+    return NextResponse.redirect(url);
   }
-
+  
   return NextResponse.next();
 }
+
+// Configure which routes to run the middleware on
+export const config = {
+  matcher: [
+  ],
+};

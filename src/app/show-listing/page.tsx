@@ -435,7 +435,7 @@ export default function ShowListing() {
           </div><br />
         </div>
 
-        <div className="bg-black flex justify-center flex-col py-5 sticky bottom-0 px-8">
+        <div className="bg-black flex justify-center flex-col py-5 sticky bottom-0 px-4">
           <div className="text-sm font-normal text-white mb-3">
             Send message to <span className='text-sm font-semibold'>Pratik Parmar</span>
           </div>

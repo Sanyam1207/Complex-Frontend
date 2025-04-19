@@ -79,14 +79,14 @@ const StepItem = ({
 export default function CreateListing() {
     const router = useRouter();
     return (
-        <>
+        <div className="h-screen flex flex-col">
             {/* MOBILE LAYOUT */}
-            <div className={`${inter.className} flex flex-col md:hidden h-screen fixed inset-0 z-20 bg-black`}>
+            <div className={`${inter.className} flex flex-col md:hidden h-screen bg-black`}>
                 {/* Top Section: Black background */}
                 <div className="flex flex-col flex-1 h-full bg-[#1F1F21] text-white p-5 pb-10">
                     {/* Back arrow + Title */}
                     <div className="flex items-center w-full">
-                        <button onClick={() => {router.push('/home')}} className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full">
+                        <button onClick={() => { router.push('/home') }} className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full">
                             <Image src="/icons/backarrow.svg" alt="Back" width={12} height={12} />
                         </button>
                         <div className="flex-1 text-center text-sm font-medium">Listing</div>
@@ -115,7 +115,7 @@ export default function CreateListing() {
                             <div className="flex-1" />
                         </div>
                         {/* Get Started Button */}
-                        <button onClick={() => {router.push('create-listing-steps')}} className="bg-black text-white w-full py-3 rounded-full font-semibold text-sm">
+                        <button onClick={() => { router.push('create-listing-steps') }} className="bg-black text-white w-full py-3 rounded-full font-semibold text-sm">
                             Get Started
                         </button>
                     </div>
@@ -123,8 +123,9 @@ export default function CreateListing() {
             </div>
 
             {/* DESKTOP LAYOUT */}
-            <Navbar />
-            <div className={`${inter.className} hidden md:flex justify-center w-full bg-white`}>
+
+            <div className={`${inter.className} hidden md:flex flex-col justify-center w-full bg-white`}>
+                <Navbar />
                 {/* Left Column: Headline + Button */}
                 <div className="flex flex-col justify-center items-start p-16">
                     <h1 className="text-4xl font-semibold mb-6">
@@ -132,7 +133,7 @@ export default function CreateListing() {
                         <br />
                         your listing.
                     </h1>
-                    <button onClick={() => {router.push('/create-listing-steps')}} className="bg-black text-white px-6 py-3 rounded-full font-semibold text-sm">
+                    <button onClick={() => { router.push('/create-listing-steps') }} className="bg-black text-white px-6 py-3 rounded-full font-semibold text-sm">
                         Get Started
                     </button>
                 </div>
@@ -146,7 +147,7 @@ export default function CreateListing() {
                     ))}
                 </div>
             </div>
-        </>
+        </div>
 
     );
 }

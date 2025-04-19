@@ -243,7 +243,7 @@ export default function ChatList() {
                   }}
                 >
                   <p
-                    className={`${message.sender === "user" ? 'text-white' : ' text-[#2C3C4E]'}  font-inter text-sm font-normal leading-relaxed`}
+                    className={`${message.sender === "user" ? 'text-white font-medium' : ' text-[#2C3C4E] font-normal'}  font-inter text-sm  leading-relaxed`}
                   >
                     {message.text}
                   </p>
@@ -354,7 +354,7 @@ export default function ChatList() {
           <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] py-6 px-4">
             <div className="flex items-center space-x-4">
               <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Image src={"/icons/plusiconsend.svg"} alt="add" height={120} width={120} className="w-3 h-3" />
+                <Image src={"/icons/plusiconsend.svg"} alt="add" height={120} width={120} className="w-4 h-4" />
               </button>
               <input
                 type="text"
@@ -369,8 +369,8 @@ export default function ChatList() {
                 <Image
                   src="/icons/sendicon.svg"
                   alt="Send"
-                  width={120}
-                  height={120}
+                  width={128}
+                  height={128}
                   className="h-4 w-4"
                 />
               </button>

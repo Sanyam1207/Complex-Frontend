@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import api from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -16,6 +18,9 @@ interface SignUpModalProps {
 const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
 
     const [fullName, setFullName] = useState("");
+    const router = useRouter();
+    const [error, setError] = useState("");
+    console.log(error)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     if (!isOpen) return null;
@@ -23,12 +28,29 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
     // Now conditionally return based on isOpen
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Full Name:", fullName);
-        console.log("Email:", email);
-        console.log("Password:", password);
+        const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, { email: email, password: password, fullName: fullName })
+        console.log(response)
+
+        if (response.data.success) {
+            router.push(`/home?token=${response.data.token}`)
+        }
     };
+
+    const handleGoogleLogin = () => {
+        console.log("Google login clicked");
+        console.log(process.env.API_URL)
+
+        setError('');
+
+        try {
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Login failed');
+        }
+    }
 
     return (
         <div
@@ -179,7 +201,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
                 <div>
                     <div className="rounded-t-2xl bg-white">
                         {/* Close Button */}
-                        <div className="flex items-center justify-center absolute top-4 left-4 bg-[#353537] h-7 w-7 rounded-full hover:text-gray-800">
+                        <div className="flex items-center justify-center absolute top-8 left-4 bg-[#353537] h-7 w-7 rounded-full hover:text-gray-800">
                             <button onClick={onClose} aria-label="Close">
                                 <Image src={'/icons/backarrow.svg'} height={12} width={12} alt="back arrow" />
                             </button>
@@ -265,7 +287,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
                                         <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
                                     </div>
                                     <div className="flex flex-col items-center space-y-1">
-                                        <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                                        <button onClick={() => handleGoogleLogin()} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
                                             <Image
                                                 src="/icons/googlelogo.svg"
                                                 alt="Google"

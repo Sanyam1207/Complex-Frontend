@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Knewave, Inter } from "next/font/google";
 import Image from "next/image";
 import { Menu as MenuIcon } from "lucide-react";
@@ -11,6 +11,8 @@ import { usePathname, useRouter } from "next/navigation";
 import LogoutModal from "./LogoutModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/store"; // adjust path as needed
+import OnBoardingPopup from "./OnboardingPopup";
+import { useAuth } from "@/context/AuthContext";
 
 // Fonts
 const knewave = Knewave({
@@ -51,9 +53,9 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showSignUpModel, setShowSignUpModal] = useState(false);
-  const [showLoginModel, setShowLoginModal] = useState(false);
   const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [onBoardingPopup, setOnBoardingPopup] = useState(false);
 
   // Extract multiple fields from your filter slice
   const {
@@ -81,6 +83,28 @@ export default function Navbar() {
     console.log("Listing deleted!");
     setShowLogoutModal(false);
   };
+
+  const { isAuthenticated, user, logout, showLoginModal, setShowLoginModal } = useAuth();
+  console.log(user)
+  console.log(logout)
+
+
+  // Only show onboarding to unauthenticated users and only once
+  useEffect(() => {
+    // Check if the user has already dismissed the onboarding
+    const onboardingDismissed = localStorage.getItem('onboardingDismissed');
+    
+    // Only show onboarding if:
+    // 1. User is not authenticated
+    // 2. User hasn't dismissed onboarding before
+    if (!isAuthenticated && !onboardingDismissed) {
+      setOnBoardingPopup(true);
+    } else {
+      setOnBoardingPopup(false);
+    }
+  }, [isAuthenticated]);
+
+
 
   return (
     <nav className={`sticky top-0 z-10 bg-[#1c1c1c] text-white ${inter.className}`}>
@@ -231,7 +255,7 @@ export default function Navbar() {
             {menuOpen && (
               <div className="absolute right-2 top-[110%] mt-2 w-[10rem] bg-white text-black rounded-lg shadow-md">
                 <ul className="flex flex-col py-2 text-[0.875rem]">
-                  <li onClick={() => setShowLoginModal((prev) => !prev)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                  <li onClick={() => setShowLoginModal(true)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                     Login
                   </li>
                   <li onClick={() => setShowSignUpModal((prev) => !prev)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
@@ -286,8 +310,9 @@ export default function Navbar() {
       </div>
 
       <SignUpModal isOpen={showSignUpModel} onClose={() => setShowSignUpModal(false)} />
-      <LoginModal isOpen={showLoginModel} onClose={() => setShowLoginModal(false)} />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={handleLogout} />
+      <OnBoardingPopup setShowLoginModal={setShowLoginModal} setShowOnboardingPopup={setOnBoardingPopup} setShowSignupPopup={setShowSignUpModal} isOpen={onBoardingPopup}  onClose={() => {setOnBoardingPopup(false)}}  />
     </nav>
   );
 }
