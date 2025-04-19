@@ -36,7 +36,8 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, set
 
         try {
             window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
-        } catch (err: any) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) { // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setError(err.response?.data?.message || 'Login failed');
         }
     };
