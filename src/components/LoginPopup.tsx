@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import axios from 'axios';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,10 +24,10 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    const response = await axios.post(`${process.env.API_URL}/api/auth/google`)
+    console.log(response.data);
   };
 
   return (

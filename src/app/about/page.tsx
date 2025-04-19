@@ -17,43 +17,20 @@ interface FormElementsProps {
     about: string;
     setAbout: (about: string) => void;
     selectedLanguages: string[];
-    toggleLanguage: (lang: string) => void;
     languages: string[];
 }
 
 // External FormElements Component
-const FormElements = ({ 
-    gender,
-    setGender,
-    about,
-    setAbout,
+const FormElements = ({
     selectedLanguages,
-    toggleLanguage,
     languages
 }: FormElementsProps) => (
     <>
         {/* Gender Select */}
         <div className="mb-6">
             <label className="block mb-2 text-sm text-[#2C3C4E] font-medium">
-                Gender
+                Gender : Male
             </label>
-            <div className="relative">
-                <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    className="border border-[#E3E2E0] text-[#2C3C4E] rounded-xl py-3 px-4 bg-transparent w-96 appearance-none focus:outline-none focus:ring-2 focus:ring-[#0A84FF]"
-                >
-                    <option value="" disabled>
-                        Select
-                    </option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                    <option value="Prefer not to disclose">
-                        Prefer not to disclose
-                    </option>
-                </select>
-            </div>
         </div>
 
         {/* Languages */}
@@ -68,7 +45,7 @@ const FormElements = ({
                         <button
                             type="button"
                             key={lang}
-                            onClick={() => toggleLanguage(lang)}
+                         
                             className={`px-3 py-1 rounded-full text-sm border transition-colors ${isSelected
                                 ? "bg-[#0A84FF] border-[#0A84FF] text-white"
                                 : "border-[#2C3C4E] hover:bg-gray-50 text-[#2C3C4E]"
@@ -84,25 +61,13 @@ const FormElements = ({
         {/* About */}
         <div className="mb-6">
             <label className="block mb-2 text-sm font-medium text-[#2C3C4E]">
-                About you?
+                About Person Name
             </label>
-            <textarea
-                rows={4}
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-                placeholder="Eg: work, hobby, lifestyle, anything"
-                className="w-full border border-none placeholder:text-[rgba(44,60,78,0.50)] text-[#2C3C4E] focus-within:border-none rounded-xl p-4 bg-[#F4F4F4] focus:outline-none"
-            />
+            <p
+                className="w-full border-none text-[#2C3C4E] focus-within:border-none rounded-xl p-4 bg-[#F4F4F4]">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam consectetur, quis eum sequi soluta labore iste laborum veritatis facilis nemo animi, nam vero, mollitia quibusdam obcaecati reiciendis dicta explicabo! Ea.
+                </p>
         </div>
-
-        {/* Save Button */}
-        <button
-            type="button"
-            onClick={() => alert("Profile saved!")}
-            className="w-full bg-black text-white py-4 rounded-full font-medium hover:bg-gray-900 transition-colors"
-        >
-            Save
-        </button>
     </>
 );
 
@@ -120,15 +85,6 @@ export default function CompleteProfile() {
         "Punjabi",
         "Mandarin",
         "Telugu",
-        "Urdu",
-        "Spanish",
-        "Korean",
-        "Russian",
-        "Filipino",
-        "Tamil",
-        "Malayalam",
-        "Not listed",
-        "Skip",
     ];
 
     const toggleLanguage = (lang: string) => {
@@ -137,11 +93,13 @@ export default function CompleteProfile() {
         );
     };
 
+    console.log(toggleLanguage)
+
     return (
         <>
             {/* Mobile View */}
             <div
-                className={`md:hidden h-full overflow-hidden w-screen bg-black flex flex-col ${inter.className}`}
+                className={`md:hidden min-h-screen bg-black flex flex-col ${inter.className}`}
             >
                 <div className="relative bg-black text-white pt-6 pb-6 px-4">
                     <button
@@ -160,22 +118,14 @@ export default function CompleteProfile() {
                     <h1 className="text-center text-base">Profile</h1>
 
                     <div className="mt-4 mb-3 flex flex-col items-center">
-                        <h2 className="text-xl font-semibold">Complete your profile!</h2>
-                        <p className="text-sm text-gray-400 mt-1">Stand out and Shine ✨</p>
-                        <div className="w-20 h-20 rounded-full mt-4 relative flex items-center justify-center">
-                           <Image src={'/icons/personaldetailplaceholder.svg'} alt="placeholder" height={180} width={180} className="object-contain"/>
-                            <button 
-                                type="button"
-                                className="absolute right-0 bottom-0 bg-blue-500 text-white p-1 rounded-full"
-                            >
-                                <Image src="/icons/plusicon.svg" alt="Add" width={16} height={16} />
-                            </button>
+                        <div className="w-20 h-20 rounded-full relative flex items-center justify-center">
+                            <Image src={'/icons/personaldetailplaceholder.svg'} alt="placeholder" height={140} width={140} className="object-contain"/>
                         </div>
                         <button 
                             type="button"
                             className="mt-2 text-gray-400 text-sm"
                         >
-                            Add your profile picture
+                            Person Name
                         </button>
                     </div>
                 </div>
@@ -187,7 +137,6 @@ export default function CompleteProfile() {
                         about={about}
                         setAbout={setAbout}
                         selectedLanguages={selectedLanguages}
-                        toggleLanguage={toggleLanguage}
                         languages={languages}
                     />
                 </div>
@@ -237,7 +186,6 @@ export default function CompleteProfile() {
                             about={about}
                             setAbout={setAbout}
                             selectedLanguages={selectedLanguages}
-                            toggleLanguage={toggleLanguage}
                             languages={languages}
                         />
                     </div>

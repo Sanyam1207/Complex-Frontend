@@ -14,7 +14,7 @@ export default function PersonalDetails() {
             {/* ==================== MOBILE VIEW (Android-style) ==================== */}
             <div className={`${inter.className} flex flex-col md:hidden bg-black h-screen w-full`}>
                 {/* Top bar: Back arrow + Title */}
-                <div className="flex flex-col items-center justify-center px-4 py-3 pt-6">
+                <div className="flex flex-col items-center justify-center px-4 pt-6">
                     <button onClick={() => { router.back() }} className='absolute top-[18px] left-7 rounded-full bg-[#353537]'>
                         <Image
                             src="/icons/backbuttonn.svg"
@@ -28,7 +28,7 @@ export default function PersonalDetails() {
                         Personal details
                     </h1>
 
-                    <div className="relative w-24 h-24 mb-4  mt-2">
+                    <div className="relative w-24 h-24 mb-3 mt-2">
                         {/* Large circle with a placeholder face */}
                         <div className="w-24 h-24 rounded-full  flex items-center p-0 justify-center overflow-hidden">
                             <Image src={"/icons/personaldetailplaceholder.svg"} alt='placeholder' height={120} width={120} className='h-full w-full' />
@@ -59,45 +59,45 @@ export default function PersonalDetails() {
 
 
                     {/* Form fields */}
-                    <div className="w-full mt-6">
+                    <div className="w-full mt-3">
                         {/* Full name */}
-                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
+                        <label className="block mb-3 text-sm font-medium text-[#2C3C4E]">
                             Full name
                         </label>
                         <input
                             type="text"
                             placeholder="Pratik Parmar"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
                         />
 
                         {/* Email */}
-                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
+                        <label className="block mb-3 text-sm font-medium text-[#2C3C4E]">
                             Email
                         </label>
                         <input
                             type="email"
                             placeholder="Pratikparmar@fmr.ca"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
                         />
 
                         {/* Change password */}
-                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
+                        <label className="block mb-3 text-sm font-medium text-[#2C3C4E]">
                             Change password
                         </label>
                         <input
                         placeholder='findmyrentals'
                             type="password"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm "
                         />
 
                         {/* Phone number */}
-                        <label className="block mb-4 text-sm font-medium text-[#2C3C4E]">
+                        <label className="block mb-3 text-sm font-medium text-[#2C3C4E]">
                             Phone number
                         </label>
                         <input
                             type="tel"
                             placeholder="647-772-4334"
-                            className="mb-7 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm 
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm 
                          "
                         />
 

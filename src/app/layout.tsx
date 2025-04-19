@@ -1,3 +1,5 @@
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { AuthProvider } from "@/context/AuthContext";
 import { Providers } from "@/redux/Provider";
 import '@mantine/core/styles.css';
 import type { Metadata } from "next";
@@ -37,9 +39,11 @@ export default function RootLayout({
       >
         <MantineProvider>
           <Providers>
-            {/* <Navbar /> */}
-            {children}
-            {/* <MobileBottomTabs /> */}
+            <AuthProvider>
+              <ProtectedRoute>
+                {children}
+              </ProtectedRoute>
+            </AuthProvider>
           </Providers>
         </MantineProvider>
       </body>
