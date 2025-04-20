@@ -73,7 +73,7 @@ export default function PersonalDetails() {
                 password: formData.password ? formData.password : undefined
             };
 
-            const response = await api.put('/api/auth/update-profile', dataToSubmit);
+            const response = await api.put(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`, dataToSubmit);
 
             if (response.data.success) {
                 setSuccessMessage('Profile updated successfully!');
@@ -95,7 +95,7 @@ export default function PersonalDetails() {
     const handleDeleteAccount = async () => {
         if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
             try {
-                const response = await api.delete('/api/auth/delete-account');
+                const response = await api.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/delete-account`);
                 if (response.data.success) {
                     // Clear local storage
                     localStorage.removeItem('token');

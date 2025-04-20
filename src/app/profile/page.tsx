@@ -40,7 +40,7 @@ export default function ProfilePage() {
     useLayoutEffect(() => {
         const getDetails = async () => {
             try {
-                const response = await api.get('/api/auth/get-details')
+                const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-details`)
                 console.log(response)
                 if (response.data.success) {
                     setUser(response.data.user)

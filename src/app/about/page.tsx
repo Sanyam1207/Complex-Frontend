@@ -96,7 +96,7 @@ export default function CompleteProfile() {
         const getDetails = async () => {
             setIsLoading(true);
             try {
-                const response = await api.get("/api/auth/get-details");
+                const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-details`);
                 console.log("Response from API:", response.data);
                 
                 if (response.data.success) {
