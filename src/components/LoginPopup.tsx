@@ -21,43 +21,65 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
   // All hooks are called unconditionally at the top
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   // Early return based on isOpen AFTER all hooks have been called
   if (!isOpen) return null;
 
-  // Handle form submission
+  // Handle Google authentication
   const handleSubmitGoogle = async () => {
-
     try {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.log(err)
-      router.push("/home")
+      console.error("Google auth error:", err);
+      setError("Failed to authenticate with Google");
     }
   };
 
-  const handleSubmit = async () => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    
     try {
-      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { email, password })
-      console.log(`Response from the login server : ${response.data}`)
-      if (response.data.success) {
-        // Store the token in localStorage or cookies
+      // Validate inputs
+      if (!email || !password) {
+        setError("Email and password are required");
+        setIsLoading(false);
+        return;
+      }
+      
+      console.log("Attempting login with:", { email });
+      
+      const response = await api.post('/api/auth/login', { 
+        email, 
+        password 
+      });
+      
+      console.log("Login response:", response.data);
+      
+      if (response.data.success === true) {
+        // Store the token in localStorage
         localStorage.setItem('token', response.data.token);
 
         // You might want to store user info as well
         localStorage.setItem('user', JSON.stringify(response.data.user));
 
         // Redirect to homepage or dashboard
-        router.push('/home');
+        router.push(`/home?token=${response.data.token}`);
+      } else {
+        setError(response.data.message || "Login failed");
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log(error)
+      console.error("Login error:", error);
+      setError(error.response?.data?.message || "Incorrect email or password");
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center ${inter.className}`}>
@@ -90,8 +112,15 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
           </h2>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
-        <form className="flex flex-col space-y-3" onSubmit={() => { }}>
+        <form className="flex flex-col space-y-3" onSubmit={handleSubmit}>
           {/* Email */}
           <label htmlFor="email" className="text-sm text-[#2C3C4E]">
             Email
@@ -125,9 +154,10 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition"
+            disabled={isLoading}
+            className="w-full rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition disabled:bg-gray-400"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
@@ -153,7 +183,10 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
 
             {/* Google */}
             <div className="flex flex-col items-center space-y-1">
-              <button onClick={() => handleSubmitGoogle()} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+              <button 
+                onClick={handleSubmitGoogle} 
+                className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition"
+              >
                 <Image src="/icons/googlelogo.svg" alt="Google" width={24} height={24} />
               </button>
               <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
@@ -162,7 +195,10 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
 
           <div className="text-[#2C3C4E] text-sm my-8">
             Other ways to{" "}
-            <Link onClick={() => { }} className="text-[#0A84FF]" href="">
+            <Link onClick={() => {
+              onClose();
+              setOnOpenSignup(true);
+            }} className="text-[#0A84FF]" href="#">
               sign up
             </Link>
           </div>
@@ -208,8 +244,15 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
           </h2>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
-        <form className="flex flex-col space-y-4" onSubmit={() => handleSubmit()}>
+        <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
           {/* Email */}
           <label htmlFor="email_mobile" className="text-sm text-[#2C3C4E]">
             Email
@@ -241,9 +284,10 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full mt-4 rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition"
+            disabled={isLoading}
+            className="w-full mt-4 rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition disabled:bg-gray-400"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
@@ -269,7 +313,10 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
 
             {/* Google */}
             <div className="flex flex-col items-center space-y-1">
-              <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+              <button 
+                onClick={handleSubmitGoogle}
+                className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition"
+              >
                 <Image src="/icons/googlelogo.svg" alt="Google" width={24} height={24} />
               </button>
               <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
