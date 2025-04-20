@@ -41,6 +41,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
   const handleSubmit = async () => {
     try {
       const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { email, password })
+      console.log(`Response from the login server : ${response.data}`)
       if (response.data.success) {
         // Store the token in localStorage or cookies
         localStorage.setItem('token', response.data.token);
