@@ -76,7 +76,7 @@ export default function ProfilePage() {
                                     alt="profile"
                                     onError={(e) => {
                                         // Fallback to placeholder if image fails to load
-                                        e.currentTarget.src = '/icons/profile-placeholder.svg';
+                                        e.currentTarget.src = '/icons/personaldetailplaceholder.svg';
                                     }}
                                 />
                             ) : (
