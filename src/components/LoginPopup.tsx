@@ -33,6 +33,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.log(err)
       router.push("/home")
     }
   };
@@ -53,7 +54,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-
+      console.log(error)
     }
   }
 
