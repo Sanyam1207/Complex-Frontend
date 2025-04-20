@@ -28,7 +28,7 @@ export default function PersonalDetails() {
         const getDetails = async () => {
             setIsLoading(true);
             try {
-                const response = await api.get('/api/auth/get-details');
+                const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-details`);
                 console.log(`\n\n Response from the personal-details${response.data.user}`)
                 if (response.data.success) {
                     setUser(response.data.user);
