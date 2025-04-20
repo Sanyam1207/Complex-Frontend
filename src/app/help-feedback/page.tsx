@@ -72,7 +72,7 @@ export default function HelpFeedback() {
 
                             {/* Dropdown Options */}
                             {isOpen && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md">
                                     {options.map((option, index) => (
                                         <div
                                             key={index}

@@ -310,7 +310,7 @@ export default function Navbar() {
       </div>
 
       <SignUpModal isOpen={showSignUpModel} onClose={() => setShowSignUpModal(false)} />
-      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <LoginModal setOnOpenSignup={setShowSignUpModal} isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={handleLogout} />
       <OnBoardingPopup setShowLoginModal={setShowLoginModal} setShowOnboardingPopup={setOnBoardingPopup} setShowSignupPopup={setShowSignUpModal} isOpen={onBoardingPopup}  onClose={() => {setOnBoardingPopup(false)}}  />
     </nav>

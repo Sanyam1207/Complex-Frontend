@@ -1,10 +1,11 @@
 "use client";
 
+import api from "@/lib/axios";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import axios from 'axios';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,22 +14,48 @@ const inter = Inter({
 interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
+  setOnOpenSignup: (isOpen: boolean) => void;
 }
 
-const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
+const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSignup }) => {
   // All hooks are called unconditionally at the top
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   // Early return based on isOpen AFTER all hooks have been called
   if (!isOpen) return null;
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const response = await axios.post(`${process.env.API_URL}/api/auth/google`)
-    console.log(response.data);
+  const handleSubmitGoogle = async () => {
+
+    try {
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      router.push("/home")
+    }
   };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { email, password })
+      if (response.data.success) {
+        // Store the token in localStorage or cookies
+        localStorage.setItem('token', response.data.token);
+
+        // You might want to store user info as well
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        // Redirect to homepage or dashboard
+        router.push('/home');
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+
+    }
+  }
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center ${inter.className}`}>
@@ -62,7 +89,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Form */}
-        <form className="flex flex-col space-y-3" onSubmit={handleSubmit}>
+        <form className="flex flex-col space-y-3" onSubmit={() => { }}>
           {/* Email */}
           <label htmlFor="email" className="text-sm text-[#2C3C4E]">
             Email
@@ -124,7 +151,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
 
             {/* Google */}
             <div className="flex flex-col items-center space-y-1">
-              <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+              <button onClick={() => handleSubmitGoogle()} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
                 <Image src="/icons/googlelogo.svg" alt="Google" width={24} height={24} />
               </button>
               <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
@@ -133,7 +160,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
 
           <div className="text-[#2C3C4E] text-sm my-8">
             Other ways to{" "}
-            <Link onClick={() => {}} className="text-[#0A84FF]" href="">
+            <Link onClick={() => { }} className="text-[#0A84FF]" href="">
               sign up
             </Link>
           </div>
@@ -180,7 +207,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Form */}
-        <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col space-y-4" onSubmit={() => handleSubmit()}>
           {/* Email */}
           <label htmlFor="email_mobile" className="text-sm text-[#2C3C4E]">
             Email
@@ -249,9 +276,12 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
 
           <div className="text-[#2C3C4E] text-sm my-8">
             Other ways to{" "}
-            <Link className="text-[#0A84FF]" href="">
+            <span className="text-[#0A84FF]" onClick={() => {
+              onClose()
+              setOnOpenSignup(true)
+            }}>
               sign up
-            </Link>
+            </span>
           </div>
         </div>
 

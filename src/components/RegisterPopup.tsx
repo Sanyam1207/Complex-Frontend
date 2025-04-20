@@ -34,6 +34,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
         console.log(response)
 
         if (response.data.success) {
+            onClose()
             router.push(`/home?token=${response.data.token}`)
         }
     };
