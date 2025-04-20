@@ -1,16 +1,58 @@
 "use client"; // If using Next.js 13 app router; remove if using pages router
 import LogoutModal from "@/components/LogoutModal";
 import MobileBottomTabs from "@/components/MobileBottomTabs";
+import api from "@/lib/axios";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 const inter = Inter({
     subsets: ["latin"],
 })
+
+export interface User {
+    _id: string;
+    email: string;
+    fullName: string;
+    profilePicture: string;
+    wishlist: string[]; // Assuming IDs of wishlisted items
+    listingsCreated: string[]; // Assuming IDs of created listings
+    accountActivity: boolean;
+    listingActivity: boolean;
+    phoneNumber: number;
+    messages: boolean;
+    languages: string[];
+    gender: 'male' | 'female' | 'rather not say' | string;
+    role: 'user' | 'admin' | string;
+    isActive: boolean;
+    lastLogin: string; // ISO date string
+    createdAt: string; // ISO date string
+    updatedAt: string; // ISO date string
+    __v: number; // MongoDB version key
+    displayName: string;
+}
+
 export default function ProfilePage() {
     const router = useRouter();
     const [logoutModal, setLogoutModal] = useState(false);
+    const [user, setUser] = useState<User>();
+
+    useLayoutEffect(() => {
+        const getDetails = async () => {
+            try {
+                const response = await api.get('/api/auth/get-details')
+                console.log(response)
+                if (response.data.success) {
+                    setUser(response.data.user)
+                    console.log(`User details: ${JSON.stringify(response.data.user.profilePicture)}`)
+                }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (error: any) {
+                console.log(error)
+            }
+        }
+        getDetails()
+    }, [])
 
     return (
         <div className={`min-h-screen bg-[#1F1F21] ${inter.className}`}>
@@ -24,13 +66,32 @@ export default function ProfilePage() {
                     {/* Avatar placeholder */}
                     <div className="flex items-center">
 
-                        <div className="w-12 h-12 flex items-center justify-center bg-[#353537] rounded-full" >
-                            <Image src={"/icons/personaldetailplaceholder.svg"} height={120} width={120} className="w-14  flex items-center justify-center" alt="profile" />
+                        <div className="w-14 h-14 flex items-center justify-center rounded-full" >
+                            {user?.profilePicture ? (
+                                <Image
+                                    src={user.profilePicture}
+                                    height={120}
+                                    width={120}
+                                    className="w-14 h-14 flex items-center justify-center rounded-full object-cover"
+                                    alt="profile"
+                                    onError={(e) => {
+                                        // Fallback to placeholder if image fails to load
+                                        e.currentTarget.src = '/icons/profile-placeholder.svg';
+                                    }}
+                                />
+                            ) : (
+                                // Placeholder when profilePicture is not available
+                                <div className="w-14 h-14 bg-gray-300 flex items-center justify-center rounded-full">
+                                    <span className="text-gray-500 text-2xl">
+                                        {user?.fullName?.charAt(0) || "?"}
+                                    </span>
+                                </div>
+                            )}
 
                         </div>
                         {/* Name & Details */}
                         <div className="ml-3">
-                            <p className="text-base font-semibold">John Doe</p>
+                            <p className="text-base font-semibold">{user?.fullName}</p>
                             <p className="text-sm font-normal">Login details</p>
                         </div>
 
@@ -72,7 +133,7 @@ export default function ProfilePage() {
                             <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
                         </div>
                         <div>
-                            <p onClick={() => {router.push('/about')}} className="text-sm text-[#2C3C4E] font-semibold">About you</p>
+                            <p onClick={() => { router.push('/about') }} className="text-sm text-[#2C3C4E] font-semibold">About you</p>
                             <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
                         </div>
                     </div>
