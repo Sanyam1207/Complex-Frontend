@@ -32,6 +32,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
   const handleSubmitGoogle = async () => {
     try {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Google auth error:", err);
       setError("Failed to authenticate with Google");
@@ -73,6 +74,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
       } else {
         setError(response.data.message || "Login failed");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.response?.data?.message || "Incorrect email or password");
