@@ -55,7 +55,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
       
       console.log("Attempting login with:", { email });
       
-      const response = await api.post('/api/auth/login', { 
+      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { 
         email, 
         password 
       });
