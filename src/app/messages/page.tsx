@@ -1,9 +1,11 @@
+// app/messages/page.tsx
 "use client";
 import MobileBottomTabs from "@/components/MobileBottomTabs";
 import MessagesNavbar from "@/components/MobileMessageNavbar";
+import api from "@/lib/axios";
 import { Inter } from "next/font/google";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,172 +13,291 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
-// Define the Chat type
-interface Chat {
-  id: number;
-  title: string;
-  subtitle: string;
-  time: string;
-  read: boolean;
-  starred?: boolean; // Add this new property
+// Define interfaces based on your backend API response
+interface User {
+  _id: string;
+  fullName: string;
+  email?: string;
+  profilePicture?: string;
 }
 
-// Define a Message type for the conversation view
+interface RentalProperty {
+  _id: string;
+  propertyType: string;
+  location: string;
+  images: string[];
+  monthlyPrice: number;
+}
+
 interface Message {
-  id: number;
-  text: string;
-  sender: "user" | "other";
-  time?: string;
+  _id: string;
+  sender: User;
+  receiver: User;
+  content: string;
+  image?: string;
+  time: Date;
 }
 
-// Dummy data for chats
-const dummyChats: Chat[] = [
-  {
-    id: 1,
-    title: "265 Mainstreet, To...",
-    subtitle: "This is the total number …",
-    time: "Just now",
-    read: false,
-    starred: true // Mark this chat as starred
-  },
-  {
-    id: 2,
-    title: "123 Elm St",
-    subtitle: "Another chat preview message …",
-    time: "2 min ago",
-    read: false,
-  },
-  {
-    id: 4,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: true,
-  },
-  {
-    id: 5,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: true,
-  },
-  {
-    id: 6,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: false,
-  },
-  {
-    id: 7,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: true,
-  },
-  {
-    id: 53,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: true,
-  },
-  {
-    id: 6432,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: false,
-  },
-  {
-    id: 76523,
-    title: "456 Oak Ave",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: true,
-  },
-  {
-    id: 764523,
-    title: "45",
-    subtitle: "Lorem ipsum dolor sit amet …",
-    time: "5 min ago",
-    read: true,
-  },
-];
-
-// Dummy data for conversation messages
-const dummyMessages: Message[] = [
-  {
-    id: 1,
-    text: "Hello, how can I help you?",
-    sender: "other",
-    time: "10:00 AM",
-
-  },
-  {
-    id: 2,
-    text: "I have a question regarding my rental.",
-    sender: "user",
-    time: "10:01 AM",
-  },
-  {
-    id: 323432423,
-    text: "Sure, please ask your question.",
-    sender: "other",
-    time: "10:02 AM",
-  },
-  {
-    id: 343245,
-    text: "Sure, please ask your question.",
-    sender: "other",
-    time: "10:02 AM",
-  },
-  {
-    id: 398765,
-    text: "Sure, please ask your question.",
-    sender: "other",
-    time: "10:02 AM",
-  },
-  {
-    id: 368,
-    text: "Sure, please ask your question.",
-    sender: "other",
-    time: "10:02 AM",
-  },
-  {
-    id: 3808,
-    text: "Sure, please ask your question.",
-    sender: "other",
-    time: "10:02 AM",
-  },
-];
+interface Chat {
+  _id: string;
+  users: User[];
+  otherUsers: User[];
+  messages: Message[];
+  lastMessage: {
+    content: string;
+    sender: string | User;
+    time: Date;
+  };
+  rentalProperty?: RentalProperty;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+  starred?: boolean; // UI state property
+}
 
 export default function ChatList() {
-  const [chats, setChats] = useState<Chat[]>(dummyChats);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [currentUserId, setCurrentUserId] = useState<string>("");
 
-  const handleChatClick = (chat: Chat) => {
-    setSelectedChat(chat);
+
+
+  //Image uploading addition 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  console.log(isUploading)
+
+
+  const handleImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Handle image selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      // Validate file size and type
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size should be less than 5MB");
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        alert("Please select an image file");
+        return;
+      }
+
+      setImageFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  // Remove selected image
+  const handleRemoveImage = () => {
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+
+  // Get current user ID (stored during login)
+
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await api.get('/api/auth/get-details');
+        if (response.data.success) {
+          setCurrentUserId(response.data.user._id);
+          console.log(`User Id from the backend ${response.data.user._id}`)
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  // Fetch all chats when component mounts
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/api/chats');
+        if (response.data.success) {
+          // Add starred property to each chat for UI state
+          const chatsWithStarred = response.data.data.map((chat: Chat) => ({
+            ...chat,
+            starred: false
+          }));
+          setChats(chatsWithStarred);
+        }
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChats();
+  }, []);
+
+  const handleChatClick = async (chat: Chat) => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/api/chats/${chat._id}`);
+      if (response.data.success) {
+        setSelectedChat(response.data.data);
+        setMessages(response.data.data.messages || []);
+        console.log(` messages from the route ${JSON.stringify(response.data)}`)
+
+        // Mark chat as read
+        await api.put(`/api/chats/${chat._id}/read`);
+
+        // Update unread count in chat list
+        setChats(prevChats =>
+          prevChats.map(c =>
+            c._id === chat._id ? { ...c, unreadCount: 0 } : c
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching chat details:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackClick = () => {
     setSelectedChat(null);
+    // Refresh chat list
+    api.get('/api/chats').then(response => {
+      if (response.data.success) {
+        // Preserve starred status when refreshing
+        const updatedChats = response.data.data.map((chat: Chat) => {
+          const existingChat = chats.find(c => c._id === chat._id);
+          return {
+            ...chat,
+            starred: existingChat?.starred || false
+          };
+        });
+        setChats(updatedChats);
+      }
+    });
   };
 
-  const handleStarToggle = (chatId: number) => {
-    setChats(prevChats => 
-      prevChats.map(chat => 
-        chat.id === chatId ? { ...chat, starred: !chat.starred } : chat
+  const handleStarToggle = (chatId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the chat
+    setChats(prevChats =>
+      prevChats.map(chat =>
+        chat._id === chatId ? { ...chat, starred: !chat.starred } : chat
       )
     );
   };
 
+  const handleSendMessage = async () => {
+    if ((!messageInput.trim() && !imageFile) || !selectedChat) return;
+
+    try {
+      setIsUploading(true);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('content', messageInput.trim() || 'Image');
+
+      if (imageFile) {
+        formData.append('messageImage', imageFile);
+      }
+
+      const response = await api.post(
+        `/api/chats/${selectedChat._id}/messages`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setMessages(response.data.data.messages);
+        setMessageInput("");
+        setImageFile(null);
+        if (imagePreview) {
+          URL.revokeObjectURL(imagePreview);
+          setImagePreview(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Format relative time (e.g., "Just now", "2 min ago")
+  const formatRelativeTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+
+    return date.toLocaleDateString();
+  };
+
+  // Format chat title
+  // Format chat title with truncation for long titles
+  const formatChatTitle = (chat: Chat): string => {
+    let title = "";
+
+    if (chat.rentalProperty && chat.rentalProperty.location) {
+      // Use street from location object
+      title = chat.rentalProperty.location;
+    } else {
+      // Use other user's name
+      const otherUser = chat.otherUsers?.[0];
+      title = otherUser ? otherUser.fullName : "Chat";
+    }
+
+    // Truncate title if longer than 40 characters
+    if (title.length > 40) {
+      return title.substring(0, 20) + "...";
+    }
+
+    return title;
+  };
   return (
+
     <div className="h-screen flex flex-col">
-      {/* =======================
-          MOBILE VIEW
-          - Uses "md:hidden" to hide on larger screens
-         ======================= */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={handleImageChange}
+      />
+      {/* Mobile View */}
       <div className="md:hidden flex flex-col bg-[#1c1c1c] h-full">
         {/* Header (Mobile) */}
         {selectedChat ? (
@@ -197,16 +318,16 @@ export default function ChatList() {
 
               {/* Main Image */}
               <Image
-                src="/icons/placeholderimageformessage.svg"
+                src={selectedChat.rentalProperty?.images?.[0] || "/icons/placeholderimageformessage.svg"}
                 alt="Main"
                 width={30}
                 height={30}
-                className="w-[30px] h-[30px] mr-2 ml-3"
+                className="w-[30px] h-[30px] mr-2 ml-3 rounded-full"
               />
 
               {/* Chat Title */}
               <span className="text-white font-inter text-[14px] font-medium leading-[194%]">
-                {selectedChat.title}
+                {formatChatTitle(selectedChat)}
               </span>
             </div>
 
@@ -225,126 +346,157 @@ export default function ChatList() {
         )}
 
         {/* MAIN CONTENT (Mobile) */}
-        {selectedChat ? (
+        {loading ? (
+          <div className="flex-grow flex items-center justify-center bg-white">
+            <p>Loading...</p>
+          </div>
+        ) : selectedChat ? (
           // Conversation view
-          <main className="flex-grow rounded-t-3xl flex flex-col overflow-y-auto bg-white p-5">
-            {dummyMessages.map((message) => (
+          <main className="flex-grow rounded-t-3xl w-full flex flex-col overflow-y-auto p-5 bg-white">
+            {messages.map((message) => (
               <div
-                key={message.id}
-                className={`mb-3 max-w-64 ${message.sender === "user" ? "self-end" : "self-start"
+                key={message._id}
+                className={`mb-3 ${message.sender._id === currentUserId ? "self-end" : "self-start"
                   }`}
               >
                 <div
-                  className={`max-w-64 p-3 ${message.sender === "user" ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl self-end bg-[#0A84FF] " : "self-start rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
+                  className={`max-w-64 p-3 ${message.sender._id === currentUserId
+                    ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl self-end bg-[#0A84FF]"
+                    : "self-start rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
                     }`}
-                  style={{
-
-
-                  }}
                 >
                   <p
-                    className={`${message.sender === "user" ? 'text-white font-medium' : ' text-[#2C3C4E] font-normal'}  font-inter text-sm  leading-relaxed`}
+                    className={`${message.sender._id === currentUserId
+                      ? 'text-white font-medium'
+                      : 'text-[#2C3C4E] font-normal'
+                      } font-inter text-sm leading-relaxed`}
                   >
-                    {message.text}
+                    {message.content}
                   </p>
+                  {message.image && (
+                    <Image
+                      src={message.image}
+                      alt="Attachment"
+                      width={200}
+                      height={150}
+                      className="mt-2 rounded-md"
+                    />
+                  )}
                 </div>
-                {message.time && (
-                  <span className={`${message.sender === "user" ? 'text-right' : 'text-left'}`}
-                    style={{
-                      fontSize: "12px",
-                      color: "rgba(44, 60, 78, 0.80)",
-                      fontFamily: "Inter",
-                      fontWeight: 400,
-                      lineHeight: "194%",
-                      display: "block",
-                    }}
-                  >
-                    {message.time}
-                  </span>
-                )}
+                <span
+                  className={`${message.sender._id === currentUserId ? 'text-right' : 'text-left'
+                    }`}
+                  style={{
+                    fontSize: "12px",
+                    color: "rgba(44, 60, 78, 0.80)",
+                    fontFamily: "Inter",
+                    fontWeight: 400,
+                    lineHeight: "194%",
+                    display: "block",
+                  }}
+                >
+                  {new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
             ))}
+
+
+
+            {imagePreview && (
+              <div className="w-full max-w-xs mx-auto my-4 relative">
+                <div className="relative">
+                  <Image src={imagePreview} alt="Selected image" width={300} height={200} className="rounded-lg w-full h-auto" />
+                  <button onClick={handleRemoveImage} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black bg-opacity-60 text-white flex items-center justify-center" > ×
+                  </button>
+                </div>
+              </div>)}
           </main>
         ) : (
           // Chat list (Mobile)
           <main className="flex-grow overflow-y-auto bg-white mt-5 rounded-t-3xl">
-            {chats.map((chat) => (
-              <div key={chat.id}>
-                <div
-                  className={`${chat.read ? 'bg-white' : 'bg-[#F9F9F9]'} flex justify-between items-start p-5 cursor-pointer`}
-                  onClick={() => handleChatClick(chat)}
-                >
-                  <div className="flex items-center">
-                    <Image
-                      src="/icons/similarlisting.png"
-                      alt="Thumbnail"
-                      width={40}
-                      height={40}
-                      className="rounded-full w-9 h-9 mr-3"
-                    />
-                    <div className="flex space-y-2 flex-col">
-                      <div className="flex items-center">
-                        <span className={`font-semibold text-[#2C3C4E]`}
-                          style={{
-                            fontFamily: "Inter",
-                            fontSize: "14px",
-                            lineHeight: "124%",
-                          }}
-                        >
-                         {chat.title}
-                        </span>
+            {chats.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full p-5 text-center">
+                <p className="text-gray-500">No messages yet</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Your conversations will appear here
+                </p>
+              </div>
+            ) : (
+              chats.map((chat) => (
+                <div key={chat._id}>
+                  <div
+                    className={`${chat.unreadCount > 0 ? 'bg-[#F9F9F9]' : 'bg-white'} flex justify-between items-start p-5 cursor-pointer`}
+                    onClick={() => handleChatClick(chat)}
+                  >
+                    <div className="flex items-center">
+                      <Image
+                        src={chat.rentalProperty?.images?.[0] || "/icons/similarlisting.png"}
+                        alt="Thumbnail"
+                        width={40}
+                        height={40}
+                        className="rounded-full w-9 h-9 mr-3"
+                      />
+                      <div className="flex space-y-2 flex-col">
+                        <div className="flex items-center">
+                          <span className={`font-semibold text-[#2C3C4E]`}
+                            style={{
+                              fontFamily: "Inter",
+                              fontSize: "14px",
+                              lineHeight: "124%",
+                            }}
+                          >
+                            {formatChatTitle(chat)}
+                          </span>
+                          <span
+                            style={{
+                              color: "#2C3C4E",
+                              fontFamily: "Inter",
+                              lineHeight: "120%",
+                            }}
+                            className={`ml-4 ${chat.unreadCount === 0 ? "font-normal" : "font-medium"} text-sm`}
+                          >
+                            {formatRelativeTime(chat.updatedAt)}
+                          </span>
+                        </div>
                         <span
                           style={{
                             color: "#2C3C4E",
-                            fontFamily: "Inter",            
+                            fontFamily: "Inter",
+                            fontSize: "14px",
+                            fontWeight: 400,
                             lineHeight: "120%",
-                          }}
-                          className={`ml-4  ${chat.read ? "font-normal" : "font-medium"} text-sm`}
+                          }} className="flex items-center"
                         >
-                          {chat.time}
+                          {
+                            chat.unreadCount > 0 && (
+                              <p className="h-1.5 w-1.5 rounded-full bg-[#0A84FF] mr-2"></p>
+                            )
+                          }
+                          {chat.lastMessage?.content || "No messages yet"}
                         </span>
                       </div>
-                      <span
-                        style={{
-                          color: "#2C3C4E",
-                          fontFamily: "Inter",
-                          fontSize: "14px",
-                          fontWeight: 400,
-                          lineHeight: "120%",
-                        }} className="flex  items-center"
-                      >
-                        {
-                          !chat.read && (
-                            <p className="h-1.5 w-1.5 rounded-full bg-[#0A84FF] mr-2"></p>
-                          )
-                         } 
-                        {chat.subtitle}
-                      </span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <div className="mt-1">
+                        <svg
+                          width="48"
+                          height="48"
+                          viewBox="0 0 20 18"
+                          className="h-6 w-6"
+                          onClick={(e) => handleStarToggle(chat._id, e)}
+                        >
+                          <path
+                            d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
+                            fill={chat.starred ? "#FFBA1A" : "#D9D9D9"}
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <div className="mt-1">
-                      <svg
-                        width="48"
-                        height="48"
-                        viewBox="0 0 20 18"
-                        className="h-6 w-6"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the chat click
-                          handleStarToggle(chat.id);
-                        }}
-                      >
-                        <path
-                          d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
-                          fill={chat.starred ? "#FFBA1A" : "#D9D9D9"}
-                        />
-                      </svg>
-                    </div>
-                  </div>
+                  <hr />
                 </div>
-                <hr />
-              </div>
-            ))}
+              ))
+            )}
           </main>
         )}
 
@@ -353,8 +505,11 @@ export default function ChatList() {
           // Conversation view: sticky input
           <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] py-6 px-4">
             <div className="flex items-center space-x-4">
-              <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Image src={"/icons/plusiconsend.svg"} alt="add" height={120} width={120} className="w-4 h-4" />
+              <button
+                className="w-10 h-10 rounded-full bg-white flex items-center justify-center"
+                onClick={handleImageClick}
+              >
+                <Image src="/icons/plusiconsend.svg" alt="add" height={120} width={120} className="w-4 h-4" />
               </button>
               <input
                 type="text"
@@ -364,8 +519,19 @@ export default function ChatList() {
                   fontFamily: "Inter",
                   fontWeight: 400,
                 }}
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
               />
-              <button className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center">
+              <button
+                className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center"
+                onClick={handleSendMessage}
+              >
                 <Image
                   src="/icons/sendicon.svg"
                   alt="Send"
@@ -384,6 +550,9 @@ export default function ChatList() {
         )}
       </div>
 
+
+
+
       {/* =======================
           DESKTOP VIEW
           - Uses "hidden md:flex" to appear only on md+ screens
@@ -393,56 +562,69 @@ export default function ChatList() {
           <MessagesNavbar />
         </div>
 
-
         {/* Desktop View - Replace the empty div in your existing code */}
         <div className="hidden md:flex h-full bg-white rounded-t-3xl">
           {/* Left sidebar - Message list */}
-          {/* Left sidebar - Message list */}
           <div className="w-full h-full border-r rounded-tl-3xl overflow-y-auto bg-white flex justify-end">
             <div className="w-96 h-full">
-              {dummyChats.map((chat) => (
-                <div key={chat.id}>
-                  <div
-                    className={`${selectedChat?.id === chat.id ? '' : ''
-                      } flex justify-between items-start h-20 p-5 cursor-pointer`}
-                    onClick={() => handleChatClick(chat)}
-                  >
-                    <div className="flex items-start">
-                      <Image
-                        src="/icons/similarlisting.png"
-                        alt="Thumbnail"
-                        width={40}
-                        height={40}
-                        className="rounded-full w-10 h-10 mr-3"
-                      />
-                      <div className="flex flex-col">
-                        <div className="flex items-center">
-                          <span className="text-[#2C3C4E] font-inter text-[14px] font-semibold leading-[124%]">
-                            {chat.title}
-                          </span>
-                          <span className="text-[#2C3C4E] text-[10px] font-normal ml-2">
-                            Just now
-                          </span>
-                        </div>
-                        <div className="mt-1">
-                          <span className="text-[#2C3C4E] font-inter text-[14px] font-medium leading-[120%]">
-                            This is the count of total char . .
-                          </span>
+              {loading ? (
+                <div className="flex h-full items-center justify-center">
+                  <p>Loading...</p>
+                </div>
+              ) : chats.length === 0 ? (
+                <div className="flex h-full items-center justify-center">
+                  <p className="text-gray-500">No messages yet</p>
+                </div>
+              ) : (
+                chats.map((chat) => (
+                  <div key={chat._id}>
+                    <div
+                      className={`${selectedChat?._id === chat._id ? 'bg-[#F9F9F9]' : ''
+                        } flex justify-between items-start h-20 p-5 cursor-pointer`}
+                      onClick={() => handleChatClick(chat)}
+                    >
+                      <div className="flex items-start">
+                        <Image
+                          src={chat.rentalProperty?.images?.[0] || "/icons/similarlisting.png"}
+                          alt="Thumbnail"
+                          width={40}
+                          height={40}
+                          className="rounded-full w-10 h-10 mr-3"
+                        />
+                        <div className="flex flex-col">
+                          <div className="flex items-center">
+                            <span className="text-[#2C3C4E] font-inter text-[14px] font-semibold leading-[124%]">
+                              {formatChatTitle(chat)}
+                            </span>
+                            <span className="text-[#2C3C4E] text-[10px] font-normal ml-2">
+                              {formatRelativeTime(chat.updatedAt)}
+                            </span>
+                          </div>
+                          <div className="mt-1">
+                            <span className="text-[#2C3C4E] font-inter text-[14px] font-medium leading-[120%]">
+                              {chat.lastMessage?.content || "No messages yet"}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="ml-auto">
-                      <Image
-                        src="/icons/staricon.svg"
-                        height={48}
-                        width={48}
-                        className="h-6 w-6 text-yellow-400"
-                        alt="Star"
-                      />
+                      <div className="ml-auto">
+                        <svg
+                          width="48"
+                          height="48"
+                          viewBox="0 0 20 18"
+                          className="h-6 w-6"
+                          onClick={(e) => handleStarToggle(chat._id, e)}
+                        >
+                          <path
+                            d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
+                            fill={chat.starred ? "#FFBA1A" : "#D9D9D9"}
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
@@ -452,30 +634,37 @@ export default function ChatList() {
               <>
                 {/* Chat messages */}
                 <div className="flex-grow overflow-y-auto p-6">
-                  {dummyMessages.map((message) => (
+                  {messages.map((message) => (
                     <div
-                      key={message.id}
-                      className={`mb-4 max-w-52 ${message.sender === "user" ? "ml-auto" : "mr-auto"
+                      key={message._id}
+                      className={`mb-4 max-w-52 ${message.sender._id === currentUserId ? "ml-auto" : "mr-auto"
                         }`}
                     >
                       <div
-                        className={`p-4 ${message.sender === "user"
+                        className={`p-4 ${message.sender._id === currentUserId
                           ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl bg-[#F4F4F4] text-[#2C3C4E]"
                           : "rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#353537] text-white"
                           } `}
                       >
                         <p className="font-inter text-[15px] font-normal leading-relaxed">
-                          {message.text}
+                          {message.content}
                         </p>
+                        {message.image && (
+                          <Image
+                            src={message.image}
+                            alt="Attachment"
+                            width={200}
+                            height={150}
+                            className="mt-2 rounded-md"
+                          />
+                        )}
                       </div>
-                      {message.time && (
-                        <span
-                          className={`text-xs text-[rgba(44,60,78,0.8)] mt-1 ${message.sender === "user" ? "text-right" : "text-left"
-                            }`}
-                        >
-                          {message.time}
-                        </span>
-                      )}
+                      <span
+                        className={`text-xs text-[rgba(44,60,78,0.8)] mt-1 ${message.sender._id === currentUserId ? "text-right" : "text-left"
+                          }`}
+                      >
+                        {new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -499,8 +688,19 @@ export default function ChatList() {
                       fontFamily: "Inter",
                       fontWeight: 400,
                     }}
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
                   />
-                  <button className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center ml-3">
+                  <button
+                    className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center ml-3"
+                    onClick={handleSendMessage}
+                  >
                     <Image
                       src="/icons/sendicon.svg"
                       alt="Send"
@@ -581,5 +781,6 @@ export default function ChatList() {
         </div>
       </div>
     </div>
+
   );
 }

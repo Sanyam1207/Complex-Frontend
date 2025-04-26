@@ -4,13 +4,14 @@ import api from '@/lib/axios';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { User } from '../profile/page';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ["100", "200", "300", "400", "500", "600"] });
 
 export default function PersonalDetails() {
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState({
@@ -19,6 +20,8 @@ export default function PersonalDetails() {
         password: '',
         phoneNumber: ''
     });
+    const [profileImage, setProfileImage] = useState<File | null>(null);
+    const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -50,6 +53,41 @@ export default function PersonalDetails() {
         getDetails();
     }, []);
 
+    // Handle profile picture click to open file dialog
+    const handleProfilePictureClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    // Handle profile picture change
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+
+            // Check if file is an image
+            if (!file.type.startsWith('image/')) {
+                setError('Please select an image file');
+                return;
+            }
+
+            // Check file size (limit to 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                setError('Image size should be less than 5MB');
+                return;
+            }
+
+            setProfileImage(file);
+
+            // Create a preview URL for the image
+            const previewUrl = URL.createObjectURL(file);
+            setProfileImagePreview(previewUrl);
+
+            // Clear any previous errors
+            setError('');
+        }
+    };
+
     // Handle input changes
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -67,18 +105,49 @@ export default function PersonalDetails() {
         setSuccessMessage('');
 
         try {
-            // Only include password if it's been changed
-            const dataToSubmit = {
-                ...formData,
-                password: formData.password ? formData.password : undefined
-            };
+            // Create a FormData object for sending both text fields and file
+            const formDataToSend = new FormData();
 
-            const response = await api.put(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`, dataToSubmit);
+            // Add text fields
+            formDataToSend.append('fullName', formData.fullName);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('phoneNumber', formData.phoneNumber);
+
+            // Only add password if it's been changed
+            if (formData.password) {
+                formDataToSend.append('password', formData.password);
+            }
+
+            // Add profile image if selected
+            if (profileImage) {
+                console.log(profileImage)
+                formDataToSend.append('profilePicture', profileImage);
+                console.log(`FormData to send : ${formDataToSend}`)
+            }
+
+            console.log(formDataToSend)
+
+            const response = await api.put(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`,
+                formDataToSend,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
 
             if (response.data.success) {
                 setSuccessMessage('Profile updated successfully!');
                 // Update the user state with new data
                 setUser(response.data.user);
+
+                // Clean up the object URL to avoid memory leaks
+                if (profileImagePreview) {
+                    URL.revokeObjectURL(profileImagePreview);
+                    setProfileImagePreview(null);
+                }
+                setProfileImage(null);
             } else {
                 setError(response.data.message || 'Failed to update profile');
             }
@@ -134,6 +203,15 @@ export default function PersonalDetails() {
 
     return (
         <>
+            {/* Hidden file input for profile picture */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+            />
+
             {/* ==================== MOBILE VIEW (Android-style) ==================== */}
             <div className={`${inter.className} flex flex-col md:hidden bg-black h-screen w-full`}>
                 {/* Top bar: Back arrow + Title */}
@@ -153,11 +231,15 @@ export default function PersonalDetails() {
 
                     <div className="relative w-24 h-24 mb-3 mt-2">
                         {/* Profile picture */}
-                        <div className="w-24 h-24 rounded-full flex items-center p-0 justify-center overflow-hidden">
+                        <div
+                            className="w-24 h-24 rounded-full flex items-center p-0 justify-center overflow-hidden cursor-pointer"
+                            onClick={handleProfilePictureClick}
+                        >
                             <Image
-                                src={user?.profilePicture === 'default-profile.jpg'
-                                    ? "/icons/personaldetailplaceholder.svg"
-                                    : user?.profilePicture || "/icons/personaldetailplaceholder.svg"}
+                                src={profileImagePreview ||
+                                    (user?.profilePicture && user.profilePicture !== 'default-profile.jpg'
+                                        ? user.profilePicture
+                                        : "/icons/personaldetailplaceholder.svg")}
                                 alt='profile picture'
                                 height={120}
                                 width={120}
@@ -165,20 +247,24 @@ export default function PersonalDetails() {
                             />
                         </div>
                         {/* Small camera/plus icon circle on the bottom-right */}
-                        <div className="absolute flex items-center justify-center bottom-1 right-1 w-6 h-6 rounded-full bg-white ">
+                        <div
+                            className="absolute flex items-center justify-center bottom-1 right-1 w-[23px] h-[23px] rounded-full bg-white cursor-pointer"
+                            onClick={handleProfilePictureClick}
+                        >
                             <Image
                                 src="/icons/addprofilepic.svg"
                                 alt="camera"
                                 width={24}
                                 height={24}
-                                className='h-[34.3px] object-cover'
+                                className='h-[31px] object-cover flex items-center justify-center'
                             />
                         </div>
                     </div>
 
                     {/* Heading under the profile picture */}
                     <p className="font-medium text-sm mb-5 text-white">
-                        {user?.profilePicture === 'default-profile.jpg' ? 'Add your profile picture' : 'Change profile picture'}
+                        {profileImagePreview ? 'Change profile picture' :
+                            user?.profilePicture === 'default-profile.jpg' ? 'Add your profile picture' : 'Change profile picture'}
                     </p>
                 </div>
 
@@ -209,7 +295,7 @@ export default function PersonalDetails() {
                             value={formData.fullName}
                             onChange={handleInputChange}
                             placeholder="Enter your full name"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
                         />
 
                         {/* Email */}
@@ -222,7 +308,7 @@ export default function PersonalDetails() {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="Enter your email"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
                         />
 
                         {/* Change password */}
@@ -235,7 +321,7 @@ export default function PersonalDetails() {
                             onChange={handleInputChange}
                             type="password"
                             placeholder="Leave blank to keep current password"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
                         />
 
                         {/* Phone number */}
@@ -245,10 +331,10 @@ export default function PersonalDetails() {
                         <input
                             type="tel"
                             name="phoneNumber"
-                            value={formData.phoneNumber}  // Use formData which is connected to your state
+                            value={formData.phoneNumber}
                             onChange={handleInputChange}
                             placeholder="Enter your phone number"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#2C3C4E] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
                         />
 
                         {/* Save button */}
@@ -293,11 +379,15 @@ export default function PersonalDetails() {
                     {/* Profile picture container */}
                     <div className="relative w-24 h-24">
                         {/* Profile picture */}
-                        <div className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden">
+                        <div
+                            className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
+                            onClick={handleProfilePictureClick}
+                        >
                             <Image
-                                src={user?.profilePicture === 'default-profile.jpg'
-                                    ? "/icons/personaldetailplaceholder.svg"
-                                    : user?.profilePicture || "/icons/personaldetailplaceholder.svg"}
+                                src={profileImagePreview ||
+                                    (user?.profilePicture && user.profilePicture !== 'default-profile.jpg'
+                                        ? user.profilePicture
+                                        : "/icons/personaldetailplaceholder.svg")}
                                 alt='profile picture'
                                 height={120}
                                 width={120}
@@ -306,7 +396,10 @@ export default function PersonalDetails() {
                         </div>
 
                         {/* Small camera icon circle on top-right corner */}
-                        <div className="absolute top-[4.3rem] right-1 w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center border-2 border-white">
+                        <div
+                            className="absolute top-[4.3rem] right-1 w-6 h-6 rounded-full bg-[#0A84FF] flex items-center justify-center border-2 border-white cursor-pointer"
+                            onClick={handleProfilePictureClick}
+                        >
                             <Image
                                 src={"/icons/profile.svg"}
                                 alt="camera"
@@ -318,7 +411,8 @@ export default function PersonalDetails() {
 
                     {/* Heading under the profile picture */}
                     <p className="mt-3 text-lg font-medium text-black">
-                        {user?.profilePicture === 'default-profile.jpg' ? 'Add your profile picture' : 'Change profile picture'}
+                        {profileImagePreview ? 'Change profile picture' :
+                            user?.profilePicture === 'default-profile.jpg' ? 'Add your profile picture' : 'Change profile picture'}
                     </p>
 
                     {/* Form fields */}
