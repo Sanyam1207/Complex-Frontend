@@ -6,24 +6,35 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { closePopup, openPopup, selectIsPopupOpen } from "@/redux/slices/showPopups";
+import { RootState } from "@/redux/store/store";
 
 const inter = Inter({
   subsets: ["latin"],
 });
 
-interface SignUpModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  setOnOpenSignup: (isOpen: boolean) => void;
-}
-
-const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSignup }) => {
+const LoginModal: React.FC = () => {
+  const dispatch = useDispatch();
+  const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'login'));
+  
   // All hooks are called unconditionally at the top
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Handle close action
+  const handleClose = () => {
+    dispatch(closePopup('login'));
+  };
+  
+  // Handle opening signup modal
+  const handleOpenSignup = () => {
+    dispatch(closePopup('login'));
+    dispatch(openPopup('signup'));
+  };
 
   // Early return based on isOpen AFTER all hooks have been called
   if (!isOpen) return null;
@@ -69,6 +80,9 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
         // You might want to store user info as well
         localStorage.setItem('user', JSON.stringify(response.data.user));
 
+        // Close the modal
+        dispatch(closePopup('login'));
+
         // Redirect to homepage or dashboard
         router.push(`/home?token=${response.data.token}`);
       } else {
@@ -86,7 +100,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center ${inter.className}`}>
       {/* Overlay / Backdrop */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={handleClose} />
 
       {/* =======================
           DESKTOP VIEW
@@ -94,7 +108,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
       <div className="hidden md:block relative z-50 w-[36rem] rounded-2xl bg-white px-28 py-10 shadow-lg">
         {/* Close Button */}
         <div className="absolute top-4 right-4 border rounded-full px-2 py-1 text-gray-500 hover:text-gray-800">
-          <button onClick={onClose} aria-label="Close">
+          <button onClick={handleClose} aria-label="Close">
             ✕
           </button>
         </div>
@@ -197,10 +211,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
 
           <div className="text-[#2C3C4E] text-sm my-8">
             Other ways to{" "}
-            <Link onClick={() => {
-              onClose();
-              setOnOpenSignup(true);
-            }} className="text-[#0A84FF]" href="#">
+            <Link onClick={handleOpenSignup} className="text-[#0A84FF]" href="#">
               sign up
             </Link>
           </div>
@@ -226,7 +237,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
       <div className="block md:hidden absolute bottom-0 z-50 w-full max-w-md mx-auto rounded-t-2xl bg-white px-6 py-8 shadow-lg">
         {/* Close Button */}
         <div className="absolute top-4 right-4 border rounded-full px-2 py-1 text-gray-500 hover:text-gray-800">
-          <button onClick={onClose} aria-label="Close">
+          <button onClick={handleClose} aria-label="Close">
             ✕
           </button>
         </div>
@@ -327,10 +338,7 @@ const LoginModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, setOnOpenSign
 
           <div className="text-[#2C3C4E] text-sm my-8">
             Other ways to{" "}
-            <span className="text-[#0A84FF]" onClick={() => {
-              onClose()
-              setOnOpenSignup(true)
-            }}>
+            <span className="text-[#0A84FF] cursor-pointer" onClick={handleOpenSignup}>
               sign up
             </span>
           </div>

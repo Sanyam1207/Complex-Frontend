@@ -6,6 +6,9 @@ import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { openPopup } from "@/redux/slices/showPopups";
+
 const inter = Inter({
     subsets: ["latin"],
 })
@@ -34,7 +37,7 @@ export interface User {
 
 export default function ProfilePage() {
     const router = useRouter();
-    const [logoutModal, setLogoutModal] = useState(false);
+    const dispatch = useDispatch();
     const [user, setUser] = useState<User>();
 
     useLayoutEffect(() => {
@@ -53,6 +56,18 @@ export default function ProfilePage() {
         }
         getDetails()
     }, [])
+
+    // Function to handle logout
+    const handleLogout = () => {
+        dispatch(openPopup('logout'));
+    };
+
+    // Function to perform actual logout
+    const performLogout = () => {
+        // Add your logout logic here
+        localStorage.removeItem('token');
+        router.push('/login');
+    };
 
     return (
         <div className={`min-h-screen bg-[#1F1F21] ${inter.className}`}>
@@ -193,17 +208,17 @@ export default function ProfilePage() {
                 <hr />
 
                 {/* -- 3) LOGOUT BUTTON -- */}
-                <div onClick={() => { setLogoutModal(true) }} className="flex justify-center mt-6 mb-6">
-                    <button className="bg-[#0A84FF] text-white px-6 py-3 rounded-full text-sm font-semibold">
+                <div className="flex justify-center mt-6 mb-6">
+                    <button 
+                        onClick={handleLogout}
+                        className="bg-[#0A84FF] text-white px-6 py-3 rounded-full text-sm font-semibold"
+                    >
                         Logout
                     </button>
                 </div>
 
-                {
-                    logoutModal && (
-                        <LogoutModal isOpen={logoutModal} onClose={() => { setLogoutModal(false) }} onConfirm={() => { alert('logged out') }} />
-                    )
-                }
+                {/* LogoutModal - No need to conditionally render */}
+                <LogoutModal onConfirm={performLogout} />
             </div>
 
             <MobileBottomTabs />

@@ -3,28 +3,44 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { openPopup } from '@/redux/slices/showPopups';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, loading, setShowLoginModal } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useDispatch();
+
+  // Define public routes that don't require authentication
+  const publicRoutes = ['/home', '/show-listing'];
+  const isPublicRoute = publicRoutes.some(route => 
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
 
   useEffect(() => {
-    // Skip authentication check for the homepage
-    if (pathname === '/home') return;
+    // Skip authentication check for public routes
+    if (isPublicRoute) return;
     
-    // If not authenticated and not loading, show login modal and redirect to home
+    // If not authenticated and not loading, show onboarding popup and redirect to home
     if (!isAuthenticated && !loading) {
+      // Store the intended route in localStorage so you can redirect back after login
+      localStorage.setItem('redirectAfterLogin', pathname);
+      
+      // Open the onboarding popup
+      dispatch(openPopup('onboarding'));
+      
+      // Redirect to home
       router.push('/home');
     }
-  }, [isAuthenticated, loading, pathname, router, setShowLoginModal]);
+  }, [isAuthenticated, loading, pathname, router, dispatch, isPublicRoute]);
 
-  // If it's the homepage, always render children
-  if (pathname === '/home') {
+  // If it's a public route, always render children
+  if (isPublicRoute) {
     return <>{children}</>;
   }
 

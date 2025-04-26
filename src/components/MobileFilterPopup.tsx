@@ -1,22 +1,23 @@
 "use client";
 
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { applyFilters } from "@/redux/slices/categorySlice";
+import { AnimatePresence, motion } from "framer-motion";
 import { Inter } from "next/font/google";
 import Image from "next/image";
-import SearchDropdown from "./SearchDropdown";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../redux/store/store";
 import {
+  resetFilters,
+  setBathrooms,
+  setBedrooms,
+  setMaxValue,
+  setMinValue,
+  setSelectedSort,
   setSelectedStayDuration,
   toggleSelectedFilter,
-  setBedrooms,
-  setBathrooms,
-  setMinValue,
-  setMaxValue,
-  setSelectedSort,
-  resetFilters,
 } from "../redux/slices/filterSlice";
+import type { RootState } from "../redux/store/store";
+import SearchDropdown from "./SearchDropdown";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,6 +45,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
 
   const handleClearFilter = () => {
     dispatch(resetFilters());
+    dispatch(applyFilters())
   };
 
   return (
@@ -149,23 +151,21 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 <div className="flex space-x-3 items-center">
                   <button
                     onClick={() => dispatch(setSelectedStayDuration("lt6"))}
-                    className={`border border-[#2D3D4E] rounded-full px-4 h-fit py-1.5 text-[14px] transition ${
-                      selectedStayDuration === "lt6"
+                    className={`border border-[#2D3D4E] rounded-full px-4 h-fit py-1.5 text-[14px] transition ${selectedStayDuration === "lt6"
                         ? "bg-[#0A84FF] text-white border-transparent"
                         : "border-[#E3E2E0] text-[#2C3C4E]"
-                    }`}
-             
+                      }`}
+
                   >
                     1 - 6 months
                   </button>
                   <button
                     onClick={() => dispatch(setSelectedStayDuration("gt6"))}
-                    className={`border border-[#2D3D4E] rounded-full h-fit py-1.5 px-4 text-[14px] transition ${
-                      selectedStayDuration === "gt6"
+                    className={`border border-[#2D3D4E] rounded-full h-fit py-1.5 px-4 text-[14px] transition ${selectedStayDuration === "gt6"
                         ? "bg-[#0A84FF] text-white border-transparent"
                         : "border-[#E3E2E0] text-[#2C3C4E]"
-                    } `}
-                
+                      } `}
+
                   >
                     6+ months
                   </button>
@@ -186,11 +186,10 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                     <button
                       key={filter}
                       onClick={() => handleToggleFilter(filter)}
-                      className={`border border-[#2D3D4E] rounded-full px-6 py-2 h-fit text-[14px] transition ${
-                        selectedFilters.includes(filter)
+                      className={`border border-[#2D3D4E] rounded-full px-6 py-2 h-fit text-[14px] transition ${selectedFilters.includes(filter)
                           ? "bg-[#0A84FF] text-white border-transparent"
                           : "border-[#E3E2E0] text-[#2C3C4E]"
-                      }`}
+                        }`}
                       style={{ lineHeight: "16px" }}
                     >
                       {filter}
@@ -276,14 +275,19 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                 onClick={handleClearFilter}
                 className="text-[#0A84FF] py-4 px-10 text-sm rounded-full border border-slate-300 font-normal"
                 style={{ lineHeight: "16px" }}
+                
               >
                 Clear filter
               </button>
               <button
                 className="bg-black text-white text-sm rounded-full py-4 px-10 hover:bg-gray-800 transition"
                 style={{ lineHeight: "16px" }}
+                onClick={() => {
+                  dispatch(applyFilters());
+                  onClose(); // Close the modal after applying filters
+                }}
               >
-                View 27 rentals
+                Show Rentals
               </button>
             </div>
           </motion.div>

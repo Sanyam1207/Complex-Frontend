@@ -43,7 +43,6 @@ export default function TabsBar() {
             {/* Use different images based on selected state */}
             <Image
               alt={tab.label}
-              
               src={selectedCategory === tab.value ? `${tab.activeIcon}` : `${tab.icon}`}
               width={27}
               height={27}

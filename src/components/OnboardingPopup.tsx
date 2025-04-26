@@ -1,8 +1,11 @@
 "use client";
 
+import { selectIsPopupOpen, closePopup, openPopup } from "@/redux/slices/showPopups";
+import { RootState } from "@/redux/store/store";
 import { Inter, Knewave } from "next/font/google";
 import Image from "next/image";
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -12,17 +15,25 @@ const knewave = Knewave({
     weight: ["400"],
 })
 
-interface LoginPopupProps {
-    isOpen: boolean;
-    onClose: () => void;
-    setShowLoginModal: (show: boolean) => void;
-    setShowOnboardingPopup: (show: boolean) => void;
-    setShowSignupPopup: (show: boolean) => void;
-}
-
-const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, setShowOnboardingPopup, onClose, setShowLoginModal }) => {
+const OnBoardingPopup: React.FC = () => {
+    const dispatch = useDispatch();
     const [error, setError] = React.useState<string | null>(null);
     console.log(error)
+    const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'onboarding'));
+
+    const handleClose = () => {
+        dispatch(closePopup('onboarding'));
+    };
+
+    const handleOpenLogin = () => {
+        dispatch(closePopup('onboarding'));
+        dispatch(openPopup('login'));
+    };
+
+    const handleOpenSignup = () => {
+        dispatch(closePopup('onboarding'));
+        dispatch(openPopup('signup'));
+    };
 
     // Early return based on isOpen AFTER all hooks have been called
     if (!isOpen) return null;
@@ -45,7 +56,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, set
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center ${inter.className}`}>
             {/* Overlay / Backdrop */}
-            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={handleClose} />
 
             {/* =======================
           DESKTOP VIEW
@@ -60,13 +71,13 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, set
             <div className="block md:hidden absolute bottom-0 z-50 w-full max-w-md mx-auto rounded-t-2xl bg-white px-6 py-8 shadow-lg">
                 {/* Close Button */}
                 <div className="absolute top-4 right-4">
-                    <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-gray-800">
+                    <button onClick={handleClose} aria-label="Close" className="text-gray-500 hover:text-gray-800">
                         <Image src={'/icons/closeicon.svg'} alt="close" height={28} width={28} />
                     </button>
                 </div>
 
                 <div className="absolute top-7 left-7">
-                    <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-gray-800">
+                    <button onClick={handleClose} aria-label="Close" className="text-gray-500 hover:text-gray-800">
                         <Image src={'/icons/stars.svg'} alt="close" height={28} width={28} />
                     </button>
                 </div>
@@ -117,10 +128,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, set
 
                     {/* Email */}
                     <div className="flex flex-col items-center">
-                        <button onClick={() => {
-                            setShowOnboardingPopup(false)
-                            setShowLoginModal(true)
-                        }} className="w-16 h-16 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition">
+                        <button onClick={handleOpenLogin} className="w-16 h-16 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#0A84FF" />
                             </svg>
@@ -132,10 +140,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, set
                 {/* Other Ways to Sign Up */}
                 <div className="text-center mb-6">
                     <p className="text-[#2C3C4E] text-sm">
-                        Other ways to <span onClick={() => {
-                            setShowOnboardingPopup(false)
-                            setShowSignupPopup(true)
-                            }} className="text-[#0A84FF] font-medium">Sign up</span>
+                        Other ways to <span onClick={handleOpenSignup} className="text-[#0A84FF] font-medium cursor-pointer">Sign up</span>
                     </p>
                 </div>
 
@@ -148,4 +153,4 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, setShowSignupPopup, set
     );
 };
 
-export default LoginPopup;
+export default OnBoardingPopup;

@@ -5,27 +5,31 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { closePopup, selectIsPopupOpen } from "@/redux/slices/showPopups";
+import { RootState } from "@/redux/store/store";
 
 const inter = Inter({
     subsets: ["latin"],
 });
 
-interface SignUpModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
-
-const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
-
+const SignUpModal: React.FC = () => {
+    const dispatch = useDispatch();
+    const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'signup'));
+    
     const [fullName, setFullName] = useState("");
     const router = useRouter();
     const [error, setError] = useState("");
     console.log(error)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    if (!isOpen) return null;
+    
+    // Handle close action
+    const handleClose = () => {
+        dispatch(closePopup('signup'));
+    };
 
-    // Now conditionally return based on isOpen
+    // Early return based on isOpen
     if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,8 +38,8 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
         console.log(response)
 
         if (response.data.success) {
-            onClose()
-            router.push(`/home?token=${response.data.token}`)
+            dispatch(closePopup('signup'));
+            router.push(`/home?token=${response.data.token}`);
         }
     };
 
@@ -60,7 +64,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
             {/* Overlay / Backdrop */}
             <div
                 className="absolute inset-0 bg-black bg-opacity-50"
-                onClick={onClose}
+                onClick={handleClose}
             />
 
             {/* ==========================
@@ -69,7 +73,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
             <div className="hidden md:block relative z-50 w-[36rem] py-6 rounded-2xl bg-white px-28 shadow-lg">
                 {/* Close Button */}
                 <div className="absolute top-4 px-2 py-1 right-4 border rounded-full text-gray-500 hover:text-gray-800">
-                    <button onClick={onClose} aria-label="Close">
+                    <button onClick={handleClose} aria-label="Close">
                         ✕
                     </button>
                 </div>
@@ -155,7 +159,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
                             <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
                         </div>
                         <div className="flex flex-col items-center space-y-1">
-                            <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                            <button onClick={handleGoogleLogin} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
                                 <Image
                                     src="/icons/googlelogo.svg"
                                     alt="Google"
@@ -203,7 +207,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
                     <div className="rounded-t-2xl bg-white">
                         {/* Close Button */}
                         <div className="flex items-center justify-center absolute top-8 left-4 bg-[#353537] h-7 w-7 rounded-full hover:text-gray-800">
-                            <button onClick={onClose} aria-label="Close">
+                            <button onClick={handleClose} aria-label="Close">
                                 <Image src={'/icons/backarrow.svg'} height={12} width={12} alt="back arrow" />
                             </button>
                         </div>
@@ -288,7 +292,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose }) => {
                                         <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
                                     </div>
                                     <div className="flex flex-col items-center space-y-1">
-                                        <button onClick={() => handleGoogleLogin()} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                                        <button onClick={handleGoogleLogin} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
                                             <Image
                                                 src="/icons/googlelogo.svg"
                                                 alt="Google"

@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Knewave, Inter } from "next/font/google";
-import Image from "next/image";
+import { closePopup, openPopup } from "@/redux/slices/showPopups";
 import { Menu as MenuIcon } from "lucide-react";
-import SignUpModal from "./RegisterPopup";
-import LoginModal from "./LoginPopup";
-import MobileFilterModal from "./MobileFilterPopup";
+import { Inter, Knewave } from "next/font/google";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store/store";
+import LoginModal from "./LoginPopup";
 import LogoutModal from "./LogoutModal";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store/store"; // adjust path as needed
+import MobileFilterModal from "./MobileFilterPopup";
 import OnBoardingPopup from "./OnboardingPopup";
-import { useAuth } from "@/context/AuthContext";
+import SignUpModal from "./RegisterPopup";
 
 // Fonts
 const knewave = Knewave({
@@ -24,6 +24,7 @@ const inter = Inter({
 });
 
 export default function Navbar() {
+  const dispatch = useDispatch();
   const hidePaths = [
     "/messages",
     "/wishlist",
@@ -52,10 +53,7 @@ export default function Navbar() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [showSignUpModel, setShowSignUpModal] = useState(false);
   const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [onBoardingPopup, setOnBoardingPopup] = useState(false);
 
   // Extract multiple fields from your filter slice
   const {
@@ -78,33 +76,11 @@ export default function Navbar() {
     (selectedFilters.length > 0 ? 1 : 0) +
     (selectedSort !== "price" ? 1 : 0);
 
-  // Handler for confirming deletion
+  // Handler for confirming logout
   const handleLogout = () => {
-    console.log("Listing deleted!");
-    setShowLogoutModal(false);
+    console.log("User logged out!");
+    dispatch(closePopup('logout'));
   };
-
-  const { isAuthenticated, user, logout, showLoginModal, setShowLoginModal } = useAuth();
-  console.log(user)
-  console.log(logout)
-
-
-  // Only show onboarding to unauthenticated users and only once
-  useEffect(() => {
-    // Check if the user has already dismissed the onboarding
-    const onboardingDismissed = localStorage.getItem('onboardingDismissed');
-    
-    // Only show onboarding if:
-    // 1. User is not authenticated
-    // 2. User hasn't dismissed onboarding before
-    if (!isAuthenticated && !onboardingDismissed) {
-      setOnBoardingPopup(true);
-    } else {
-      setOnBoardingPopup(false);
-    }
-  }, [isAuthenticated]);
-
-
 
   return (
     <nav className={`sticky top-0 z-10 bg-[#1c1c1c] text-white ${inter.className}`}>
@@ -154,24 +130,24 @@ export default function Navbar() {
 
           {/* Mobile filter icon with chip indicator and conditional background */}
           <div className="relative flex-shrink-0">
-                     <button
-                       onClick={() => setShowMobileFilterModal(true)}
-                       className={`h-11 w-11 rounded-full flex items-center justify-center relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
-                         }`}
-                     >
-                       <Image
-                         src="/icons/mobileslider.svg"
-                         alt="Slider Icon"
-                         width={15}
-                         height={12}
-                       />
-                       {compositeCount > 0 && (
-                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                           {compositeCount}
-                         </span>
-                       )}
-                     </button>
-                   </div>
+            <button
+              onClick={() => setShowMobileFilterModal(true)}
+              className={`h-11 w-11 rounded-full flex items-center justify-center relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
+                }`}
+            >
+              <Image
+                src="/icons/mobileslider.svg"
+                alt="Slider Icon"
+                width={15}
+                height={12}
+              />
+              {compositeCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {compositeCount}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         <MobileFilterModal
@@ -255,10 +231,10 @@ export default function Navbar() {
             {menuOpen && (
               <div className="absolute right-2 top-[110%] mt-2 w-[10rem] bg-white text-black rounded-lg shadow-md">
                 <ul className="flex flex-col py-2 text-[0.875rem]">
-                  <li onClick={() => setShowLoginModal(true)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                  <li onClick={() => dispatch(openPopup('login'))} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                     Login
                   </li>
-                  <li onClick={() => setShowSignUpModal((prev) => !prev)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                  <li onClick={() => dispatch(openPopup('signup'))} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                     Sign up
                   </li>
                   <li onClick={() => router.push("/create-listing")} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
@@ -292,7 +268,7 @@ export default function Navbar() {
                   <li onClick={() => router.push("/help-feedback")} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                     Feedback
                   </li>
-                  <li onClick={() => setShowLogoutModal(true)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                  <li onClick={() => dispatch(openPopup('logout'))} className="cursor-pointer px-4 py-2 hover:bg-gray-100">
                     Logout
                   </li>
                 </ul>
@@ -309,10 +285,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      <SignUpModal isOpen={showSignUpModel} onClose={() => setShowSignUpModal(false)} />
-      <LoginModal setOnOpenSignup={setShowSignUpModal} isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
-      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={handleLogout} />
-      <OnBoardingPopup setShowLoginModal={setShowLoginModal} setShowOnboardingPopup={setOnBoardingPopup} setShowSignupPopup={setShowSignUpModal} isOpen={onBoardingPopup}  onClose={() => {setOnBoardingPopup(false)}}  />
+      {/* Popup components - they check their own state from Redux */}
+      <SignUpModal />
+      <LoginModal />
+      <LogoutModal onConfirm={handleLogout} />
+      <OnBoardingPopup />
     </nav>
   );
 }

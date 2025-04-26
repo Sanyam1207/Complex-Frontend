@@ -1,3 +1,4 @@
+// app/page.tsx
 "use client";
 
 import CreateListingStepper from "@/components/CreateListingStepper";
@@ -5,7 +6,13 @@ import Navbar from "@/components/NavBar";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
+import PropertyTypeSelector from "./step1";
+import RentalDetails from "./step2";
+import LocationSelector from "./step3";
+import PropertyFeatures from "./step4";
+import PropertyDescription from "./step5";
+import PropertyPhotos from "./step6";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -102,105 +109,51 @@ const steps = [
     "Final step to upload photos/videos",
 ];
 
-/** Reusable card for each property item */
-function PropertyCard({ item, setActiveStep }: { item: TypeItem, setActiveStep: (step: number) => void }) {
-    return (
-        <div onClick={() => setActiveStep(2)} className="hover:cursor-pointer flex items-center space-x-4 bg-[#F4F4F4] p-4 rounded-md ">
-            <div className="w-10 h-10 bg-[#1F1F21] flex p-2 items-center justify-center rounded-full">
-                {item.icon}
-            </div>
-            <div className="flex flex-col">
-                <span className="font-medium">{item.title}</span>
-                <span className="text-sm text-gray-500">{item.description}</span>
-            </div>
-        </div>
-    );
-}
-
-/** Column for property type (Apartment or House).
-    - On desktop, always visible.
-    - On mobile, visible only if it matches the selectedTab. */
-function PropertyColumn({
-    title,
-    items,
-    selectedTab,
-    isThisTab,
-    setActiveStep,
-}: {
-    title: string;
-    items: TypeItem[];
-    selectedTab: string;
-    isThisTab?: string;
-    setActiveStep?: (step: number) => void;
-}) {
-    return (
-        <div
-            className={`
-        // For desktop, show both columns side-by-side
-        md:w-1/2 md:block 
-
-        // On mobile, show only the column that matches the selected tab
-        ${selectedTab === isThisTab ? "block" : "hidden"}
-
-        // Some spacing and sizing
-        space-y-4 w-full max-w-md
-      `}
-        >
-            {/* Title is hidden on mobile (since we use tab buttons), 
-          but shown on desktop */}
-            <h2 className="hidden md:block text-xl font-semibold">{title}</h2>
-
-            {items.map((item) => (
-                <PropertyCard setActiveStep={setActiveStep!} key={item.title} item={item} />
-            ))}
-        </div>
-    );
-}
-
 export default function Page() {
     const router = useRouter();
     const [activeStep, setActiveStep] = useState(1);
     const [selectedTab, setSelectedTab] = useState<"Apartment" | "House">("Apartment");
+    const [selectedPropertyType, setSelectedPropertyType] = useState("");
+
+    // Step 2 state
+    const [monthlyPrice, setMonthlyPrice] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [leaseDuration, setLeaseDuration] = useState("Month-To-Month / Flexible");
+
+    // Step 3 state
+    const [location, setLocation] = useState("");
+    const [intersection, setIntersection] = useState("");
+
+    // Step 4 state
     const [bedrooms, setBedrooms] = useState("");
     const [bathrooms, setBathrooms] = useState("");
-
-    // State for toggle: "Couple-friendly".
     const [isCoupleFriendly, setIsCoupleFriendly] = useState(false);
-    // eslint-disable-next-line
-    const [description, setDescription] = useState("");
+    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
-    // eslint-disable-next-line
-    const [walikingDistanceTo, setWalkingDistanceTo] = useState("");
-    console.log(`${description} ${isCoupleFriendly} ${setDescription} ${setIsCoupleFriendly} ${setWalkingDistanceTo} ${walikingDistanceTo} ${setWalkingDistanceTo}`);
+    // Step 5 state
+    const [descriptionPoints, setDescriptionPoints] = useState(["", ""]);
+    const [walkingDistancePoints, setWalkingDistancePoints] = useState(["", ""]);
+    const [submitting, setIsSubmitting] = useState(false);
+
+    // Step 6 state
+    const [images, setImages] = useState<string[]>([]);
 
     // List of possible amenities
     const availableAmenities = [
-        {title: "Pet Friendly", icon: '/icons/petfriendly.svg'},
-        {title: "Parking", icon: '/icons/amenetiesparking.svg'},
-        {title: "Utilities", icon: '/icons/amenetiesutilities.svg'},
-        {title: "Wi-Fi", icon: '/icons/amenetieswifi.svg'},
-        {title: "Laundry", icon: '/icons/amenetieslaundry.svg'},
-        {title: "Air Conditioning", icon: '/icons/amenetiesac.svg'},
-        {title: "Furnished", icon: '/icons/amenetiesfurnished.svg'},
-        {title: "Storage", icon: '/icons/amenetiesstorage.svg'},
-        {title: "Balcony", icon: '/icons/amenetiesbalconies.svg'},
-        {title: "Heating", icon: '/icons/amenetiesheating.svg'},
-        {title: "Dishwasher", icon: '/icons/amenetiesdishwasher.svg'},
+        { title: "Pet Friendly", icon: '/icons/petfriendly.svg' },
+        { title: "Parking", icon: '/icons/amenetiesparking.svg' },
+        { title: "Utilities", icon: '/icons/amenetiesutilities.svg' },
+        { title: "Wi-Fi", icon: '/icons/amenetieswifi.svg' },
+        { title: "Laundry", icon: '/icons/amenetieslaundry.svg' },
+        { title: "Air Conditioning", icon: '/icons/amenetiesac.svg' },
+        { title: "Furnished", icon: '/icons/amenetiesfurnished.svg' },
+        { title: "Storage", icon: '/icons/amenetiesstorage.svg' },
+        { title: "Balcony", icon: '/icons/amenetiesbalconies.svg' },
+        { title: "Heating", icon: '/icons/amenetiesheating.svg' },
+        { title: "Dishwasher", icon: '/icons/amenetiesdishwasher.svg' },
     ];
 
-    // State for selected amenities (array of strings).
-    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-
-    // Toggle an amenity in the selectedAmenities array
-    const handleAmenityToggle = (amenity: string) => {
-        if (selectedAmenities.includes(amenity)) {
-            setSelectedAmenities((prev) => prev.filter((a) => a !== amenity));
-        } else {
-            setSelectedAmenities((prev) => [...prev, amenity]);
-        }
-    };
-
-
+    // Event handlers
     const handleBackButton = () => {
         if (activeStep > 1) {
             setActiveStep((prev) => prev - 1);
@@ -210,68 +163,225 @@ export default function Page() {
         }
     };
 
-    // eslint-disable-next-line
-    const [descriptionPoints, setDescriptionPoints] = useState(["", ""]);
+    const handlePropertySelect = (propertyType: string) => {
+        setSelectedPropertyType(propertyType);
+        setActiveStep(2);
+    };
 
-    // 2) Manage the "Walking Distance" points: each index is an independent text value
-    const [walkingDistancePoints, setWalkingDistancePoints] = useState(["", ""]);
 
-    // Handler to add a new Description input
+    const handleSubmitListing = async () => {
+        try {
+            // Show loading state
+            setIsSubmitting(true);
+
+            // Form validation
+            if (!selectedPropertyType) {
+                alert("Please select a property type");
+                setActiveStep(1);
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!monthlyPrice || !startDate) {
+                alert("Please provide price and start date");
+                setActiveStep(2);
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!location) {
+                alert("Please provide a location");
+                setActiveStep(3);
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!bedrooms || !bathrooms) {
+                alert("Please specify bedrooms and bathrooms");
+                setActiveStep(4);
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Determine the correct property type value based on selection
+            let propertyType;
+            if (selectedTab === "Apartment") {
+                propertyType = selectedPropertyType === "Shared Room"
+                    ? "Shared Room in Apartment"
+                    : selectedPropertyType;
+            } else {
+                propertyType = selectedPropertyType === "Shared Room"
+                    ? "Shared Room in House"
+                    : selectedPropertyType;
+            }
+
+            // Create a FormData object for multipart form submission
+            const formData = new FormData();
+
+            // Add all the text data as a single JSON field
+            const rentalData = {
+                propertyType: propertyType,
+                monthlyPrice: Number(monthlyPrice),
+                startDate: new Date(startDate).toISOString(),
+                leaseDuration: leaseDuration,
+                location: location,
+                nearestIntersection: intersection,
+                numberOfBedrooms: Number(bedrooms),
+                numberOfBathrooms: Number(bathrooms),
+                coupleFriendly: isCoupleFriendly,
+                amenities: selectedAmenities,
+                description: descriptionPoints.filter(point => point.trim() !== ''),
+                walkingDistanceTo: walkingDistancePoints.filter(point => point.trim() !== '')
+            };
+
+            // Add the JSON data to the form
+            formData.append('rentalData', JSON.stringify(rentalData));
+            console.log("Rental data:", rentalData);
+
+
+            // Debug the FormData contents
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}: ${value instanceof File ? `File: ${value.name}, ${value.size} bytes` : value}`);
+            }
+
+
+            // Process and append each image
+            for (let i = 0; i < images.length; i++) {
+                const imageUrl = images[i];
+
+                try {
+                    // For blob URLs created with URL.createObjectURL
+                    if (imageUrl.startsWith('blob:')) {
+                        // Get the image data
+                        const response = await fetch(imageUrl);
+                        const blob = await response.blob();
+
+                        // Create a file name
+                        const fileName = `image-${Date.now()}-${i}.${blob.type.split('/')[1] || 'jpg'}`;
+
+                        // Create a File object from the blob
+                        const file = new File([blob], fileName, { type: blob.type });
+
+                        // Append to FormData with field name 'images' (important: must match backend)
+                        formData.append('images', file);
+                        console.log(`Appended image ${i}: ${fileName}`);
+                    } else if (imageUrl.startsWith('data:')) {
+                        // For data URLs, convert to blob first
+                        const response = await fetch(imageUrl);
+                        const blob = await response.blob();
+
+                        // Create a file name
+                        const fileName = `image-${Date.now()}-${i}.${blob.type.split('/')[1] || 'jpg'}`;
+
+                        // Create a File object from the blob
+                        const file = new File([blob], fileName, { type: blob.type });
+
+                        // Append to FormData with field name 'images'
+                        formData.append('images', file);
+                        console.log(`Appended image ${i}: ${fileName}`);
+                    } else if (!imageUrl.includes('cloudinary.com')) {
+                        console.warn('Image URL format not directly supported:', imageUrl);
+                    }
+                } catch (error) {
+                    console.error(`Error processing image ${i}:`, error);
+                    // Continue with other images instead of failing the whole upload
+                }
+            }
+
+            // Log the form data keys for debugging
+            console.log("FormData contains keys:", [...formData.keys()]);
+
+            // Check if we have the required data
+            if (!formData.has('rentalData')) {
+                throw new Error('Rental data is missing from the form');
+            }
+
+            // Call the API to create the listing
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Authentication token is missing');
+            }
+
+            console.log("Sending API request...");
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Note: Do NOT set Content-Type header here - the browser will set it 
+                    // automatically with the correct boundary for multipart/form-data
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`API request failed (${response.status}): ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log("Response from backend:", result);
+
+            if (result.success) {
+                // Redirect to the listing page
+                router.push(`/show-listing/${result.data._id}`);
+            } else {
+                throw new Error(result.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error creating listing:', error);
+            alert(`Error: ${error instanceof Error ? error.message : 'Something went wrong'}`);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+
+
+    const handleAmenityToggle = (amenity: string) => {
+        if (selectedAmenities.includes(amenity)) {
+            setSelectedAmenities((prev) => prev.filter((a) => a !== amenity));
+        } else {
+            setSelectedAmenities((prev) => [...prev, amenity]);
+        }
+    };
+
     const handleAddDescriptionPoint = () => {
         setDescriptionPoints((prev) => [...prev, ""]);
+    };
+
+    const handleDescriptionChange = (index: number, value: string) => {
+        const updatedPoints = [...descriptionPoints];
+        updatedPoints[index] = value;
+        setDescriptionPoints(updatedPoints);
+    };
+
+    const handleAddWalkingDistancePoint = () => {
+        setWalkingDistancePoints((prev) => [...prev, ""]);
+    };
+
+    const handleWalkingDistanceChange = (index: number, value: string) => {
+        const updatedPoints = [...walkingDistancePoints];
+        updatedPoints[index] = value;
+        setWalkingDistancePoints(updatedPoints);
     };
 
     const handleRemoveImage = (index: number) => {
         setImages((prev) => prev.filter((_, i) => i !== index));
     };
 
-
-    // Handler to add a new Walking Distance input
-    const handleAddWalkingDistancePoint = () => {
-        setWalkingDistancePoints((prev) => [...prev, ""]);
-    };
-
-    // Update the text for a specific Description input
-    const handleDescriptionChange = (index: number, value: string) => {
-        const updatedPoints = [...descriptionPoints];
-        updatedPoints[index] = value; // Update only the changed field
-        setDescriptionPoints(updatedPoints);
-    };
-
-    // Update the text for a specific Walking Distance input
-    const handleWalkingDistanceChange = (index: number, value: string) => {
-        const updatedPoints = [...walkingDistancePoints];
-        updatedPoints[index] = value; // Update only the changed field
-        setWalkingDistancePoints(updatedPoints);
-    };
-
-
-
-
-    const [images, setImages] = useState<string[]>([]);
-    // We'll use a hidden file input for the "Add More" button (when images.length >= 6).
-    // eslint-disable-next-line
-    const hiddenFileInputRef = useRef<HTMLInputElement>(null);
-    // eslint-disable-next-line
-    const [activeIndex, setActiveIndex] = useState(0);
-    console.log(`${activeIndex} - ${images.length} ${setActiveIndex}`);
-
-    // Handle file input
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
         const file = e.target.files[0];
         const fileUrl = URL.createObjectURL(file);
         setImages((prev) => [...prev, fileUrl]);
-        // Reset the input so that selecting the same file again works.
         e.target.value = "";
     };
 
-    const totalSlots = images.length < 6 ? 6 : images.length + 1;
 
+    const totalSlots = images.length < 6 ? 6 : images.length + 1;
 
     return (
         <div className={`${inter.className} relative min-h-screen flex flex-col`}>
-
             <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-8 left-8">
                 <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} />
             </button>
@@ -287,616 +397,77 @@ export default function Page() {
                     steps={steps}
                 />
 
-
-                {activeStep === 1 && (<div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 min-h-screen -mt-2">
-
-                    <h2 className="text-base font-medium mb-4 md:hidden">
-                        Select the type of rental property
-                    </h2>
-
-                    {/* Mobile-only tabs */}
-                    <div>
-                        <div className="flex space-x-2 mb-4 md:hidden">
-                            <button
-                                onClick={() => setSelectedTab("Apartment")}
-                                className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedTab === "Apartment"
-                                    ? "bg-[#353537] text-white"
-                                    : "bg-gray-200 text-gray-700"
-                                    }`}
-                            >
-                                Apartment
-                            </button>
-                            <button
-                                onClick={() => setSelectedTab("House")}
-                                className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedTab === "House"
-                                    ? "bg-[#353537] text-white"
-                                    : "bg-gray-200 text-gray-700"
-                                    }`}
-                            >
-                                House
-                            </button>
-                        </div>
-
-
-                        <div className="flex flex-col md:flex-row md:space-x-8">
-                            <PropertyColumn
-                                setActiveStep={setActiveStep}
-                                title="Apartment"
-                                items={apartmentItems}
-                                selectedTab={selectedTab}
-                                isThisTab="Apartment"
-                            />
-                            <PropertyColumn
-                                title="House"
-                                setActiveStep={setActiveStep}
-
-                                items={houseItems}
-                                selectedTab={selectedTab}
-                                isThisTab="House"
-                            />
-                        </div>
-                    </div>
-
-
-                </div>)}
-
+                {activeStep === 1 && (
+                    <PropertyTypeSelector
+                        selectedTab={selectedTab}
+                        setSelectedTab={setSelectedTab}
+                        setActiveStep={setActiveStep}
+                        apartmentItems={apartmentItems}
+                        houseItems={houseItems}
+                        onSelectPropertyType={handlePropertySelect}
+                    />
+                )}
 
                 {activeStep === 2 && (
-                    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 h-full -mt-2">
-                        <div className="max-w-md mx-auto w-full flex flex-col pt-5 md:pt-6 justify-center md:justify-start space-y-4">
-                            {/* Monthly price */}
-                            <div className="flex flex-col space-y-3">
-                                <label className="text-sm font-base">
-                                    Monthly price for your rental?
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="$2000"
-                                    className="
-                                        w-full
-                                        bg-[#F4F4F4]
-                                        border
-                                        border-gray-300
-                                        rounded-lg
-                                        p-3
-                                        text-sm
-                                        focus:outline-none
-                                        focus:ring-1
-                                        focus:ring-black
-                                    "
-                                />
-                            </div>
-
-                            {/* Start date */}
-                            <div className="flex flex-col space-y-3">
-                                <label className="text-sm font-base ">
-                                    Pick a start date for your rental
-                                </label>
-                                <div className="flex space-x-2">
-                                    <select
-                                        className="
-                                        flex-1
-                                        border
-                                        border-gray-300
-                                        rounded-lg
-                                        p-3
-                                        text-sm
-                                        
-                                        focus:outline-none
-                                        focus:ring-1
-                                        focus:ring-black
-                                        "
-                                    >
-                                        <option>January</option>
-                                        <option>February</option>
-                                        <option>March</option>
-
-                                    </select>
-
-                                    <select
-                                        className="
-                                           flex-1
-                                        border
-                                        border-gray-300
-                                        rounded-lg
-                                        p-3
-                                        text-sm
-                                        
-                                        focus:outline-none
-                                        focus:ring-1
-                                        focus:ring-black
-                                            "
-                                    >
-                                        <option>01</option>
-                                        <option>02</option>
-                                        <option>03</option>
-                                        {/* Add more days as needed */}
-                                    </select>
-
-                                    <select
-                                        className="
-                                       flex-1
-                                        border
-                                        border-gray-300
-                                        rounded-lg
-                                        p-3
-                                        text-sm
-                                        
-                                        focus:outline-none
-                                        focus:ring-1
-                                        focus:ring-black
-                                        "
-                                    >
-                                        <option>2023</option>
-                                        <option>2024</option>
-                                        <option>2025</option>
-                                        {/* Add more years as needed */}
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Lease duration */}
-                            <div className="flex flex-col space-y-3">
-                                <label className="text-sm font-base ">
-                                    How long is the lease duration?
-                                </label>
-                                <select
-                                    className="
-                                        w-full
-                                        border
-                                        border-gray-300
-                                        rounded-lg
-                                        p-3
-                                        text-sm
-                                        text-gray-700
-                                        focus:outline-none
-                                        focus:ring-1
-                                        focus:ring-black
-                                    "
-                                >
-                                    <option>Month-to-Month / Flexible</option>
-                                    <option>6 Months</option>
-                                    <option>12 Months</option>
-                                    {/* Add more durations as needed */}
-                                </select>
-                            </div>
-
-                            <div className="h-64 md:h-8">
-
-                            </div>
-
-                            {/* Continue button */}
-                            <button onClick={() => { setActiveStep(3) }}
-                                type="button"
-                                className="
-                                bg-black
-                                text-white
-                                w-full
-                                py-4
-                                rounded-full
-                                font-semibold
-                                text-sm
-                                focus:outline-none
-                                focus:ring-2
-                                focus:ring-black
-                                "
-                            >
-                                Continue
-                            </button>
-                        </div>
-
-                    </div>
+                    <RentalDetails
+                        setActiveStep={setActiveStep}
+                        monthlyPrice={monthlyPrice}
+                        setMonthlyPrice={setMonthlyPrice}
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        leaseDuration={leaseDuration}
+                        setLeaseDuration={setLeaseDuration}
+                    />
                 )}
 
                 {activeStep === 3 && (
-                    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 h-full -mt-2">
-                        <div className="flex flex-col justify-stretch h-full max-w-md mx-auto w-full">
-                            {/* Top Section: Location & Intersection */}
-                            <div className="space-y-6">
-                                {/* "Your location?" */}
-                                <div className="flex flex-col space-y-1">
-                                    <label className="text-sm font-medium text-[#2C3C4E]">
-                                        Your location?
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Toronto, ON"
-                                        className="
-                                        w-full
-                                        border
-                                        bg-[#F4F4F4]
-                                        rounded-lg
-                                        p-3
-                                        text-sm
-                                        focus:outline-none
-                                        focus:ring-1
-                                        focus:ring-black
-                                        "
-                                    />
-                                </div>
-
-                                {/* Divider with "or" */}
-                                <div className="relative flex items-center justify-center">
-                                    <hr className="absolute w-full border-gray-200" />
-                                    <span className="bg-white px-2 text-gray-400 text-xs">or</span>
-                                </div>
-
-                                {/* "Nearest intersection" */}
-                                <div className="flex flex-col space-y-1">
-                                    <label className="text-sm font-medium text-[#2C3C4E]">
-                                        Nearest intersection
-                                    </label>
-                                    <textarea
-                                        placeholder="Main St & Danforth"
-                                        className="
-                                            w-full
-                                            border
-                                            bg-[#F4F4F4]
-                                            rounded-lg
-                                            p-3
-                                            text-sm
-                                            focus:outline-none
-                                            focus:ring-1
-                                            focus:ring-black
-                                            h-12
-                                                "
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Bottom Section: Continue Button */}
-                            <button
-                                onClick={() => { setActiveStep(prev => prev + 1) }}
-                                type="button"
-                                className="
-                                        bg-black
-                                        text-white
-                                        w-full
-                                        py-4    
-                                        rounded-full
-                                        font-semibold
-                                        text-sm
-                                        mt-6
-                                        focus:outline-none
-                                        focus:ring-2
-                                        focus:ring-black
-                                        "
-                            >
-                                Continue
-                            </button>
-                        </div>
-
-                    </div>
+                    <LocationSelector
+                        setActiveStep={setActiveStep}
+                        location={location}
+                        setLocation={setLocation}
+                        intersection={intersection}
+                        setIntersection={setIntersection}
+                    />
                 )}
 
                 {activeStep === 4 && (
-                    <div
-                        className="
-                        bg-white 
-                        md:flex 
-                        md:justify-center 
-                        md:items-center 
-                        rounded-t-[2rem] 
-                        p-2
-                        h-screen
-                        -mt-5
-                      "
-                    >
-                        <div
-                            className="
-                          flex 
-                          flex-col 
-                          space-y-2 
-                          p-4 
-                          
-                          w-full 
-                          md:max-w-[450px] 
-                        "
-                        >
-                            {/* 1) First Div: Title + Dropdowns */}
-                            <div className="flex flex-col pb-4 space-y-4">
-                                <div>
-                                    <h2 className="text-sm text-[#2C3C4E] font-medium">
-                                        Total number of beds + baths in your house?
-                                    </h2>
-                                </div>
-                                <div className="flex flex-row space-x-2">
-                                    {/* Bedrooms Dropdown */}
-                                    <select
-                                        className="border p-4 text-xs rounded"
-                                        value={bedrooms}
-                                        onChange={(e) => setBedrooms(e.target.value)}
-                                    >
-                                        <option value="">Bedrooms</option>
-                                        <option value="1">1 Bedroom</option>
-                                        <option value="2">2 Bedrooms</option>
-                                        <option value="3">3 Bedrooms</option>
-                                        <option value="4">4 Bedrooms</option>
-                                        <option value="5">5 Bedrooms</option>
-                                    </select>
-
-                                    {/* Bathrooms Dropdown */}
-                                    <select
-                                        className="border p-4 text-xs rounded"
-                                        value={bathrooms}
-                                        onChange={(e) => setBathrooms(e.target.value)}
-                                    >
-                                        <option value="">Bathrooms</option>
-                                        <option value="1">1 Bathroom</option>
-                                        <option value="2">2 Bathrooms</option>
-                                        <option value="3">3 Bathrooms</option>
-                                        <option value="4">4 Bathrooms</option>
-                                        <option value="5">5 Bathrooms</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <hr />
-
-                            {/* 2) Second Div: Couple-friendly Toggle */}
-                            <div className="flex py-4 flex-row items-center justify-between">
-                                {/* Label + Sub-caption */}
-                                <div className="flex flex-col space-y-2">
-                                    {/* Updated styling here */}
-                                    <span className="text-sm text-[#2C3C4E] font-medium">Couple-friendly</span>
-                                    <span className="text-sm font-normal text-[#2C3C4E]">
-                                        Couple can share this private room
-                                    </span>
-                                </div>
-
-                                {/* Toggle Button */}
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={isCoupleFriendly}
-                                        onChange={(e) => setIsCoupleFriendly(e.target.checked)}
-                                        className="sr-only peer"
-                                    />
-                                    <div
-                                        className="
-                                w-11 h-6 
-                                bg-gray-200 
-                                peer-focus:outline-none 
-                                rounded-full peer
-                                dark:bg-gray-700 
-                                peer-checked:bg-blue-600 
-                                peer-checked:after:translate-x-full 
-                                peer-checked:after:border-white 
-                                after:content-[''] 
-                                after:absolute 
-                                after:top-[2px] 
-                                after:left-[2px] 
-                                after:bg-white 
-                                after:border-gray-300 
-                                after:border 
-                                after:rounded-full 
-                                after:h-5 
-                                after:w-5 
-                                after:transition-all
-                              "
-                                    />
-                                </label>
-                            </div>
-
-                            <hr />
-
-                            {/* 3) Third Div: Amenities Title + Chips */}
-                            <div className="flex py-4 flex-col space-y-2">
-                                <div>
-                                    {/* Title */}
-                                    <h2 className="mb-3 text-sm text-[#2C3C4E] font-medium font-[Inter] leading-[124%]">
-                                        Select all the amenities your rental offers
-                                    </h2>
-                                </div>
-
-                                {/* 3 columns, auto rows */}
-                                <div className="flex flex-wrap space-x-2 space-y-2">
-                                    {availableAmenities.map((amenity) => {
-                                        const isSelected = selectedAmenities.includes(amenity.title);
-                                        return (
-                                            <button
-                                                key={amenity.title}
-                                                type="button"
-                                                onClick={() => handleAmenityToggle(amenity.title)}
-                                                className={`
-                                                    px-4 h-9  py-1 flex items-center justify-center space-x-1 
-                                                    transition border text-[12px] font-normal font-[Inter] 
-                                                    rounded-[42px] border-[#2C3C4E] 
-                                                    ${isSelected ? "bg-[#0A84FF] text-white" : "text-[#2C3C4E] hover:bg-gray-100"}
-                                                `}
-                                            >
-                                                {/* Example icon; adjust src, width, height, or remove if not needed */}
-                                                <Image
-                                                    alt={amenity.title}
-                                                    src={amenity.icon}
-                                                    width={16}
-                                                    height={16}
-                                                />
-                                                <span>{amenity.title}</span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-
-                            <hr />
-
-                            {/* 4) Fourth Div: Caption + Continue Button */}
-                            <div className="flex flex-col py-4 space-y-4">
-                                <p className="text-sm mb-2">
-                                    If you don&apos;t see an amenity listed, you can mention it in the next step.
-                                </p>
-                                <button
-                                    onClick={() => {
-                                        setActiveStep((prev) => prev + 1);
-                                    }}
-                                    className="px-4 py-3 bg-black text-white rounded-full hover:bg-blue-700"
-                                >
-                                    Continue
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                    <PropertyFeatures
+                        bedrooms={bedrooms}
+                        setBedrooms={setBedrooms}
+                        bathrooms={bathrooms}
+                        setBathrooms={setBathrooms}
+                        isCoupleFriendly={isCoupleFriendly}
+                        setIsCoupleFriendly={setIsCoupleFriendly}
+                        selectedAmenities={selectedAmenities}
+                        handleAmenityToggle={handleAmenityToggle}
+                        availableAmenities={availableAmenities}
+                        setActiveStep={setActiveStep}
+                    />
                 )}
 
                 {activeStep === 5 && (
-                    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 h-full -mt-2">
-                        <div className="flex flex-col space-y-8 p-4 md:p-8 md:w-1/2">
-                            {/* 1) First Division: Description */}
-                            <div className="flex flex-col space-y-4">
-                                <label className="text-base font-semibold">Description:</label>
-
-                                {descriptionPoints.map((point, index) => {
-                                    const isLast = index === descriptionPoints.length - 1;
-                                    return (
-                                        <div
-                                            key={index}
-                                            className="flex flex-col md:flex-row md:items-center md:gap-2"
-                                        >
-                                            <input
-                                                type="text"
-                                                placeholder={`Point ${index + 1}`}
-                                                value={point}
-                                                onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                                                className="border border-gray-300 bg-[#F4F4F4] rounded p-2 focus:outline-none flex-1"
-                                            />
-                                            {isLast && (
-                                                <button
-                                                    onClick={handleAddDescriptionPoint}
-                                                    className="bg-blue-500 text-white px-4 py-2 rounded-full w-1/3 hover:bg-blue-600 transition mt-3 md:mt-0"
-                                                >
-                                                    Add +
-                                                </button>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            {/* 2) Second Division: Walking Distance */}
-                            <div className="flex flex-col space-y-4">
-                                <label className="text-base font-semibold">Walking Distance to:</label>
-
-                                {walkingDistancePoints.map((point, index) => {
-                                    const isLast = index === walkingDistancePoints.length - 1;
-                                    return (
-                                        <div
-                                            key={index}
-                                            className="flex flex-col md:flex-row md:items-center md:gap-2"
-                                        >
-                                            <input
-                                                type="text"
-                                                placeholder={`Point ${index + 1}`}
-                                                value={point}
-                                                onChange={(e) =>
-                                                    handleWalkingDistanceChange(index, e.target.value)
-                                                }
-                                                className="border border-gray-300 bg-[#F4F4F4] rounded p-2 focus:outline-none flex-1"
-                                            />
-                                            {isLast && (
-                                                <button
-                                                    onClick={handleAddWalkingDistancePoint}
-                                                    className="bg-blue-500 text-white px-4 py-2 rounded-full w-1/3 hover:bg-blue-600 transition mt-3 md:mt-0"
-                                                >
-                                                    Add +
-                                                </button>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            {/* 3) Third Division: Continue button */}
-                            <div className="flex justify-center">
-                                <button
-                                    onClick={() => { setActiveStep(prev => prev + 1) }}
-                                    className="bg-black text-white rounded-full px-4 py-3 w-full max-w-sm hover:bg-gray-900 transition"
-                                >
-                                    Continue
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <PropertyDescription
+                        descriptionPoints={descriptionPoints}
+                        handleDescriptionChange={handleDescriptionChange}
+                        handleAddDescriptionPoint={handleAddDescriptionPoint}
+                        walkingDistancePoints={walkingDistancePoints}
+                        handleWalkingDistanceChange={handleWalkingDistanceChange}
+                        handleAddWalkingDistancePoint={handleAddWalkingDistancePoint}
+                        setActiveStep={setActiveStep}
+                    />
                 )}
 
                 {activeStep === 6 && (
-                    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 h-full -mt-2">
-                        <div className="flex flex-col items-center p-4 min-h-screen bg-white">
-                            {/* Grid: 2 columns on mobile, 3 columns on desktop */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl mb-4">
-                                {Array.from({ length: totalSlots }, (_, i) => {
-                                    if (i < images.length) {
-                                        // Uploaded image slot
-                                        return (
-                                            <div
-                                                key={i}
-                                                className="relative w-full aspect-square md:h-64 md:aspect-auto bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden"
-                                            >
-                                                <img
-                                                    src={images[i]}
-                                                    alt={`Uploaded ${i}`}
-                                                    className="object-cover w-full h-full"
-                                                />
-                                                {/* Cancel icon */}
-                                                <div
-                                                    onClick={() => handleRemoveImage(i)}
-                                                    className="absolute top-1 right-1 w-6 h-6 bg-white text-black rounded-full flex items-center justify-center cursor-pointer shadow-md"
-                                                >
-                                                    ✕
-                                                </div>
-                                            </div>
-                                        );
-                                    } else if (i === images.length) {
-                                        // Active upload slot (with camera icon)
-                                        return (
-                                            <div
-                                                key={i}
-                                                className="relative w-full aspect-square md:h-64 md:aspect-auto bg-gray-100 rounded-lg flex items-center justify-center"
-                                            >
-                                                <label className="cursor-pointer flex flex-col items-center justify-center">
-                                                    <div className="relative w-16 h-16 bg-white rounded-full flex items-center justify-center shadow">
-                                                        <span className="text-gray-400 text-2xl">📷</span>
-                                                        <span className="absolute bottom-0 right-0 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs">
-                                                            +
-                                                        </span>
-                                                    </div>
-                                                    {/* Hidden file input */}
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        className="hidden"
-                                                        onChange={handleFileUpload}
-                                                    />
-                                                </label>
-                                            </div>
-                                        );
-                                    } else {
-                                        // Remaining empty placeholders (non-clickable)
-                                        return (
-                                            <div
-                                                key={i}
-                                                className="md:w-64 aspect-square md:h-64 md:aspect-auto bg-gray-100 rounded-lg"
-                                            ></div>
-                                        );
-                                    }
-                                })}
-                            </div>
-
-                            {/* Continue Button */}
-                            <button
-                                onClick={() => console.log(router.push('/show-listing'))}
-                                className="bg-black text-white rounded-full px-6 py-3 w-full max-w-md"
-                            >
-                                Continue
-                            </button>
-                        </div>
-                    </div>
+                    <PropertyPhotos
+                        images={images}
+                        setImages={setImages}
+                        handleFileUpload={handleFileUpload}
+                        handleRemoveImage={handleRemoveImage}
+                        totalSlots={totalSlots}
+                        handleSubmitListing={handleSubmitListing}
+                        isSubmitting={submitting}
+                    />
                 )}
-
-
-
             </div>
         </div>
     );
