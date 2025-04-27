@@ -167,7 +167,7 @@ export default function ChatList() {
     try {
       setLoading(true);
       const timestamp = new Date().getTime();
-      console.log(`[${new Date().toISOString()}] Fetching chats for user: ${currentUserId}`);
+      console.log(`[${new Date().toISOString()}] Fetching chats for user: ${timestamp} ${currentUserId}`);
 
       const response = await api.get(`/api/chats`, {
         headers: {
