@@ -90,7 +90,7 @@ export default function PropertyCardCarousel({
     if (!isClient) return null; // Prevent SSR mismatch
 
     return (
-        <div onClick={onClick} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-[#F4F4F4]">
+        <div onClick={onClick} className="relative max-w-sm rounded-3xl overflow-hidden outline outline-[#F4F4F4] shadow-sm bg-white">
             <Carousel setApi={setCarouselApi} className="relative w-full">
                 <CarouselContent>
                     {images.map((src, idx) => (

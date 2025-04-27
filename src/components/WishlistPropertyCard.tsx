@@ -48,7 +48,7 @@ export default function WishlistCardCarousel({
     if (!isClient) return null; // Prevent SSR mismatch
 
     return (
-        <div onClick={() => { router.push(`/show-listing/${id}`) }} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-white">
+        <div onClick={() => { router.push(`/show-listing/${id}`) }} className="relative max-w-sm rounded-3xl overflow-hidden shadow-sm bg-white outline outline-[#F4F4F4]">
 
 
             <Carousel setApi={setApi} className="relative w-full">
@@ -91,7 +91,7 @@ export default function WishlistCardCarousel({
             </div>
             {/* Cancel Icon (replaces the heart icon) */}
             <button
-                onClick={ handleCancel}
+                onClick={handleCancel}
                 className="absolute top-4 right-4 flex items-center justify-center h-6 w-6 bg-white p-1.5 rounded-full shadow-md"
             >
                 <Image alt="Cancel" src="/icons/xmark.svg" className="items-center flex justify-center" width={15} height={15} />
