@@ -169,7 +169,7 @@ export default function ChatList() {
       const timestamp = new Date().getTime();
       console.log(`[${new Date().toISOString()}] Fetching chats for user: ${currentUserId}`);
 
-      const response = await api.get(`/api/chats?_t=${timestamp}`, {
+      const response = await api.get(`/api/chats`, {
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
@@ -262,6 +262,8 @@ export default function ChatList() {
     fetchChats();
   };
 
+
+  //TODO : Add logic for starred messages
   const handleStarToggle = (chatId: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening the chat
     setChats(prevChats =>
