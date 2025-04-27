@@ -115,6 +115,7 @@ export default function ChatList() {
   };
 
   // Network status monitoring
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleOnline = () => {
       console.log("Browser is online. Fetching latest data...");
@@ -134,6 +135,7 @@ export default function ChatList() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Get current user ID (stored during login)
@@ -204,18 +206,22 @@ export default function ChatList() {
   };
 
   // Polling mechanism for chats
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!currentUserId) return;
 
     // Initial fetch
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchChats();
 
     // Set up polling every 15 seconds
     const interval = setInterval(() => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       fetchChats();
     }, 15000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserId]);
 
   // Fetch messages when selecting a chat
