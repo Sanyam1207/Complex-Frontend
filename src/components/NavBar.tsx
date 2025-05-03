@@ -43,6 +43,7 @@ export default function Navbar() {
     "/personal-details",
     "/help-feedback",
     "/complete-account",
+    '/create-listing',
     "/create-listing-steps",
   ];
 

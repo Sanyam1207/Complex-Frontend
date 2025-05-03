@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { Menu as MenuIcon } from "lucide-react";
 import { Inter, Knewave } from "next/font/google";
-import MobileFilterModal from "./MobileFilterPopup";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/store";
-import { Menu as MenuIcon } from "lucide-react";
+import LanguageFilterModal from "./LanguageFilterModal";
 
 // Fonts
 const inter = Inter({
@@ -100,7 +100,7 @@ export default function MessagesNavbar() {
         </div>
       </div>
 
-      <MobileFilterModal
+      <LanguageFilterModal
         isOpen={showMobileFilterModal}
         onClose={() => setShowMobileFilterModal(false)}
       />

@@ -70,7 +70,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className={`min-h-screen bg-[#1F1F21] ${inter.className}`}>
+        <div className={`min-h-screen max-h-screen bg-[#1F1F21] ${inter.className}`}>
             {/* -- 1) TOP BLACK SECTION -- */}
             <div className="bg-[#1F1F21] px-6 pt-8 py-6 text-white relative">
                 {/* Top label: "Profile" (centered) */}
@@ -120,7 +120,7 @@ export default function ProfilePage() {
             </div>
 
             {/* -- 2) MAIN WHITE CARD WITH ROUNDED TOP -- */}
-            <div className="bg-white h-[80vh] text-[#2C3C4E] rounded-t-3xl  pt-2 px-6">
+            <div className="bg-white h-full text-[#2C3C4E] rounded-t-3xl  pt-2 px-6">
                 {/* A) Create Listing */}
                 <div onClick={() => { router.push('/create-listing') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">

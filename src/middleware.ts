@@ -2,14 +2,19 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Get token from cookies or headers
-  const token = request.cookies.get('token')?.value;
-  
   // Get the pathname of the request
   const { pathname } = request.nextUrl;
   
+  // Always redirect root path to /home
+  if (pathname === '/' || pathname === '') {
+    return NextResponse.redirect(new URL('/home', request.url));
+  }
+  
+  // Get token from cookies or headers
+  const token = request.cookies.get('token')?.value;
+  
   // Define public routes that don't require authentication
-  const publicRoutes = ['/','/home', '/login', '/register', '/api/auth']; 
+  const publicRoutes = ['/home', '/login', '/register', '/api/auth']; 
   const isPublicRoute = publicRoutes.some(route => 
     pathname === route || pathname.startsWith(route + '/')
   );
@@ -28,5 +33,6 @@ export function middleware(request: NextRequest) {
 // Configure which routes to run the middleware on
 export const config = {
   matcher: [
+
   ],
 };
