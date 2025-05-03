@@ -1,7 +1,6 @@
 'use client'
 
 import LoginModal from '@/components/LoginPopup';
-import MobileBottomTabs from '@/components/MobileBottomTabs';
 import Navbar from '@/components/NavBar';
 import OfferChips from '@/components/OfferChips';
 import OnBoardingPopup from '@/components/OnboardingPopup';
@@ -733,7 +732,7 @@ const handleSendMessage = async () => {
         </div>
 
         {/* Mobile Bottom Navigation */}
-        <MobileBottomTabs />
+       
         <SignUpModal />
         <LoginModal />
 

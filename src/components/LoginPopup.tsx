@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closePopup, openPopup, selectIsPopupOpen } from "@/redux/slices/showPopups";
 import { RootState } from "@/redux/store/store";
+import { AnimatePresence, motion } from "framer-motion";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,7 +18,7 @@ const inter = Inter({
 const LoginModal: React.FC = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'login'));
-  
+
   // All hooks are called unconditionally at the top
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +30,7 @@ const LoginModal: React.FC = () => {
   const handleClose = () => {
     dispatch(closePopup('login'));
   };
-  
+
   // Handle opening signup modal
   const handleOpenSignup = () => {
     dispatch(closePopup('login'));
@@ -55,7 +56,7 @@ const LoginModal: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    
+
     try {
       // Validate inputs
       if (!email || !password) {
@@ -63,16 +64,16 @@ const LoginModal: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      
+
       console.log("Attempting login with:", { email });
-      
-      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { 
-        email, 
-        password 
+
+      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+        email,
+        password
       });
-      
+
       console.log("Login response:", response.data);
-      
+
       if (response.data.success === true) {
         // Store the token in localStorage
         localStorage.setItem('token', response.data.token);
@@ -199,8 +200,8 @@ const LoginModal: React.FC = () => {
 
             {/* Google */}
             <div className="flex flex-col items-center space-y-1">
-              <button 
-                onClick={handleSubmitGoogle} 
+              <button
+                onClick={handleSubmitGoogle}
                 className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition"
               >
                 <Image src="/icons/googlelogo.svg" alt="Google" width={24} height={24} />
@@ -234,129 +235,145 @@ const LoginModal: React.FC = () => {
       {/* =======================
           MOBILE VIEW
       ======================= */}
-      <div className="block md:hidden absolute bottom-0 z-50 w-full max-w-md mx-auto rounded-t-2xl bg-white px-6 py-8 shadow-lg">
-        {/* Close Button */}
-        <div className="absolute top-4 right-4 border rounded-full px-2 py-1 text-gray-500 hover:text-gray-800">
-          <button onClick={handleClose} aria-label="Close">
-            ✕
-          </button>
-        </div>
+      <AnimatePresence>
+        {isOpen && (
+          <div className={`fixed inset-0 flex flex-col text-[#2C3C4E] ${inter.className} z-40`}>
+            {/* Dark overlay */}
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={handleClose} />
 
-        {/* Star Icon */}
-        <div className="absolute top-4 left-4">
-          <Image src="/icons/stars.svg" alt="Star" width={24} height={24} />
-        </div>
+            {/* Modal */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "tween", duration: 0.3 }}
+              className="absolute bottom-0 w-full h-[95%] bg-white rounded-t-2xl py-6 px-6 shadow-lg flex flex-col overflow-hidden z-50"
+            >
+              {/* Close Button */}
+              <button onClick={handleClose} className="absolute top-4 right-4" aria-label="Close">
+                <Image src="/icons/close.svg" width={24} height={24} alt="Close" />
+              </button>
 
-        {/* Title */}
-        <div className="mb-8 mt-8">
-          <h2 className="text-lg font-semibold mb-3 text-[#2C3C4E]">
-            Log in with your email and password.
-          </h2>
-          <h2 className="text-base text-[#2C3C4E]">
-            Log in with your email and password.
-          </h2>
-        </div>
+              {/* Star Icon */}
+              <div className="absolute top-4 left-4">
+                <Image src="/icons/stars.svg" alt="Star" width={24} height={24} />
+              </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-sm">
-            {error}
+              {/* Title */}
+              <div className="mb-8 mt-8">
+                <h2 className="text-lg font-semibold mb-3 text-[#2C3C4E]">
+                  Log in with your email and password.
+                </h2>
+                <h2 className="text-base text-[#2C3C4E]">
+                  Log in with your email and password.
+                </h2>
+              </div>
+
+              <div className="flex-1 overflow-y-auto">
+                {/* Error Message */}
+                {error && (
+                  <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
+
+                {/* Form */}
+                <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
+                  {/* Email */}
+                  <label htmlFor="email_mobile" className="text-sm text-[#2C3C4E]">
+                    Email
+                  </label>
+                  <input
+                    id="email_mobile"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                  />
+
+                  {/* Password */}
+                  <label htmlFor="password_mobile" className="text-sm text-[#2C3C4E]">
+                    Password
+                  </label>
+                  <input
+                    id="password_mobile"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                  />
+
+                  <div className="text-[#0A84FF] text-sm my-6 h-10">
+                    <Link href="">Forgot Password?</Link>
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full mt-4 rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition disabled:bg-gray-400"
+                  >
+                    {isLoading ? "Logging in..." : "Login"}
+                  </button>
+                </form>
+
+                {/* Continue With (Social) */}
+                <div className="mt-8 text-center">
+                  <p className="mb-4 text-sm text-gray-600">Continue with</p>
+                  <div className="flex items-center justify-center space-x-4">
+                    {/* Apple */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                        <Image src="/icons/applelogo.svg" alt="Apple" width={24} height={24} />
+                      </button>
+                      <span className="text-[#2C3C4E] text-[0.875rem]">Apple</span>
+                    </div>
+
+                    {/* Facebook */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                        <Image src="/icons/facebooklogo.svg" alt="Facebook" width={24} height={24} />
+                      </button>
+                      <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
+                    </div>
+
+                    {/* Google */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <button
+                        onClick={handleSubmitGoogle}
+                        className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition"
+                      >
+                        <Image src="/icons/googlelogo.svg" alt="Google" width={24} height={24} />
+                      </button>
+                      <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
+                    </div>
+                  </div>
+
+                  <div className="text-[#2C3C4E] text-sm my-8">
+                    Other ways to{" "}
+                    <span className="text-[#0A84FF] cursor-pointer" onClick={handleOpenSignup}>
+                      sign up
+                    </span>
+                  </div>
+                </div>
+
+                {/* Terms & Privacy */}
+                <p className="mt-2 text-center text-xs text-gray-500">
+                  By continuing, you agree to our{" "}
+                  <a href="#" className="underline">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="#" className="underline">
+                    Privacy Policy
+                  </a>
+                  .
+                </p>
+              </div>
+            </motion.div>
           </div>
         )}
-
-        {/* Form */}
-        <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-          {/* Email */}
-          <label htmlFor="email_mobile" className="text-sm text-[#2C3C4E]">
-            Email
-          </label>
-          <input
-            id="email_mobile"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
-          />
-
-          {/* Password */}
-          <label htmlFor="password_mobile" className="text-sm text-[#2C3C4E]">
-            Password
-          </label>
-          <input
-            id="password_mobile"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
-          />
-
-          <div className="text-[#0A84FF] text-sm my-6 h-10">
-            <Link href="">Forgot Password ?</Link>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full mt-4 rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition disabled:bg-gray-400"
-          >
-            {isLoading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-
-        {/* Continue With (Social) */}
-        <div className="mt-8 text-center">
-          <p className="mb-4 text-sm text-gray-600">Continue with</p>
-          <div className="flex items-center justify-center space-x-4">
-            {/* Apple */}
-            <div className="flex flex-col items-center space-y-1">
-              <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
-                <Image src="/icons/applelogo.svg" alt="Apple" width={24} height={24} />
-              </button>
-              <span className="text-[#2C3C4E] text-[0.875rem]">Apple</span>
-            </div>
-
-            {/* Facebook */}
-            <div className="flex flex-col items-center space-y-1">
-              <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
-                <Image src="/icons/facebooklogo.svg" alt="Facebook" width={24} height={24} />
-              </button>
-              <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
-            </div>
-
-            {/* Google */}
-            <div className="flex flex-col items-center space-y-1">
-              <button 
-                onClick={handleSubmitGoogle}
-                className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition"
-              >
-                <Image src="/icons/googlelogo.svg" alt="Google" width={24} height={24} />
-              </button>
-              <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
-            </div>
-          </div>
-
-          <div className="text-[#2C3C4E] text-sm my-8">
-            Other ways to{" "}
-            <span className="text-[#0A84FF] cursor-pointer" onClick={handleOpenSignup}>
-              sign up
-            </span>
-          </div>
-        </div>
-
-        {/* Terms & Privacy */}
-        <p className="mt-2 text-center text-xs text-gray-500">
-          By continuing, you agree to our{" "}
-          <a href="#" className="underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="#" className="underline">
-            Privacy Policy
-          </a>
-          .
-        </p>
-      </div>
+      </AnimatePresence>
     </div>
   );
 };

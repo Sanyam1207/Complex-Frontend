@@ -9,7 +9,8 @@ export type PopupType =
   | 'login' 
   | 'logout' 
   | 'deleteAccount'
-  | 'confirmation';
+  | 'confirmation'
+  | 'ProfileCreation'
 
 interface PopupState {
   // Simple map of which popups are open
@@ -23,7 +24,8 @@ const initialState: PopupState = {
     login: false,
     logout: false,
     deleteAccount: false,
-    confirmation: false
+    confirmation: false,
+    ProfileCreation: false,
   }
 };
 

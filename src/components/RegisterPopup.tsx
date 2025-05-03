@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { closePopup, selectIsPopupOpen } from "@/redux/slices/showPopups";
 import { RootState } from "@/redux/store/store";
+import { AnimatePresence, motion } from "framer-motion";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -16,14 +17,14 @@ const inter = Inter({
 const SignUpModal: React.FC = () => {
     const dispatch = useDispatch();
     const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'signup'));
-    
+
     const [fullName, setFullName] = useState("");
     const router = useRouter();
     const [error, setError] = useState("");
     console.log(error)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    
+
     // Handle close action
     const handleClose = () => {
         dispatch(closePopup('signup'));
@@ -190,137 +191,165 @@ const SignUpModal: React.FC = () => {
           MOBILE VIEW (FULL SCREEN)
       ========================== */}
 
-            <div className="block md:hidden fixed inset-0 z-50 bg-black">
-                <div className="flex flex-col items-center justify-center bg-[#1F1F21] text-white p-5">
-                    <div className="text-sm mt-4 text-center">
-                        Sign up
-                    </div>
-                    <div className="mt-8 text-[2rem] font-semibold w-full text-left">
-                        Let&apos;s Create
-                        <br />
-                        Account Together!
-                    </div>
-                </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <div className={`fixed md:hidden inset-0 flex flex-col text-[#2C3C4E] ${inter.className} z-40`}>
+                        {/* Dark overlay */}
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
 
-
-                <div>
-                    <div className="rounded-t-2xl bg-white">
-                        {/* Close Button */}
-                        <div className="flex items-center justify-center absolute top-8 left-4 bg-[#353537] h-7 w-7 rounded-full hover:text-gray-800">
-                            <button onClick={handleClose} aria-label="Close">
-                                <Image src={'/icons/backarrow.svg'} height={12} width={12} alt="back arrow" />
-                            </button>
-                        </div>
-
-                        {/* Scrollable Content if needed */}
-                        <div className="h-screen overflow-y-auto p-6 pt-14">
-
-                            {/* Form */}
-                            <form className="flex flex-col mb-10 space-y-4" onSubmit={handleSubmit}>
-                                <label
-                                    htmlFor="fullname-mobile"
-                                    className="text-sm text-[#2C3C4E]"
-                                >
-                                    Full Name
-                                </label>
-                                <input
-                                    id="fullname-mobile"
-                                    type="text"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
-                                />
-
-                                <label htmlFor="email-mobile" className="text-sm text-[#2C3C4E]">
-                                    Email
-                                </label>
-                                <input
-                                    id="email-mobile"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
-                                />
-
-                                <label
-                                    htmlFor="password-mobile"
-                                    className="text-sm text-[#2C3C4E]"
-                                >
-                                    Create Password
-                                </label>
-                                <input
-                                    id="password-mobile"
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
-                                />
-
+                        {/* Top Section */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="w-full flex-none bg-[#1F1F21] text-white p-5 z-50"
+                        >
+                            <div className="text-sm mt-4 text-center">
+                                Sign up
+                            </div>
+                            <div className="mt-8 text-[2rem] font-semibold w-full text-left">
+                                Let&apos;s Create
                                 <br />
-                                <button
-                                    type="submit"
-                                    className="w-full rounded-3xl  bg-black py-4 text-white font-semibold hover:bg-gray-800 transition"
-                                >
-                                    Create account
+                                Account Together!
+                            </div>
+                            {/* Back Button */}
+                            <div className="absolute top-8 left-4 bg-[#353537] h-7 w-7 rounded-full flex items-center justify-center">
+                                <button onClick={handleClose} aria-label="Close">
+                                    <Image src="/icons/backarrow.svg" height={12} width={12} alt="back arrow" />
                                 </button>
-                            </form>
+                            </div>
+                        </motion.div>
 
-                            {/* Continue With (Social) */}
-                            <div className="mt-6 text-center">
-                                <p className="mb-8 text-sm text-gray-600">Continue with</p>
-                                <div className="flex items-center justify-center mb-10 space-x-4">
-                                    <div className="flex flex-col items-center space-y-1">
-                                        <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
-                                            <Image
-                                                src="/icons/applelogo.svg"
-                                                alt="Apple"
-                                                width={24}
-                                                height={24}
-                                            />
-                                        </button>
-                                        <span className="text-[#2C3C4E] text-[0.875rem]">Apple</span>
+                        {/* Bottom Form Section */}
+                        <motion.div
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            exit={{ y: "100%" }}
+                            transition={{ type: "tween", duration: 0.3 }}
+                            className="flex-grow bg-white rounded-t-2xl overflow-hidden relative z-50"
+                        >
+
+
+                            {/* Scrollable Content */}
+                            <div className="h-full overflow-y-auto p-6 pt-14">
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+                                        {error}
                                     </div>
-                                    <div className="flex flex-col items-center space-y-1">
-                                        <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
-                                            <Image
-                                                src="/icons/facebooklogo.svg"
-                                                alt="Facebook"
-                                                width={24}
-                                                height={24}
-                                            />
-                                        </button>
-                                        <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
-                                    </div>
-                                    <div className="flex flex-col items-center space-y-1">
-                                        <button onClick={handleGoogleLogin} className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
-                                            <Image
-                                                src="/icons/googlelogo.svg"
-                                                alt="Google"
-                                                width={24}
-                                                height={24}
-                                            />
-                                        </button>
-                                        <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
+                                )}
+
+                                {/* Form */}
+                                <form className="flex flex-col mb-10 space-y-4" onSubmit={handleSubmit}>
+                                    <label
+                                        htmlFor="fullname-mobile"
+                                        className="text-sm text-[#2C3C4E]"
+                                    >
+                                        Full Name
+                                    </label>
+                                    <input
+                                        id="fullname-mobile"
+                                        type="text"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                                    />
+
+                                    <label htmlFor="email-mobile" className="text-sm text-[#2C3C4E]">
+                                        Email
+                                    </label>
+                                    <input
+                                        id="email-mobile"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                                    />
+
+                                    <label
+                                        htmlFor="password-mobile"
+                                        className="text-sm text-[#2C3C4E]"
+                                    >
+                                        Create Password
+                                    </label>
+                                    <input
+                                        id="password-mobile"
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                                    />
+
+                                    <br />
+                                    <button
+                                        type="submit"
+                                        className="w-full rounded-3xl bg-black py-4 text-white font-semibold hover:bg-gray-800 transition"
+                                    >
+                                        Create account
+                                    </button>
+                                </form>
+
+                                {/* Continue With (Social) */}
+                                <div className="mt-6 text-center">
+                                    <p className="mb-8 text-sm text-gray-600">Continue with</p>
+                                    <div className="flex items-center justify-center mb-10 space-x-4">
+                                        <div className="flex flex-col items-center space-y-1">
+                                            <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                                                <Image
+                                                    src="/icons/applelogo.svg"
+                                                    alt="Apple"
+                                                    width={24}
+                                                    height={24}
+                                                />
+                                            </button>
+                                            <span className="text-[#2C3C4E] text-[0.875rem]">Apple</span>
+                                        </div>
+                                        <div className="flex flex-col items-center space-y-1">
+                                            <button className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition">
+                                                <Image
+                                                    src="/icons/facebooklogo.svg"
+                                                    alt="Facebook"
+                                                    width={24}
+                                                    height={24}
+                                                />
+                                            </button>
+                                            <span className="text-[#2C3C4E] text-[0.875rem]">Facebook</span>
+                                        </div>
+                                        <div className="flex flex-col items-center space-y-1">
+                                            <button
+                                                onClick={handleGoogleLogin}
+                                                className="border border-[#E3E2E0] w-[3.813rem] h-[3rem] rounded-3xl flex items-center justify-center hover:opacity-80 transition"
+                                            >
+                                                <Image
+                                                    src="/icons/googlelogo.svg"
+                                                    alt="Google"
+                                                    width={24}
+                                                    height={24}
+                                                />
+                                            </button>
+                                            <span className="text-[#2C3C4E] text-[0.875rem]">Google</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Terms & Privacy */}
-                            <p className="mt-6 text-center text-xs text-gray-500">
-                                By continuing, you agree to our{" "}
-                                <a href="#" className="underline">
-                                    Terms of Service
-                                </a>{" "}
-                                and{" "}
-                                <a href="#" className="underline">
-                                    Privacy Policy
-                                </a>
-                                .
-                            </p>
-                        </div>
+                                {/* Terms & Privacy */}
+                                <p className="mt-6 text-center text-xs text-gray-500">
+                                    By continuing, you agree to our{" "}
+                                    <a href="#" className="underline">
+                                        Terms of Service
+                                    </a>{" "}
+                                    and{" "}
+                                    <a href="#" className="underline">
+                                        Privacy Policy
+                                    </a>
+                                    .
+                                </p>
+                            </div>
+                        </motion.div>
                     </div>
-                </div>
-            </div>
+                )}
+            </AnimatePresence>
 
         </div>
     );
