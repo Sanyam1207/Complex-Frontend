@@ -295,7 +295,8 @@ export default function PersonalDetails() {
                             value={formData.fullName}
                             onChange={handleInputChange}
                             placeholder="Enter your full name"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg px-5 py-4 text-sm focus:outline-none focus:border focus:border-black"
+
                         />
 
                         {/* Email */}
@@ -308,7 +309,8 @@ export default function PersonalDetails() {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="Enter your email"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg px-5 py-4 text-sm focus:outline-none focus:border focus:border-black"
+
                         />
 
                         {/* Change password */}
@@ -321,7 +323,8 @@ export default function PersonalDetails() {
                             onChange={handleInputChange}
                             type="password"
                             placeholder="Leave blank to keep current password"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg px-5 py-4 text-sm focus:outline-none focus:border focus:border-black"
+
                         />
 
                         {/* Phone number */}
@@ -334,7 +337,8 @@ export default function PersonalDetails() {
                             value={formData.phoneNumber}
                             onChange={handleInputChange}
                             placeholder="Enter your phone number"
-                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg focus:border-none focus:outline-none px-5 py-4 text-sm"
+                            className="mb-5 bg-[#F4F4F4] text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg px-5 py-4 text-sm focus:outline-none focus:border focus:border-black"
+
                         />
 
                         {/* Save button */}

@@ -94,7 +94,8 @@ export default function HelpFeedback() {
                         </label>
                         <textarea
                             placeholder="Add additional information"
-                            className="w-full h-32 bg-[#F4F4F4] rounded-md px-4 py-2 text-sm outline-none focus:outline-none focus:border-none resize-none text-[#2C3C4E]"
+                            className="w-full bg-[#F4F4F4] rounded-lg p-3 min-h-24 text-sm focus:outline-none focus:border focus:border-black"
+
                         />
                     </div>
 

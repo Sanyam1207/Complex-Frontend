@@ -7,7 +7,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { openPopup } from "@/redux/slices/showPopups";
+import { openPopup, closePopup } from "@/redux/slices/showPopups";
+import OnBoardingPopup from "@/components/OnboardingPopup";
+import LoginModal from "@/components/LoginPopup";
+import SignUpModal from "@/components/RegisterPopup";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -39,6 +42,7 @@ export default function ProfilePage() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [user, setUser] = useState<User>();
+    const [isTokenValid, setIsTokenValid] = useState<boolean>(false);
 
     useLayoutEffect(() => {
         const getDetails = async () => {
@@ -48,13 +52,23 @@ export default function ProfilePage() {
                 if (response.data.success) {
                     setUser(response.data.user)
                     console.log(`User details: ${JSON.stringify(response.data.user.profilePicture)}`)
+                    setIsTokenValid(true)
                 }
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 console.log(error)
+                setIsTokenValid(false)
             }
         }
-        getDetails()
+
+        // Check if token exists in localStorage
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setIsTokenValid(false);
+            return;
+        } else {
+            getDetails()
+        }
     }, [])
 
     // Function to handle logout
@@ -68,6 +82,15 @@ export default function ProfilePage() {
         localStorage.removeItem('token');
         router.push('/login');
     };
+    const handleOpenSignup = () => {
+        dispatch(closePopup('onboarding'));
+        dispatch(openPopup('signup'));
+    };
+
+    // Function to handle unauthenticated clicks
+    const handleUnauthenticatedClick = () => {
+        dispatch(openPopup('onboarding'));
+    };
 
     return (
         <div className={`min-h-screen max-h-screen bg-[#1F1F21] ${inter.className}`}>
@@ -77,52 +100,82 @@ export default function ProfilePage() {
                 <p className="text-center text-sm font-medium">Profile</p>
 
                 {/* User Info Row */}
-                <div onClick={() => router.push('/personal-details')} className="mt-4 flex items-center justify-between">
+                <div onClick={() => isTokenValid ? router.push('/personal-details') : handleUnauthenticatedClick()} className="mt-4 flex items-center justify-between">
                     {/* Avatar placeholder */}
-                    <div className="flex items-center">
-
-                        <div className="w-14 h-14 flex items-center justify-center rounded-full" >
-                            {user?.profilePicture ? (
-                                <Image
-                                    src={user.profilePicture}
-                                    height={120}
-                                    width={120}
-                                    className="w-14 h-14 flex items-center justify-center rounded-full object-cover"
-                                    alt="profile"
-                                    onError={(e) => {
-                                        // Fallback to placeholder if image fails to load
-                                        e.currentTarget.src = '/icons/personaldetailplaceholder.svg';
-                                    }}
-                                />
-                            ) : (
-                                // Placeholder when profilePicture is not available
-                                <div className="w-14 h-14 bg-gray-300 flex items-center justify-center rounded-full">
-                                    <span className="text-gray-500 text-2xl">
-                                        {user?.fullName?.charAt(0) || "?"}
-                                    </span>
+                    <div className={`flex items-center ${!isTokenValid ? 'w-full' : ''}`}>
+                        {isTokenValid ? (
+                            <>
+                                <div className="w-14 h-14 flex items-center justify-center rounded-full" >
+                                    {user?.profilePicture ? (
+                                        <Image
+                                            src={user.profilePicture}
+                                            height={120}
+                                            width={120}
+                                            className="w-14 h-14 flex items-center justify-center rounded-full object-cover"
+                                            alt="profile"
+                                            onError={(e) => {
+                                                // Fallback to placeholder if image fails to load
+                                                e.currentTarget.src = '/icons/personaldetailplaceholder.svg';
+                                            }}
+                                        />
+                                    ) : (
+                                        // Placeholder when profilePicture is not available
+                                        <div className="w-14 h-14 bg-gray-300 flex items-center justify-center rounded-full">
+                                            <span className="text-gray-500 text-2xl">
+                                                {user?.fullName?.charAt(0) || "?"}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                                {/* Name & Details */}
+                                <div className="ml-3">
+                                    <p className="text-base font-semibold">{user?.fullName}</p>
+                                    <p className="text-sm font-normal">Login details</p>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col justify-center items-center w-full">
+                                {/* Key Icon */}
+                                <div className="flex w-[120px] h-[120px] bg-gray-800 rounded-full items-center justify-center">
+                                    <Image
+                                        src="/icons/keydoorlogout.png"
+                                        alt="Key Icon"
+                                        width={97}
+                                        height={97}
+                                        className="w-[97px] h-[97px]"
+                                    />
+                                </div>
 
-                        </div>
-                        {/* Name & Details */}
-                        <div className="ml-3">
-                            <p className="text-base font-semibold">{user?.fullName}</p>
-                            <p className="text-sm font-normal">Login details</p>
-                        </div>
+                                <p className="text-[16px] mb-4 text-center w-full">Log in or sign up to continue</p>
 
+                                <button
+                                    className="text-[14px] w-full rounded-full bg-white px-[24px] py-[8px] text-black font-semibold hover:bg-gray-800 hover:text-white transition"
+                                >
+                                    Log In
+                                </button>
+
+                                <p className="text-[14px] mt-4 text-center w-full">
+                                    Don&apos;t have an account?
+                                    <span onClick={handleOpenSignup} className="text-[#0A84FF]"> Sign up</span>
+                                </p>
+
+                            </div>
+                        )}
                     </div>
 
-                    {/* Arrow on the right */}
-                    <div className="bg-[#353537] rounded-full h-8 w-8 flex items-center justify-center">
-                        <Image src={'/icons/forwardarrow.svg'} alt="go" height={20} width={20} />
-                    </div>
+                    {/* Arrow on the right - only show when token is valid */}
+                    {isTokenValid && (
+                        <div className="bg-[#353537] rounded-full h-8 w-8 flex items-center justify-center">
+                            <Image src={'/icons/forwardarrow.svg'} alt="go" height={20} width={20} />
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* -- 2) MAIN WHITE CARD WITH ROUNDED TOP -- */}
             <div className="bg-white h-full text-[#2C3C4E] rounded-t-3xl  pt-2 px-6">
                 {/* A) Create Listing */}
-                <div onClick={() => { router.push('/create-listing') }} className="flex items-center justify-between py-5">
+                <div onClick={() => isTokenValid ? router.push('/create-listing') : handleUnauthenticatedClick()} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Icon circle (plus sign) */}
                         <div className="w-12 h-12 flex items-center justify-center bg-[#0A84FF] rounded-full mr-3">
@@ -140,30 +193,34 @@ export default function ProfilePage() {
                 </div>
                 <hr />
 
-                {/* B) Renters Profile */}
-                <div className="flex items-center justify-between py-5">
-                    <div className="flex items-center">
-                        {/* Icon circle (user) */}
-                        <div className="w-12 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
-                            <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
+                {/* B) Renters Profile - only show when token is valid */}
+                {isTokenValid && (
+                    <>
+                        <div className="flex items-center justify-between py-5">
+                            <div className="flex items-center">
+                                {/* Icon circle (user) */}
+                                <div className="w-12 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
+                                    <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
+                                </div>
+                                <div>
+                                    <p onClick={() => { router.push('/about') }} className="text-sm text-[#2C3C4E] font-semibold">About you</p>
+                                    <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
+                                </div>
+                            </div>
+                            {/* Arrow */}
+                            <div className="rounded-full bg-[#F4F4F4] p-2">
+                                <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
+                            </div>
                         </div>
-                        <div>
-                            <p onClick={() => { router.push('/about') }} className="text-sm text-[#2C3C4E] font-semibold">About you</p>
-                            <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
-                        </div>
-                    </div>
-                    {/* Arrow */}
-                    <div className="rounded-full bg-[#F4F4F4] p-2">
-                        <Image src={'/icons/forward.svg'} alt="goto" height={20} width={20} />
-                    </div>
-                </div>
-
+                        <hr />
+                    </>
+                )}
 
                 {/* Divider: "Settings" Label */}
                 <p className="my-6 text-sm font-semibold text-[#2C3C4E]">Settings</p>
 
                 {/* C) Notifications */}
-                <div onClick={() => { router.push("/notifications") }} className="flex items-center justify-between py-5">
+                <div onClick={() => isTokenValid ? router.push("/notifications") : handleUnauthenticatedClick()} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Bell icon */}
                         <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -178,7 +235,7 @@ export default function ProfilePage() {
                 <hr />
 
                 {/* D) Terms & conditions */}
-                <div onClick={() => { router.push('/home') }} className="flex items-center justify-between py-5">
+                <div onClick={() => { router.push('/terms-and-conditions') }} className="flex items-center justify-between py-5">
                     <div className="flex items-center">
                         {/* Document icon */}
                         <div className="w-12 p-3 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -207,18 +264,23 @@ export default function ProfilePage() {
                 </div>
                 <hr />
 
-                {/* -- 3) LOGOUT BUTTON -- */}
-                <div className="flex justify-center mt-6 mb-6">
-                    <button 
-                        onClick={handleLogout}
-                        className="bg-[#0A84FF] text-white px-6 py-3 rounded-full text-sm font-semibold"
-                    >
-                        Logout
-                    </button>
-                </div>
+                {/* -- 3) LOGOUT BUTTON -- only show when token is valid */}
+                {isTokenValid && (
+                    <div className="flex justify-center mt-6 mb-6">
+                        <button
+                            onClick={handleLogout}
+                            className="bg-[#0A84FF] text-white px-6 py-3 rounded-full text-sm font-semibold"
+                        >
+                            Logout
+                        </button>
+                    </div>
+                )}
 
-                {/* LogoutModal - No need to conditionally render */}
+                {/* Modals */}
                 <LogoutModal onConfirm={performLogout} />
+                <OnBoardingPopup />
+                <LoginModal />
+                <SignUpModal />
             </div>
 
             <MobileBottomTabs />
