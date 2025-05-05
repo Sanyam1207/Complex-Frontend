@@ -17,23 +17,23 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const dispatch = useDispatch();
 
   // Define public routes that don't require authentication
-  const publicRoutes = ['/home', '/show-listing', '/messages'];
-  const isPublicRoute = publicRoutes.some(route => 
+  const publicRoutes = ['/home', '/show-listing', '/messages', '/profile'];
+  const isPublicRoute = publicRoutes.some(route =>
     pathname === route || pathname.startsWith(`${route}/`)
   );
 
   useEffect(() => {
     // Skip authentication check for public routes
     if (isPublicRoute) return;
-    
+
     // If not authenticated and not loading, show onboarding popup and redirect to home
     if (!isAuthenticated && !loading) {
       // Store the intended route in localStorage so you can redirect back after login
       localStorage.setItem('redirectAfterLogin', pathname);
-      
+
       // Open the onboarding popup
       dispatch(openPopup('onboarding'));
-      
+
       // Redirect to home
       router.push('/home');
     }

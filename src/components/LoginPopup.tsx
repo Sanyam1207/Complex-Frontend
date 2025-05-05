@@ -89,6 +89,8 @@ const LoginModal: React.FC = () => {
       } else {
         setError(response.data.message || "Login failed");
       }
+
+      // dispatch(openPopup('onboarding'));
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login error:", error);
@@ -288,7 +290,8 @@ const LoginModal: React.FC = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E] focus:border-black"
+
                   />
 
                   {/* Password */}
@@ -300,7 +303,8 @@ const LoginModal: React.FC = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E]"
+                    className="w-full rounded-md border bg-[#F4F4F4] p-2 outline-none text-[#2C3C4E] focus:border-black"
+
                   />
 
                   <div className="text-[#0A84FF] text-sm my-6 h-10">

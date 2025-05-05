@@ -14,15 +14,15 @@ interface ProfileCreationModalProps {
 const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ onConfirm }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'ProfileCreation'));
-  
+
   // Handle close action
   const handleClose = () => {
     dispatch(closePopup('ProfileCreation'));
   };
-  
+
   // Handle confirm action with redirection
   const router = useRouter();
-  
+
   const handleConfirm = () => {
     onConfirm();
     dispatch(closePopup('ProfileCreation'));
@@ -36,7 +36,7 @@ const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ onConfirm }
     <div className="fixed bottom-0 z-[900] flex items-center min-w-full justify-center">
       {/* Overlay / Backdrop */}
       <div
-        className="absolute bg-black bg-opacity-50"
+        className="fixed inset-0 bg-black bg-opacity-80"
         onClick={handleClose}
       />
 
@@ -45,19 +45,19 @@ const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ onConfirm }
         {/* Close Button */}
         <div className="absolute top-4 right-4">
           <button onClick={handleClose} aria-label="Close" className="text-gray-700">
-            <Image src={"/icons/closeicon.svg"} alt="close" height={27} width={27}/>
+            <Image src={"/icons/closeicon.svg"} alt="close" height={27} width={27} />
           </button>
         </div>
 
         {/* Star Icon (top-left) */}
         <div className="absolute top-8 left-8">
-          <Image alt="stars" src={"/icons/stars.svg"} height={32} width={32}/>
+          <Image alt="stars" src={"/icons/stars.svg"} height={32} width={32} />
         </div>
 
         {/* Profile Icon */}
         <div className="flex items-center justify-center">
           <div className="">
-            <Image src={"/icons/profilecreation.svg"} alt="complete profile" height={300} width={300}/>
+            <Image src={"/icons/profilecreation.svg"} alt="complete profile" height={300} width={300} />
           </div>
         </div>
 

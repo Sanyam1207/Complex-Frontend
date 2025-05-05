@@ -600,8 +600,8 @@ export default function ChatList() {
                 {/* View Button */}
                 <button onClick={() => {
                   console.log(selectedChat)
-                  const otherUser = selectedChat.users[0];  
-                  router.push(`/show-profile/${otherUser._id}`)
+                  const listing = selectedChat.rentalProperty?._id;
+                  router.push(`/show-listing/${listing}`)
                 }} className="rounded-[57px] bg-[#353537] px-6 py-1.5">
                   <span className="text-white text-center text-[12px] font-medium leading-[194%]">
                     View
@@ -1114,7 +1114,8 @@ export default function ChatList() {
             </div>
           </div>
         </>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }

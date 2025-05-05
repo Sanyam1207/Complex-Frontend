@@ -290,7 +290,8 @@ export default function CompleteProfile() {
                 <button
                     type="button"
                     onClick={() => { router.push('/profile') }}
-                    className="absolute top-6 left-4 text-white"
+                    // className="absolute top-6 left-4 text-white"
+                    className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full"
                 >
                     <Image
                         src={"/icons/backarrow.svg"}
@@ -306,7 +307,7 @@ export default function CompleteProfile() {
             {/* Main Content */}
             <div className="px-4 pt-2 text-white">
                 <h2 className="text-xl text-center font-bold">Complete your profile!</h2>
-                <p className="text-sm text-gray-300 text-center">Stand out and Shine ✨</p>
+                <p className="text-sm text-white text-center">Stand out and Shine ✨</p>
 
                 {/* Profile Picture */}
                 <div className="flex flex-col items-center justify-center my-6">
@@ -486,7 +487,8 @@ export default function CompleteProfile() {
                         placeholder="Eg: work, hobby, lifestyle, anything"
                         value={about}
                         onChange={(e) => setAbout(e.target.value)}
-                        className="w-full border-none focus:border-none focus:outline-none bg-[#F4F4F4] rounded-lg p-3 min-h-24 text-sm"
+                        className="w-full bg-[#F4F4F4] rounded-lg p-3 min-h-24 text-sm focus:outline-none focus:border focus:border-black"
+
                     ></textarea>
                 </div>
 
