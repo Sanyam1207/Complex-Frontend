@@ -136,7 +136,7 @@ export default function ProfilePage() {
                         ) : (
                             <div className="flex flex-col justify-center items-center w-full">
                                 {/* Key Icon */}
-                                <div className="flex w-[120px] h-[120px] bg-gray-800 rounded-full items-center justify-center">
+                                <div className="flex w-[90px] h-[90px] bg-[#343437] rounded-full items-center justify-center">
                                     <Image
                                         src="/icons/keydoorlogout.png"
                                         alt="Key Icon"
@@ -146,10 +146,10 @@ export default function ProfilePage() {
                                     />
                                 </div>
 
-                                <p className="text-[16px] mb-4 text-center w-full">Log in or sign up to continue</p>
+                                <p className="text-[16px] mb-4 mt-4 text-center w-full">Log in or sign up to continue</p>
 
                                 <button
-                                    className="text-[14px] w-full rounded-full bg-white px-[24px] py-[8px] text-black font-semibold hover:bg-gray-800 hover:text-white transition"
+                                    className="w-full rounded-full bg-white py-4 text-black font-semibold hover:bg-gray-800 transition"
                                 >
                                     Log In
                                 </button>

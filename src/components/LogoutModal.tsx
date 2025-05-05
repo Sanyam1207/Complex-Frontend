@@ -14,12 +14,12 @@ interface LogoutModalProps {
 const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'logout'));
-  
+
   // Handle close action
   const handleClose = () => {
     dispatch(closePopup('logout'));
   };
-  
+
   // Handle confirm action
   const handleConfirm = () => {
     onConfirm();
