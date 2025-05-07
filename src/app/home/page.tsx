@@ -17,36 +17,68 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Home() {
     const router = useRouter();
     const dispatch = useDispatch();
-    
+
     // State and ref for bottom bar visibility
     const [bottomBarVisible, setBottomBarVisible] = useState(true);
+    // New state for tracking if the content is docked
+    const [contentDocked, setContentDocked] = useState(false);
+    // New state to store navbar height
+    const [navbarHeight, setNavbarHeight] = useState(0);
     const prevScrollY = useRef(0);
     const scrollableContentRef = useRef<HTMLDivElement>(null);
-    
+    const whiteContainerRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+
+    // Measure header height on mount and window resize
+    useEffect(() => {
+        const measureHeaderHeight = () => {
+            if (headerRef.current) {
+                // Get the actual height of the header element
+                const height = headerRef.current.offsetHeight;
+                setNavbarHeight(height);
+            }
+        };
+
+        // Measure initially
+        measureHeaderHeight();
+
+        // Re-measure on window resize
+        window.addEventListener('resize', measureHeaderHeight);
+        
+        return () => {
+            window.removeEventListener('resize', measureHeaderHeight);
+        };
+    }, []);
+
     // Set up scroll event listener for the inner scrollable div
     useEffect(() => {
         const scrollableContent = scrollableContentRef.current;
-        
+
         if (!scrollableContent) return;
-        
+
         const handleScroll = () => {
             const currentScrollY = scrollableContent.scrollTop;
-            
-            // If we're scrolling down, hide the bottom bar
-            // If we're scrolling up, show the bottom bar
-            if (currentScrollY > prevScrollY.current && currentScrollY > 20) {
+
+            // If we're scrolling down, hide the bottom bar and dock the content
+            // If we're scrolling up, show the bottom bar and undock the content
+            if (currentScrollY > prevScrollY.current && currentScrollY > 50) {
                 setBottomBarVisible(false);
+                setContentDocked(true);
             } else if (currentScrollY < prevScrollY.current) {
                 setBottomBarVisible(true);
+                // Only undock when scrolled near the top
+                if (currentScrollY < 50) {
+                    setContentDocked(false);
+                }
             }
-            
+
             // Update previous scroll position
             prevScrollY.current = currentScrollY > 0 ? currentScrollY : 0;
         };
-        
+
         // Add scroll event listener to the scrollable content
         scrollableContent.addEventListener('scroll', handleScroll, { passive: true });
-        
+
         // Clean up event listener
         return () => {
             if (scrollableContent) {
@@ -116,26 +148,38 @@ export default function Home() {
     ].reduce((sum, count) => sum + count, 0);
     console.log(activeFilterCount)
 
+    // Calculate how far to move the content when docked
+    // Using a fixed offset of 50px below the navbar
+    const dockedTopPosition = -165; 
+
     return (
         <div className={`${inter.className} h-screen flex flex-col bg-[#1F1F21]`}>
             <Suspense fallback={null}>
                 <AuthCallback />
             </Suspense>
 
-            {/* Fixed header section */}
-            <header className="flex-none z-20">
+            {/* Fixed header section - z-20 so it appears above the content when docked */}
+            <header ref={headerRef} className="flex-none z-20">
                 <Navbar />
                 <TabsBar />
             </header>
 
             {/* Main container - takes full height */}
-            <main className="flex-grow relative bg-[#1F1F21]">
+            <main className="flex-grow relative rounded-t-3xl bg-[#1F1F21]">
                 {/* White container with rounded top corners */}
-                <div className="absolute inset-0 bg-white rounded-t-3xl flex flex-col">
+                <div
+                    ref={whiteContainerRef}
+                    style={{
+                        top: contentDocked ? `${dockedTopPosition}px` : 0,
+                        height: contentDocked ? `calc(100% + ${-dockedTopPosition}px)` : '100%'
+                    }}
+                    className={`absolute inset-x-0 bottom-0 bg-white rounded-t-3xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out
+                        ${contentDocked ? 'z-30 rounded-t-3xl' : 'rounded-t-3xl'}`}
+                >
                     {/* Scrollable content area */}
-                    <div 
+                    <div
                         ref={scrollableContentRef}
-                        className="flex-grow overflow-y-auto pb-16"
+                        className="flex-grow overflow-y-auto pb-16 box-border"
                     >
                         {status === 'loading' ? (
                             // Loading state
@@ -143,7 +187,7 @@ export default function Home() {
                                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
                             </div>
                         ) : (
-                            <div className="max-w-7xl md:max-w-full mx-auto grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:px-20">
+                            <div className="max-w-7xl md:max-w-full mx-auto grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:px-20 overflow-hidden">
                                 {properties && properties.length > 0 ? (
                                     // Properties from API
                                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -190,12 +234,11 @@ export default function Home() {
                         )}
                     </div>
                 </div>
-                
+
                 {/* Bottom tabs as overlay at the bottom of the screen */}
-                <div 
-                    className={`fixed bottom-0 left-0 right-0 z-10 transition-transform duration-300 ease-in-out ${
-                        bottomBarVisible ? 'translate-y-0' : 'translate-y-full md:translate-y-0'
-                    }`}
+                <div
+                    className={`fixed bottom-0 left-0 right-0 z-10 transition-transform duration-300 ease-in-out 
+                        ${bottomBarVisible ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}`}
                 >
                     <MobileBottomTabs />
                 </div>
