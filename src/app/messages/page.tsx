@@ -31,6 +31,7 @@ interface User {
 
 interface RentalProperty {
   _id: string;
+  listedBy: User;
   propertyType: string;
   location: string;
   images: string[];
@@ -598,11 +599,25 @@ export default function ChatList() {
                 </div>
 
                 {/* View Button */}
-                <button onClick={() => {
-                  console.log(selectedChat)
-                  const listing = selectedChat.rentalProperty?._id;
-                  router.push(`/show-listing/${listing}`)
-                }} className="rounded-[57px] bg-[#353537] px-6 py-1.5">
+                <button
+                  onClick={() => {
+                    if (!selectedChat || !selectedChat.rentalProperty) return;
+
+                    // Check if current user is the owner of the listing
+                    const isOwner = selectedChat.rentalProperty.listedBy._id === currentUserId;
+
+                    // Find the other user by filtering out the current user from the users array
+                    const otherUser = selectedChat.users.find(user => user._id !== currentUserId);
+
+                    if (isOwner && otherUser) {
+                      // If current user is the owner, redirect to the renter's profile
+                      router.push(`/show-profile/${otherUser._id}`);
+                    } else if (selectedChat.rentalProperty) {
+                      // If current user is the renter, redirect to the listing details
+                      router.push(`/show-listing/${selectedChat.rentalProperty._id}`);
+                    }
+                  }}
+                  className="rounded-[57px] bg-[#353537] px-6 py-1.5">
                   <span className="text-white text-center text-[12px] font-medium leading-[194%]">
                     View
                   </span>
