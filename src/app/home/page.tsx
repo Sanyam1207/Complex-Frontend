@@ -24,6 +24,7 @@ export default function Home() {
     const [contentDocked, setContentDocked] = useState(false);
     // New state to store navbar height
     const [navbarHeight, setNavbarHeight] = useState(0);
+    console.log(navbarHeight)
     const prevScrollY = useRef(0);
     const scrollableContentRef = useRef<HTMLDivElement>(null);
     const whiteContainerRef = useRef<HTMLDivElement>(null);
