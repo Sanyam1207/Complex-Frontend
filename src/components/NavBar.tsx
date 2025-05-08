@@ -13,6 +13,7 @@ import LogoutModal from "./LogoutModal";
 import MobileFilterModal from "./MobileFilterPopup";
 import OnBoardingPopup from "./OnboardingPopup";
 import SignUpModal from "./RegisterPopup";
+import { closeFilterModal, openFilterModal } from "@/redux/slices/filterModalSlice";
 
 // Fonts
 const knewave = Knewave({
@@ -54,7 +55,7 @@ export default function Navbar() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
+  const isFilterModalOpen = useSelector((state: RootState) => state.filterModal.isOpen);
 
   // Extract multiple fields from your filter slice
   const {
@@ -132,7 +133,7 @@ export default function Navbar() {
           {/* Mobile filter icon with chip indicator and conditional background */}
           <div className="relative flex-shrink-0">
             <button
-              onClick={() => setShowMobileFilterModal(true)}
+              onClick={() => dispatch(openFilterModal())}
               className={`h-11 w-11 rounded-full flex items-center justify-center relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
                 }`}
             >
@@ -152,8 +153,8 @@ export default function Navbar() {
         </div>
 
         <MobileFilterModal
-          isOpen={showMobileFilterModal}
-          onClose={() => setShowMobileFilterModal(false)}
+            isOpen={isFilterModalOpen}
+            onClose={() => dispatch(closeFilterModal())}
         />
       </div>
 

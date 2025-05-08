@@ -22,9 +22,12 @@ export default function Home() {
     const [bottomBarVisible, setBottomBarVisible] = useState(true);
     // New state for tracking if the content is docked
     const [contentDocked, setContentDocked] = useState(false);
+    // New state for tracking transition position - using actual numeric value instead of boolean
+    const [dockPosition, setDockPosition] = useState(0);
     // New state to store navbar height
     const [navbarHeight, setNavbarHeight] = useState(0);
-    console.log(navbarHeight)
+
+    console.log(navbarHeight);
     const prevScrollY = useRef(0);
     const scrollableContentRef = useRef<HTMLDivElement>(null);
     const whiteContainerRef = useRef<HTMLDivElement>(null);
@@ -45,11 +48,14 @@ export default function Home() {
 
         // Re-measure on window resize
         window.addEventListener('resize', measureHeaderHeight);
-        
+
         return () => {
             window.removeEventListener('resize', measureHeaderHeight);
         };
     }, []);
+
+    // Calculate how far to move the content when docked
+    const dockedTopPosition = -165;
 
     // Set up scroll event listener for the inner scrollable div
     useEffect(() => {
@@ -57,20 +63,38 @@ export default function Home() {
 
         if (!scrollableContent) return;
 
+        let isScrollingUp = false;
+        let lastScrollTop = 0;
+
         const handleScroll = () => {
             const currentScrollY = scrollableContent.scrollTop;
 
+            // Determine scroll direction
+            isScrollingUp = currentScrollY < lastScrollTop;
+            lastScrollTop = currentScrollY;
+
             // If we're scrolling down, hide the bottom bar and dock the content
-            // If we're scrolling up, show the bottom bar and undock the content
-            if (currentScrollY > prevScrollY.current && currentScrollY > 50) {
+            if (!isScrollingUp && currentScrollY > 50) {
                 setBottomBarVisible(false);
                 setContentDocked(true);
-            } else if (currentScrollY < prevScrollY.current) {
+                setDockPosition(dockedTopPosition);
+            }
+            // If we're scrolling up and near the top (< 50px)
+            else if (isScrollingUp && currentScrollY < 50) {
                 setBottomBarVisible(true);
-                // Only undock when scrolled near the top
-                if (currentScrollY < 50) {
+                
+                // No delay - immediately start the animation
+                setDockPosition(0);
+                
+                // Only change the contentDocked state after animation completes
+                // This ensures the animation plays smoothly without a sudden snap
+                setTimeout(() => {
                     setContentDocked(false);
-                }
+                }, 300); // Match this with the transition duration
+            }
+            // If scrolling up but not near the top
+            else if (isScrollingUp) {
+                setBottomBarVisible(true);
             }
 
             // Update previous scroll position
@@ -86,7 +110,7 @@ export default function Home() {
                 scrollableContent.removeEventListener('scroll', handleScroll);
             }
         };
-    }, []);
+    }, [dockedTopPosition]);
 
     // Get category state values
     const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory);
@@ -94,6 +118,8 @@ export default function Home() {
     const status = useSelector((state: RootState) => state.category.status);
     const error = useSelector((state: RootState) => state.category.error);
     const shouldRefetch = useSelector((state: RootState) => state.category.shouldRefetch);
+    const isFilterModalOpen = useSelector((state: RootState) => state.filterModal.isOpen);
+    
 
     // Fetch properties when category changes or when filters are applied
     useEffect(() => {
@@ -147,11 +173,6 @@ export default function Home() {
         filterState.selectedFilters.length > 0 ? 1 : 0,
         filterState.selectedSort !== "price" ? 1 : 0
     ].reduce((sum, count) => sum + count, 0);
-    console.log(activeFilterCount)
-
-    // Calculate how far to move the content when docked
-    // Using a fixed offset of 50px below the navbar
-    const dockedTopPosition = -165; 
 
     return (
         <div className={`${inter.className} h-screen flex flex-col bg-[#1F1F21]`}>
@@ -171,11 +192,12 @@ export default function Home() {
                 <div
                     ref={whiteContainerRef}
                     style={{
-                        top: contentDocked ? `${dockedTopPosition}px` : 0,
-                        height: contentDocked ? `calc(100% + ${-dockedTopPosition}px)` : '100%'
+                        top: contentDocked ? `${dockPosition}px` : 0,
+                        height: contentDocked ? `calc(100% + ${-dockedTopPosition}px)` : '100%',
+                        transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)' // Smoother easing
                     }}
-                    className={`absolute inset-x-0 bottom-0 bg-white rounded-t-3xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out
-                        ${contentDocked ? 'z-30 rounded-t-3xl' : 'rounded-t-3xl'}`}
+                    className={`absolute inset-x-0 bottom-0 bg-white rounded-t-3xl flex flex-col overflow-hidden
+                        ${contentDocked ? 'z-20 rounded-t-3xl' : 'rounded-t-3xl'}`}
                 >
                     {/* Scrollable content area */}
                     <div
@@ -238,8 +260,11 @@ export default function Home() {
 
                 {/* Bottom tabs as overlay at the bottom of the screen */}
                 <div
-                    className={`fixed bottom-0 left-0 right-0 z-10 transition-transform duration-300 ease-in-out 
-                        ${bottomBarVisible ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}`}
+                    style={{
+                        transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)' // Match transition timing
+                    }}
+                    className={`fixed bottom-0 left-0 right-0 
+                        ${bottomBarVisible ? 'translate-y-0 z-10' : 'translate-y-full md:translate-y-0'} ${isFilterModalOpen ? 'z-10' : 'z-20'}`}
                 >
                     <MobileBottomTabs />
                 </div>
