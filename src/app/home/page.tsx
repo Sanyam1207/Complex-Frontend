@@ -173,6 +173,7 @@ export default function Home() {
         filterState.selectedFilters.length > 0 ? 1 : 0,
         filterState.selectedSort !== "price" ? 1 : 0
     ].reduce((sum, count) => sum + count, 0);
+    console.log("Active filters count:", activeFilterCount);
 
     return (
         <div className={`${inter.className} h-screen flex flex-col bg-[#1F1F21]`}>
