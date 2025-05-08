@@ -3,6 +3,7 @@ import categoryReducer from '../slices/categorySlice'
 import filterReducer from '../slices/filterSlice'
 import popupReducer from '../slices/showPopups'
 import candidateFilterReducer from '../slices/messageSlice';
+import filterModalReducer from "../slices/filterModalSlice" 
 // Import any slice reducers here:
 
 
@@ -13,6 +14,7 @@ export const store = configureStore({
     popup: popupReducer, // Add this line to include the popup reducer
     // ...other slices if you have them,
     candidateFilter: candidateFilterReducer,
+    filterModal: filterModalReducer,
   },
 });
 
