@@ -17,9 +17,10 @@ export const fetchPropertiesByCategory = createAsyncThunk(
   'category/fetchPropertiesByCategory',
   async (category: string, { rejectWithValue, getState }) => {
     try {
-      // Get the current state to access filter values
+      // Get the current state to access filter values and location
       const state = getState() as RootState;
       const filterState = state.filter;
+      const locationState = state.location; // Get location state
       
       // Map the category values to the actual property types used in your backend
       const categoryToPropertyTypeMap: Record<string, string[]> = {
@@ -36,11 +37,22 @@ export const fetchPropertiesByCategory = createAsyncThunk(
       // Build the query string
       const queryParams = new URLSearchParams();
       
-      // Add property types
+      // IMPORTANT: Always include property types to strictly filter by category
       if (propertyTypes.length > 0) {
+        // Make sure to append each property type as a separate parameter
+        // This ensures the backend receives it as an array
         propertyTypes.forEach(type => {
           queryParams.append('propertyType', type);
         });
+        
+        console.log('Property types in query:', propertyTypes);
+      } else {
+        console.warn('No property types found for category:', category);
+      }
+      
+      // Add location filter if it exists
+      if (locationState.selectedLocation) {
+        queryParams.append('location', locationState.selectedLocation);
       }
       
       // Add price range filters

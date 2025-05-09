@@ -7,6 +7,7 @@ import { clearSelectedLocation, setSelectedLocation } from "@/redux/slices/locat
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Image from "next/image";
+import { applyFilters } from "@/redux/slices/categorySlice";
 
 // Your API base URL - should come from env vars in production
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -22,11 +23,12 @@ export default function SearchResultsPanel({
     isOpen,
     onClose,
     searchValue,
-    
 }: SearchResultsPanelProps) {
     const dispatch = useDispatch();
     const panelRef = useRef<HTMLDivElement>(null);
     const { recentSearches } = useSelector((state: RootState) => state.location);
+    // Get the current category to inform the user about what they're searching for
+    const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory);
 
     // State for API locations
     const [locations, setLocations] = useState<string[]>([]);
@@ -55,6 +57,18 @@ export default function SearchResultsPanel({
                 damping: 40,
                 stiffness: 300
             }
+        }
+    };
+
+    // Helper function to get display name for the category
+    const getCategoryDisplayName = (categoryKey: string): string => {
+        switch(categoryKey) {
+            case 'privateRoom': return 'Private Rooms';
+            case 'apartments': return 'Apartments';
+            case 'houses': return 'Houses';
+            case 'sharing': return 'Shared Rooms';
+            case 'basement': return 'Basements';
+            default: return 'Properties';
         }
     };
 
@@ -119,10 +133,12 @@ export default function SearchResultsPanel({
         } else {
             // Otherwise dispatch the selected location
             dispatch(setSelectedLocation(location));
+            // Explicitly trigger a filter application to ensure category+location filter works
+            dispatch(applyFilters());
         }
 
         // Log the selection for debugging
-        console.log(`Selected location: ${location || "cleared"}`);
+        console.log(`Selected location: ${location || "cleared"} for category: ${selectedCategory}`);
 
         // Close the popup
         onClose();
@@ -138,8 +154,10 @@ export default function SearchResultsPanel({
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 // Just use "Current Location" as the location string
-                console.log(position)
+                console.log(position);
                 dispatch(setSelectedLocation("Current Location"));
+                // Explicitly trigger a filter application
+                dispatch(applyFilters());
                 onClose();
             },
             (error) => {
@@ -195,6 +213,13 @@ export default function SearchResultsPanel({
                     exit="exit"
                     variants={panelVariants}
                 >
+                    {/* Category indication header */}
+                    <div className="bg-gray-100 p-3 text-center">
+                        <p className="text-sm text-gray-600">
+                            Searching for {getCategoryDisplayName(selectedCategory)}
+                        </p>
+                    </div>
+                
                     {/* Use my current location button */}
                     <button
                         onClick={handleUseCurrentLocation}
@@ -209,6 +234,7 @@ export default function SearchResultsPanel({
                     {/* Recent searches - only show if we have recent searches and no search value */}
                     {!searchValue && recentSearches.length > 0 && (
                         <div className="w-full">
+                            <h3 className="px-7 py-2 text-sm text-gray-500">Recent searches</h3>
                             <ul>
                                 {recentSearches.map((location, index) => (
                                     <li key={index} className="w-full px-7 border-b border-gray-200 last:border-b-0">
@@ -220,10 +246,7 @@ export default function SearchResultsPanel({
                                                 <Image src={"/icons/searchicon.svg"} alt="search" height={12} width={12} />
                                             </div>
                                             <span className="font-normal text-sm text-[#2C3C4E]">{location}</span>
-
                                         </button>
-
-
                                     </li>
                                 ))}
                             </ul>

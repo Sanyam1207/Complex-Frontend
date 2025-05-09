@@ -1,68 +1,54 @@
-// redux/slices/locationSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+// src/redux/slices/locationSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { applyFilters } from "./categorySlice";
 
+// Define location state interface
 interface LocationState {
-  selectedLocation: string;
+  selectedLocation: string | null;
   recentSearches: string[];
 }
 
-// Initialize from localStorage if available
-const getInitialRecentSearches = (): string[] => {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('recentLocationSearches');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse recent searches from localStorage', e);
-      }
-    }
-  }
-  return [];
-};
-
 const initialState: LocationState = {
-  selectedLocation: '',
-  recentSearches: getInitialRecentSearches(),
+  selectedLocation: null,
+  recentSearches: []
 };
 
 export const locationSlice = createSlice({
-  name: 'location',
+  name: "location",
   initialState,
   reducers: {
     setSelectedLocation: (state, action: PayloadAction<string>) => {
-      state.selectedLocation = action.payload;
+      const location = action.payload;
       
-      // Add to recent searches if not already there and not empty
-      if (action.payload && !state.recentSearches.includes(action.payload)) {
-        state.recentSearches = [
-          action.payload, 
-          ...state.recentSearches.filter(location => location !== action.payload).slice(0, 4)
-        ];
-        
-        // Save to localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('recentLocationSearches', JSON.stringify(state.recentSearches));
-        }
+      // Set the selected location
+      state.selectedLocation = location;
+      
+      // Add to recent searches if not already present (and not "Current Location")
+      if (location !== "Current Location" && !state.recentSearches.includes(location)) {
+        // Keep only the 5 most recent searches
+        state.recentSearches = [location, ...state.recentSearches.slice(0, 4)];
       }
     },
     clearSelectedLocation: (state) => {
-      state.selectedLocation = '';
-    },
-    clearRecentSearches: (state) => {
-      state.recentSearches = [];
-      // Clear from localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('recentLocationSearches');
-      }
-    },
-  },
+      state.selectedLocation = null;
+    }
+  }
 });
 
-export const { 
-  setSelectedLocation, 
-  clearSelectedLocation,
-  clearRecentSearches
-} = locationSlice.actions;
+// Export action creators
+export const { setSelectedLocation, clearSelectedLocation } = locationSlice.actions;
+
+// Create middleware for handling side effects when location changes
+export const locationMiddleware = (store: any) => (next: any) => (action: any) => {
+  // First pass the action
+  const result = next(action);
+  
+  // After a location change, we should trigger a refetch of properties
+  if (setSelectedLocation.match(action) || clearSelectedLocation.match(action)) {
+    store.dispatch(applyFilters());
+  }
+  
+  return result;
+};
 
 export default locationSlice.reducer;

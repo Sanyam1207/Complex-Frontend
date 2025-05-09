@@ -18,6 +18,18 @@ const inter = Inter({ subsets: ['latin'] });
 // Your API base URL - should come from env vars in production
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+// Define category type for type safety
+type CategoryType = 'privateRoom' | 'apartments' | 'houses' | 'sharing' | 'basement';
+
+// Define the property type map
+const categoryToPropertyTypeMap: Record<CategoryType, string[]> = {
+    privateRoom: ['Private room in Apartment', 'Private room in House'],
+    apartments: ['Apartment / Condo'],
+    houses: ['House / Townhouse'],
+    sharing: ['Shared Room in House', 'Shared Room in Apartment'],
+    basement: ['Basement'],
+};
+
 export default function Home() {
     const router = useRouter();
     const dispatch = useDispatch();
@@ -30,7 +42,10 @@ export default function Home() {
     const [dockPosition, setDockPosition] = useState(0);
     // New state to store navbar height
     const [navbarHeight, setNavbarHeight] = useState(0);
-console.log("navbarHeight", navbarHeight);
+    
+    // Add state to track initial load
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
     // State for properties filtered by location
     const [propertiesByLocation, setPropertiesByLocation] = useState([]);
     const [isLoadingLocationProperties, setIsLoadingLocationProperties] = useState(false);
@@ -44,30 +59,13 @@ console.log("navbarHeight", navbarHeight);
     const whiteContainerRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
 
-    // const dummyProperties = [
-    //     {
-    //         images: [
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //         ],
-    //         address: "265 Mainstreet, Toronto",
-    //         price: 1200,
-    //         date: new Date(),
-    //     },
-    //     {
-    //         images: [
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //             "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    //         ],
-    //         address: "266 Mainstreet, Toronto",
-    //         price: 1200,
-    //         date: new Date(),
-    //     },
-    // ];
+    // Get category state values
+    const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory) as CategoryType;
+    const properties = useSelector((state: RootState) => state.category.properties);
+    const status = useSelector((state: RootState) => state.category.status);
+    const error = useSelector((state: RootState) => state.category.error);
+    const shouldRefetch = useSelector((state: RootState) => state.category.shouldRefetch);
+    const isFilterModalOpen = useSelector((state: RootState) => state.filterModal.isOpen);
 
     // Measure header height on mount and window resize
     useEffect(() => {
@@ -148,64 +146,104 @@ console.log("navbarHeight", navbarHeight);
         };
     }, [dockedTopPosition]);
 
-    // Get category state values
-    const selectedCategory = useSelector((state: RootState) => state.category.selectedCategory);
-    const properties = useSelector((state: RootState) => state.category.properties);
-    const status = useSelector((state: RootState) => state.category.status);
-    const error = useSelector((state: RootState) => state.category.error);
-    const shouldRefetch = useSelector((state: RootState) => state.category.shouldRefetch);
-    const isFilterModalOpen = useSelector((state: RootState) => state.filterModal.isOpen);
-
+    // Initial fetch on component mount - This ensures properties are loaded on initial page load
+    useEffect(() => {
+        if (!initialLoadComplete) {
+            // @ts-expect-error - TS might complain about dispatch type
+            dispatch(fetchPropertiesByCategory(selectedCategory));
+            setInitialLoadComplete(true);
+        }
+    }, [dispatch, selectedCategory, initialLoadComplete]);
+    
     // Fetch properties by category when category changes or when filters are applied
     useEffect(() => {
         if (shouldRefetch && !selectedLocation) {
             // Only fetch by category if no location is selected
             // @ts-expect-error - TS might complain about dispatch type
             dispatch(fetchPropertiesByCategory(selectedCategory));
+        } else if (selectedLocation && (shouldRefetch || initialLoadComplete)) {
+            // If location is selected and category changes, refetch with both filters
+            fetchPropertiesByLocationAndCategory();
         }
-    }, [dispatch, selectedCategory, shouldRefetch, selectedLocation]);
-
-    // Fetch properties by location when location changes
+    }, [dispatch, selectedCategory, shouldRefetch, selectedLocation, initialLoadComplete]);
+    
+    // When location changes, fetch properties filtered by both location and category
     useEffect(() => {
         if (selectedLocation) {
-            fetchPropertiesByLocation(selectedLocation);
+            fetchPropertiesByLocationAndCategory();
         } else {
             // Clear properties by location when location is cleared
             setPropertiesByLocation([]);
             setLocationError(null);
         }
     }, [selectedLocation]);
-
-    // Function to fetch properties by location
-    const fetchPropertiesByLocation = async (location: string) => {
+    
+    // When category changes and we have a location filter, refetch properties
+    useEffect(() => {
+        if (selectedLocation) {
+            fetchPropertiesByLocationAndCategory();
+        }
+    }, [selectedCategory]);
+    
+    // Function to fetch properties by location AND category
+    const fetchPropertiesByLocationAndCategory = async () => {
+        if (!selectedLocation) return;
+        
         setIsLoadingLocationProperties(true);
         setLocationError(null);
-
+        
         try {
-            console.log(`Fetching properties for location: ${location}`);
-
-            // Make API call to fetch properties by location
-            const response = await axios.get(`${API_BASE_URL}/api/rentals`, {
-                params: { location }
-            });
-
-            console.log('API Response:', response.data);
-
+            // Get the property types for the selected category from our type-safe mapping
+            const propertyTypes = categoryToPropertyTypeMap[selectedCategory] || [];
+            
+            console.log(`Fetching properties for location: ${selectedLocation} and category: ${selectedCategory}`);
+            console.log('Property types:', propertyTypes);
+            
+            // Create params object with location
+            const params: any = { 
+                location: selectedLocation 
+            };
+            
+            // CRITICAL: Always include property types for the current category
+            // This ensures we only get properties of the correct type for this category
+            if (propertyTypes.length > 0) {
+                // For axios to properly send multiple values for the same parameter name
+                // we need to use the propertyType[] format in the query string
+                propertyTypes.forEach((type, index) => {
+                    params[`propertyType[${index}]`] = type;
+                });
+            }
+            
+            console.log('Request params:', params);
+            
+            // Make API call to fetch properties by location AND category
+            const response = await axios.get(`${API_BASE_URL}/api/rentals`, { params });
+            
+            console.log('API Response for location + category:', response.data);
+            
             if (response.data && response.data.success) {
-                console.log(`Found ${response.data.count} properties in location: ${location}`);
-                setPropertiesByLocation(response.data.data);
-
+                console.log(`Found ${response.data.count} properties in location: ${selectedLocation} for category: ${selectedCategory}`);
+                
+                // Additional safety check: Filter results to ensure they match the current category's property types
+                const filteredResults = response.data.data.filter((property: any) => 
+                    propertyTypes.includes(property.propertyType)
+                );
+                
+                console.log(`After filtering: ${filteredResults.length} properties match the ${selectedCategory} category`);
+                
+                setPropertiesByLocation(filteredResults);
+                
                 // If no properties found, set a user-friendly message
-                if (response.data.count === 0) {
+                if (filteredResults.length === 0) {
                     setLocationError(null);
                 }
             } else {
-                console.error('Failed to fetch properties by location');
+                console.error('Failed to fetch properties by location and category');
                 setLocationError(response.data?.message || 'Failed to fetch properties');
             }
         } catch (error) {
-            console.error('Error fetching properties by location:', error);
-
+            console.error('Error fetching properties by location and category:', error);
+            
             if (axios.isAxiosError(error)) {
                 if (error.response) {
                     console.error('Response status:', error.response.status);
@@ -223,7 +261,19 @@ console.log("navbarHeight", navbarHeight);
             setIsLoadingLocationProperties(false);
         }
     };
-
+    
+    // Get display name for selected category
+    const getCategoryDisplayName = (category: CategoryType): string => {
+        switch(category) {
+            case 'privateRoom': return 'private rooms';
+            case 'apartments': return 'apartments';
+            case 'houses': return 'houses';
+            case 'sharing': return 'shared rooms';
+            case 'basement': return 'basements';
+            default: return 'properties';
+        }
+    };
+    
     // Determine which properties to show - if location is selected, show location-filtered properties
     const displayProperties = selectedLocation ? propertiesByLocation : properties;
     const isLoading = selectedLocation ? isLoadingLocationProperties : status === 'loading';
@@ -254,8 +304,6 @@ console.log("navbarHeight", navbarHeight);
                     className={`absolute inset-x-0 bottom-0 bg-white rounded-t-3xl flex flex-col overflow-hidden
                         ${contentDocked ? 'z-20 rounded-t-3xl' : 'rounded-t-3xl'}`}
                 >
-                    {/* Removed the location filter banner as requested */}
-
                     {/* Scrollable content area */}
                     <div
                         ref={scrollableContentRef}
@@ -288,11 +336,13 @@ console.log("navbarHeight", navbarHeight);
                                     // No properties found with error message
                                     <div className="col-span-full text-center py-12">
                                         <p className="text-lg font-medium">
-                                            {selectedLocation ? `No properties found in ${selectedLocation}` : "No properties found with these filters"}
+                                            {selectedLocation ? 
+                                                `No ${getCategoryDisplayName(selectedCategory)} found in ${selectedLocation}` : 
+                                                "No properties found with these filters"}
                                         </p>
                                         <p className="text-gray-500">
                                             {selectedLocation ?
-                                                "Try searching for a different location" :
+                                                "Try searching for a different location or changing the category" :
                                                 "Try adjusting your filters or selecting a different category"}
                                         </p>
                                     </div>

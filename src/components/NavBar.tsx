@@ -15,6 +15,7 @@ import OnBoardingPopup from "./OnboardingPopup";
 import SignUpModal from "./RegisterPopup";
 import { closeFilterModal, openFilterModal } from "@/redux/slices/filterModalSlice";
 import SearchResultsPanel from "./LocationSearchPopup";
+
 import { clearSelectedLocation } from "@/redux/slices/locationSlice";
 import { fetchPropertiesByCategory } from "@/redux/slices/categorySlice";
 
@@ -26,6 +27,9 @@ const knewave = Knewave({
 const inter = Inter({
   subsets: ["latin"],
 });
+
+// Define category type for type safety
+type CategoryType = 'privateRoom' | 'apartments' | 'houses' | 'sharing' | 'basement';
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -64,7 +68,7 @@ export default function Navbar() {
   const [searchValue, setSearchValue] = useState("");
   const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
   const { selectedLocation } = useSelector((state: RootState) => state.location);
-  const { selectedCategory } = useSelector((state: RootState) => state.category);
+  const { selectedCategory } = useSelector((state: RootState) => state.category) as { selectedCategory: CategoryType };
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Extract multiple fields from your filter slice
@@ -162,8 +166,24 @@ export default function Navbar() {
   useEffect(() => {
     if (selectedLocation) {
       setSearchValue(selectedLocation);
+    } else {
+      setSearchValue("");
     }
   }, [selectedLocation]);
+
+  // Get a user-friendly placeholder for search based on the selected category
+  const getSearchPlaceholder = (): string => {
+    if (pathname === "/messages") return "Search messages";
+    
+    switch(selectedCategory) {
+      case 'privateRoom': return "Search for private rooms";
+      case 'apartments': return "Search for apartments";
+      case 'houses': return "Search for houses";
+      case 'sharing': return "Search for shared rooms";
+      case 'basement': return "Search for basements";
+      default: return "Search location";
+    }
+  };
 
   return (
     <>
@@ -210,7 +230,7 @@ export default function Navbar() {
                 onChange={handleSearchChange}
                 onFocus={handleInputFocus}
                 onKeyDown={handleKeyDown}
-                placeholder={pathname === "/messages" ? "Search messages" : "Search location"}
+                placeholder={selectedLocation || getSearchPlaceholder()}
                 className="ml-3 flex-1 text-[14px] text-white font-light tracking-[-0.3px] bg-transparent border-none outline-none"
               />
               {searchValue && (
@@ -297,7 +317,7 @@ export default function Navbar() {
               onChange={handleSearchChange}
               onFocus={handleInputFocus}
               onKeyDown={handleKeyDown}
-              placeholder="Search location"
+              placeholder={selectedLocation || getSearchPlaceholder()}
               className="ml-2 w-full border-none outline-none bg-transparent text-[14px] text-white placeholder-white"
             />
             {searchValue && (
