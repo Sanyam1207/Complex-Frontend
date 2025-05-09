@@ -39,6 +39,7 @@ export const locationSlice = createSlice({
 export const { setSelectedLocation, clearSelectedLocation } = locationSlice.actions;
 
 // Create middleware for handling side effects when location changes
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const locationMiddleware = (store: any) => (next: any) => (action: any) => {
   // First pass the action
   const result = next(action);
