@@ -68,7 +68,7 @@ const OnBoardingPopup: React.FC = () => {
             {/* =======================
           MOBILE VIEW
       ======================= */}
-            <div className="block md:hidden absolute bottom-0 z-50 w-full max-w-md mx-auto rounded-t-2xl bg-white px-6 py-8 shadow-lg">
+            <div className="block md:hidden absolute bottom-0 z-40 w-full max-w-md mx-auto rounded-t-2xl bg-white px-6 py-8 shadow-lg">
                 {/* Close Button */}
                 <div className="absolute top-4 right-4">
                     <button onClick={handleClose} aria-label="Close" className="text-gray-500 hover:text-gray-800">

@@ -3,7 +3,8 @@ import categoryReducer from '../slices/categorySlice'
 import filterReducer from '../slices/filterSlice'
 import popupReducer from '../slices/showPopups'
 import candidateFilterReducer from '../slices/messageSlice';
-import filterModalReducer from "../slices/filterModalSlice" 
+import filterModalReducer from "../slices/filterModalSlice";
+import locationReducer from "../slices/locationSlice"
 // Import any slice reducers here:
 
 
@@ -15,6 +16,7 @@ export const store = configureStore({
     // ...other slices if you have them,
     candidateFilter: candidateFilterReducer,
     filterModal: filterModalReducer,
+    location: locationReducer, // Add this line to include the location reducer
   },
 });
 
