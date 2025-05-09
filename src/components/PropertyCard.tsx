@@ -121,8 +121,8 @@ export default function PropertyCardCarousel({
             <div className="py-5 px-4">
                 <div className="flex justify-between items-center">
                     <h2 className="font-medium text-[#2C3C4E] text-sm">{address}</h2>
-                    <p className="font-medium text-[#2C3C4E] text-xs">
-                        ${price}<span className="font-light">/month</span>
+                    <p className="font-medium text-[#2C3C4E] text-sm">
+                        ${price}<span className="font-light text-xs">/month</span>
                     </p>
                 </div>
                 <p className="mt-1 text-[0.75rem] text-[#2C3C4E] flex flex-row items-center">
