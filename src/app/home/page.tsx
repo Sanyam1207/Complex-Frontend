@@ -42,6 +42,7 @@ export default function Home() {
     const [dockPosition, setDockPosition] = useState(0);
     // New state to store navbar height
     const [navbarHeight, setNavbarHeight] = useState(0);
+    console.log('Navbar height:', navbarHeight);
     
     // Add state to track initial load
     const [initialLoadComplete, setInitialLoadComplete] = useState(false);
@@ -200,6 +201,7 @@ export default function Home() {
             console.log('Property types:', propertyTypes);
             
             // Create params object with location
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const params: any = { 
                 location: selectedLocation 
             };
@@ -225,6 +227,7 @@ export default function Home() {
                 console.log(`Found ${response.data.count} properties in location: ${selectedLocation} for category: ${selectedCategory}`);
                 
                 // Additional safety check: Filter results to ensure they match the current category's property types
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const filteredResults = response.data.data.filter((property: any) => 
                     propertyTypes.includes(property.propertyType)
                 );
@@ -371,4 +374,4 @@ export default function Home() {
             </main>
         </div>
     );
-}
+}   
