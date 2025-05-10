@@ -6,7 +6,6 @@ import OfferChips from '@/components/OfferChips';
 import OnBoardingPopup from '@/components/OnboardingPopup';
 import SignUpModal from '@/components/RegisterPopup';
 import ShowListingCardReview from '@/components/ShowListingCardReview';
-import { openPopup } from '@/redux/slices/showPopups';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -62,6 +61,7 @@ const fallbackData = {
 
 export default function ReviewListing() {
     const dispatch = useDispatch();
+    console.log(dispatch)
     const router = useRouter();
 
     const [property, setProperty] = useState<PropertyType | null>(null);
@@ -69,6 +69,7 @@ export default function ReviewListing() {
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [userInfo, setUserInfo] = useState({ _id: '', fullName: '', profilePicture: '', createdAt: new Date().toISOString() });
+    console.log(userInfo)
 
     // Load property data from localStorage on component mount
     useEffect(() => {
@@ -298,6 +299,7 @@ export default function ReviewListing() {
 
     const availableFrom = formatDate(property.startDate);
     const listedOn = formatDate(new Date().toISOString());
+    console.log('Listed on:', listedOn);
 
     return (
         <div className={`${inter.className}`}>

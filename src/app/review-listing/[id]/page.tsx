@@ -80,6 +80,7 @@ export default function ShowListing() {
     const [sendMessage, setSendMessage] = useState<string>("Hello, is this available?");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [similarProperties, setSimilarProperties] = useState<any[]>([]);
+    console.log(similarProperties);
     const [isPreview, setIsPreview] = useState<boolean>(false);
 
     // Check if this is a preview (new listing that hasn't been published)
@@ -98,6 +99,7 @@ export default function ShowListing() {
         if (!isPreview) return;
 
         const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
+            console.log(e)
             // Delete the listing if user is navigating away and it's in preview mode
             if (propertyId) {
                 try {

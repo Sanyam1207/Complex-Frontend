@@ -61,16 +61,16 @@ export default function SearchResultsPanel({
     };
 
     // Helper function to get display name for the category
-    const getCategoryDisplayName = (categoryKey: string): string => {
-        switch(categoryKey) {
-            case 'privateRoom': return 'Private Rooms';
-            case 'apartments': return 'Apartments';
-            case 'houses': return 'Houses';
-            case 'sharing': return 'Shared Rooms';
-            case 'basement': return 'Basements';
-            default: return 'Properties';
-        }
-    };
+    // const getCategoryDisplayName = (categoryKey: string): string => {
+    //     switch(categoryKey) {
+    //         case 'privateRoom': return 'Private Rooms';
+    //         case 'apartments': return 'Apartments';
+    //         case 'houses': return 'Houses';
+    //         case 'sharing': return 'Shared Rooms';
+    //         case 'basement': return 'Basements';
+    //         default: return 'Properties';
+    //     }
+    // };
 
     // Calculate the navbar height when component mounts and when window resizes
     useEffect(() => {

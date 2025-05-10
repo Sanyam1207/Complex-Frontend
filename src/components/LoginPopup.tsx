@@ -119,7 +119,9 @@ const LoginModal: React.FC = () => {
         }
       }
 
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Unexpected error:", error);
       // Already handled in the try block
     } finally {
       setIsLoading(false);

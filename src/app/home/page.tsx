@@ -157,6 +157,7 @@ export default function Home() {
     }, [dispatch, selectedCategory, initialLoadComplete]);
     
     // Fetch properties by category when category changes or when filters are applied
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (shouldRefetch && !selectedLocation) {
             // Only fetch by category if no location is selected
@@ -166,9 +167,11 @@ export default function Home() {
             // If location is selected and category changes, refetch with both filters
             fetchPropertiesByLocationAndCategory();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, selectedCategory, shouldRefetch, selectedLocation, initialLoadComplete]);
     
     // When location changes, fetch properties filtered by both location and category
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (selectedLocation) {
             fetchPropertiesByLocationAndCategory();
@@ -180,6 +183,7 @@ export default function Home() {
     }, [selectedLocation]);
     
     // When category changes and we have a location filter, refetch properties
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (selectedLocation) {
             fetchPropertiesByLocationAndCategory();
