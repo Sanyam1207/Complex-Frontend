@@ -61,16 +61,16 @@ export default function SearchResultsPanel({
     };
 
     // Helper function to get display name for the category
-    const getCategoryDisplayName = (categoryKey: string): string => {
-        switch(categoryKey) {
-            case 'privateRoom': return 'Private Rooms';
-            case 'apartments': return 'Apartments';
-            case 'houses': return 'Houses';
-            case 'sharing': return 'Shared Rooms';
-            case 'basement': return 'Basements';
-            default: return 'Properties';
-        }
-    };
+    // const getCategoryDisplayName = (categoryKey: string): string => {
+    //     switch(categoryKey) {
+    //         case 'privateRoom': return 'Private Rooms';
+    //         case 'apartments': return 'Apartments';
+    //         case 'houses': return 'Houses';
+    //         case 'sharing': return 'Shared Rooms';
+    //         case 'basement': return 'Basements';
+    //         default: return 'Properties';
+    //     }
+    // };
 
     // Calculate the navbar height when component mounts and when window resizes
     useEffect(() => {
@@ -214,12 +214,7 @@ export default function SearchResultsPanel({
                     variants={panelVariants}
                 >
                     {/* Category indication header */}
-                    <div className="bg-gray-100 p-3 text-center">
-                        <p className="text-sm text-gray-600">
-                            Searching for {getCategoryDisplayName(selectedCategory)}
-                        </p>
-                    </div>
-                
+                    
                     {/* Use my current location button */}
                     <button
                         onClick={handleUseCurrentLocation}

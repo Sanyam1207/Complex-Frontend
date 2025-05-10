@@ -53,7 +53,7 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({
             onChange={(e) => setMonthlyPrice(e.target.value.replace(/\D/g, ''))}
             className="
               w-full
-              bg-[#F4F4F4]
+            
               border
               border-gray-300
               rounded-lg

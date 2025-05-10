@@ -39,7 +39,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
                   placeholder={`Point ${index + 1}`}
                   value={point}
                   onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                  className="border border-gray-300 bg-[#F4F4F4] rounded p-2 focus:outline-none flex-1"
+                  className="border border-gray-300 focus:border-gray-900 rounded p-2 focus:outline-none flex-1"
                 />
                 {isLast && (
                   <button
@@ -72,7 +72,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
                   onChange={(e) =>
                     handleWalkingDistanceChange(index, e.target.value)
                   }
-                  className="border border-gray-300 bg-[#F4F4F4] rounded p-2 focus:outline-none flex-1"
+                  className="border border-gray-300 focus:border-gray-900 rounded p-2 focus:outline-none flex-1"
                 />
                 {isLast && (
                   <button

@@ -84,7 +84,7 @@ export default function Navbar() {
 
   // Compute the composite count
   const compositeCount =
-    (minValue.trim() !== "" ? 1 : 0) +
+    (minValue.trim() !== "0" ? 1 : 0) +
     (maxValue.trim() !== "" ? 1 : 0) +
     (bedrooms.trim() !== "" ? 1 : 0) +
     (bathrooms.trim() !== "" ? 1 : 0) +
@@ -176,11 +176,11 @@ export default function Navbar() {
     if (pathname === "/messages") return "Search messages";
     
     switch(selectedCategory) {
-      case 'privateRoom': return "Search for private rooms";
-      case 'apartments': return "Search for apartments";
-      case 'houses': return "Search for houses";
-      case 'sharing': return "Search for shared rooms";
-      case 'basement': return "Search for basements";
+      case 'privateRoom': return "Search Location";
+      case 'apartments': return "Search Location";
+      case 'houses': return "Search Location";
+      case 'sharing': return "Search Location";
+      case 'basement': return "Search Location";
       default: return "Search location";
     }
   };

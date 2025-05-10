@@ -40,7 +40,6 @@ export default function ShowListingCardReview({
         
       {/* Top Section (Carousel) */}
       <div className="relative">
-        fkajfbaksfbsakfbakjsbfdksf
         <Carousel setApi={setCarouselApi} className="relative w-full h-72">
           <CarouselContent>
             {images.map((src, idx) => (

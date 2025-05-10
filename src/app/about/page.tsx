@@ -487,7 +487,7 @@ export default function CompleteProfile() {
                         placeholder="Eg: work, hobby, lifestyle, anything"
                         value={about}
                         onChange={(e) => setAbout(e.target.value)}
-                        className="w-full bg-[#F4F4F4] rounded-lg p-3 min-h-24 text-sm focus:outline-none focus:border focus:border-black"
+                        className="w-full border-gray-300 border rounded-lg p-3 min-h-24 text-sm focus:outline-none focus:border focus:border-black"
 
                     ></textarea>
                 </div>

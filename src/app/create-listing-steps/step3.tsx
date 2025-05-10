@@ -34,7 +34,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
               className="
                 w-full
                 border
-                bg-[#F4F4F4]
+                
                 rounded-lg
                 p-3
                 text-sm
@@ -63,7 +63,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
               className="
                 w-full
                 border
-                bg-[#F4F4F4]
                 rounded-lg
                 p-3
                 text-sm
