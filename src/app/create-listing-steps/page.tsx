@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import CreateListingStepper from "@/components/CreateListingStepper";
@@ -168,8 +167,8 @@ export default function Page() {
         setActiveStep(2);
     };
 
-
-    const handleSubmitListing = async () => {
+    // Modified to save to localStorage and redirect to review page
+    const handleSubmitListing = async (): Promise<void> => {
         try {
             // Show loading state
             setIsSubmitting(true);
@@ -215,10 +214,7 @@ export default function Page() {
                     : selectedPropertyType;
             }
 
-            // Create a FormData object for multipart form submission
-            const formData = new FormData();
-
-            // Add all the text data as a single JSON field
+            // Create the rental data object
             const rentalData = {
                 propertyType: propertyType,
                 monthlyPrice: Number(monthlyPrice),
@@ -231,111 +227,23 @@ export default function Page() {
                 coupleFriendly: isCoupleFriendly,
                 amenities: selectedAmenities,
                 description: descriptionPoints.filter(point => point.trim() !== ''),
-                walkingDistanceTo: walkingDistancePoints.filter(point => point.trim() !== '')
+                walkingDistanceTo: walkingDistancePoints.filter(point => point.trim() !== ''),
+                images: images
             };
 
-            // Add the JSON data to the form
-            formData.append('rentalData', JSON.stringify(rentalData));
-            console.log("Rental data:", rentalData);
-
-
-            // Debug the FormData contents
-            for (const [key, value] of formData.entries()) {
-                console.log(`${key}: ${value instanceof File ? `File: ${value.name}, ${value.size} bytes` : value}`);
-            }
-
-
-            // Process and append each image
-            for (let i = 0; i < images.length; i++) {
-                const imageUrl = images[i];
-
-                try {
-                    // For blob URLs created with URL.createObjectURL
-                    if (imageUrl.startsWith('blob:')) {
-                        // Get the image data
-                        const response = await fetch(imageUrl);
-                        const blob = await response.blob();
-
-                        // Create a file name
-                        const fileName = `image-${Date.now()}-${i}.${blob.type.split('/')[1] || 'jpg'}`;
-
-                        // Create a File object from the blob
-                        const file = new File([blob], fileName, { type: blob.type });
-
-                        // Append to FormData with field name 'images' (important: must match backend)
-                        formData.append('images', file);
-                        console.log(`Appended image ${i}: ${fileName}`);
-                    } else if (imageUrl.startsWith('data:')) {
-                        // For data URLs, convert to blob first
-                        const response = await fetch(imageUrl);
-                        const blob = await response.blob();
-
-                        // Create a file name
-                        const fileName = `image-${Date.now()}-${i}.${blob.type.split('/')[1] || 'jpg'}`;
-
-                        // Create a File object from the blob
-                        const file = new File([blob], fileName, { type: blob.type });
-
-                        // Append to FormData with field name 'images'
-                        formData.append('images', file);
-                        console.log(`Appended image ${i}: ${fileName}`);
-                    } else if (!imageUrl.includes('cloudinary.com')) {
-                        console.warn('Image URL format not directly supported:', imageUrl);
-                    }
-                } catch (error) {
-                    console.error(`Error processing image ${i}:`, error);
-                    // Continue with other images instead of failing the whole upload
-                }
-            }
-
-            // Log the form data keys for debugging
-            console.log("FormData contains keys:", [...formData.keys()]);
-
-            // Check if we have the required data
-            if (!formData.has('rentalData')) {
-                throw new Error('Rental data is missing from the form');
-            }
-
-            // Call the API to create the listing
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Authentication token is missing');
-            }
-
-            console.log("Sending API request...");
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                    // Note: Do NOT set Content-Type header here - the browser will set it 
-                    // automatically with the correct boundary for multipart/form-data
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`API request failed (${response.status}): ${errorText}`);
-            }
-
-            const result = await response.json();
-            console.log("Response from backend:", result);
-
-            if (result.success) {
-                // Redirect to the listing page
-                router.push(`/show-listing/${result.data._id}`);
-            } else {
-                throw new Error(result.message || 'Unknown error');
-            }
+            // Store in localStorage for the review page
+            localStorage.setItem('pendingListing', JSON.stringify(rentalData));
+            
+            // Redirect to review page
+            router.push('/review-listing');
+            
         } catch (error) {
-            console.error('Error creating listing:', error);
+            console.error('Error preparing listing data:', error);
             alert(`Error: ${error instanceof Error ? error.message : 'Something went wrong'}`);
         } finally {
             setIsSubmitting(false);
         }
     };
-
-
 
     const handleAmenityToggle = (amenity: string) => {
         if (selectedAmenities.includes(amenity)) {
@@ -377,13 +285,12 @@ export default function Page() {
         e.target.value = "";
     };
 
-
     const totalSlots = images.length < 6 ? 6 : images.length + 1;
 
     return (
         <div className={`${inter.className} relative min-h-screen flex flex-col`}>
             <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-8 left-8">
-                <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} />
+                <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} className="" />
             </button>
 
             {/* Navbar */}

@@ -522,9 +522,9 @@ export default function ChatList() {
 
 
           {/* Locked messages content */}
-          <div className="flex-grow rounded-t-3xl flex bg-white flex-col items-center justify-center p-6">
+          <div className="flex-grow overflow-hidden rounded-t-3xl flex bg-white flex-col items-center justify-center p-6 pt-0">
             <div className="">
-              <Image alt="keylock" src={"/icons/keylock.svg"} height={300} width={300} className="" />
+              <Image alt="keylock" src={"/icons/keylock.svg"} height={3000} width={3000} className="h-64" />
             </div>
             <h3 className="text-xl font-semibold text-[#2C3C4E] mb-2">Log in to see messages</h3>
             <p className="text-[#2C3C4E] text-center font-light mb-8">

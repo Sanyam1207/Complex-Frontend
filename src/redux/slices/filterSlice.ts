@@ -22,7 +22,7 @@ const initialState: FilterState = {
   selectedFilters: [],
   bedrooms: "",
   bathrooms: "",
-  minValue: "",
+  minValue: "0",
   maxValue: "",
   selectedSort: "price",
 };

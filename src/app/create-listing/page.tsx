@@ -83,7 +83,7 @@ export default function CreateListing() {
             {/* MOBILE LAYOUT */}
             <div className={`${inter.className} flex flex-col md:hidden h-screen bg-black`}>
                 {/* Top Section: Black background */}
-                <div className="flex flex-col flex-1 h-full bg-[#1F1F21] text-white p-5 pb-10">
+                <div className="flex flex-col flex-1 h-full bg-[#1F1F21] text-white p-5 pb-5">
                     {/* Back arrow + Title */}
                     <div className="flex items-center w-full">
                         <button onClick={() => { router.push('/home') }} className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full">
@@ -102,9 +102,9 @@ export default function CreateListing() {
 
                 {/* Bottom Section: White background, rounded top */}
                 <div className="rounded-t-2xl  flex-grow-0absolute bottom-0 text-[#2C3C4E] w-full bg-white p-6 flex flex-col h-full">
-                    <div className="flex flex-col space-y-6 flex-1">
+                    <div className="flex flex-col space-y-0 flex-1">
                         {/* Render each step */}
-                        <div className="flex flex-col justify-around flex-1 space-y-4">
+                        <div className="flex flex-col justify-around flex-1 space-y-3">
                             {steps.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <StepItem variant="mobile" {...item} />

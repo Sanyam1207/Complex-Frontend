@@ -9,7 +9,7 @@ import ShowListingCardReview from '@/components/ShowListingCardReview';
 import { openPopup } from '@/redux/slices/showPopups';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -17,10 +17,8 @@ const inter = Inter({
     subsets: ['latin'],
 })
 
-// Property type definition
+// Property type definition for pending listing
 interface PropertyType {
-    _id: string;
-    images: string[];
     propertyType: string;
     monthlyPrice: number;
     location: string;
@@ -33,16 +31,10 @@ interface PropertyType {
     startDate: string;
     leaseDuration: string;
     walkingDistanceTo?: string[];
-    listedBy: {
-        _id: string;
-        fullName: string;
-        email: string;
-        profilePicture?: string;
-    };
-    createdAt: string;
+    images: string[];
 }
 
-// Fallback data in case API fails
+// Fallback data in case localStorage data fails
 const fallbackData = {
     demoImages: [
         "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
@@ -68,219 +60,162 @@ const fallbackData = {
     leaseDuration: "12 months"
 };
 
-export default function ShowListing() {
-    const params = useParams();
-    const propertyId = params?.id as string;
+export default function ReviewListing() {
     const dispatch = useDispatch();
     const router = useRouter();
 
     const [property, setProperty] = useState<PropertyType | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [sendMessage, setSendMessage] = useState<string>("Hello, is this available?");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [similarProperties, setSimilarProperties] = useState<any[]>([]);
-    const [isPreview, setIsPreview] = useState<boolean>(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [userInfo, setUserInfo] = useState({ _id: '', fullName: '', profilePicture: '', createdAt: new Date().toISOString() });
 
-    // Check if this is a preview (new listing that hasn't been published)
+    // Load property data from localStorage on component mount
     useEffect(() => {
-        // If URL contains "preview" parameter
-        if (typeof window !== 'undefined') {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('preview') === 'true') {
-                setIsPreview(true);
+        // Load user info from localStorage
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                setUserInfo(user);
+            } catch (e) {
+                console.error('Error parsing user info:', e);
             }
+        }
+
+        // Load listing data from localStorage
+        try {
+            const savedData = localStorage.getItem('pendingListing');
+            if (!savedData) {
+                setError('No listing data found');
+                setLoading(false);
+                return;
+            }
+
+            const parsedData = JSON.parse(savedData);
+            setProperty(parsedData);
+        } catch (err) {
+            console.error('Error loading listing data:', err);
+            setError('Failed to load listing data');
+        } finally {
+            setLoading(false);
         }
     }, []);
 
-    // Handle back button press - delete the listing if in preview mode
-    useEffect(() => {
-        if (!isPreview) return;
+    // Handle publishing the listing (submitting to database)
+    const handlePublish = async () => {
+        if (!property) {
+            setError('No listing data available to publish');
+            return;
+        }
 
-        const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
-            // Delete the listing if user is navigating away and it's in preview mode
-            if (propertyId) {
+        try {
+            setSubmitting(true);
+
+            // Get the token for authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('You must be logged in to publish a listing');
+                return;
+            }
+
+            // Create a FormData object for multipart form submission
+            const formData = new FormData();
+
+            // Add the rental data as JSON
+            formData.append('rentalData', JSON.stringify({
+                propertyType: property.propertyType,
+                monthlyPrice: property.monthlyPrice,
+                startDate: property.startDate,
+                leaseDuration: property.leaseDuration,
+                location: property.location,
+                nearestIntersection: property.nearestIntersection,
+                numberOfBedrooms: property.numberOfBedrooms,
+                numberOfBathrooms: property.numberOfBathrooms,
+                coupleFriendly: property.coupleFriendly,
+                amenities: property.amenities,
+                description: property.description,
+                walkingDistanceTo: property.walkingDistanceTo
+            }));
+
+            // Process and append each image
+            for (let i = 0; i < property.images.length; i++) {
+                const imageUrl = property.images[i];
+
                 try {
-                    const token = localStorage.getItem('token');
-                    if (!token) return;
+                    // For blob URLs created with URL.createObjectURL
+                    if (imageUrl.startsWith('blob:')) {
+                        // Get the image data
+                        const response = await fetch(imageUrl);
+                        const blob = await response.blob();
 
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals/${propertyId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    console.log('Listing deleted due to navigation away from preview');
+                        // Create a file name
+                        const fileName = `image-${Date.now()}-${i}.${blob.type.split('/')[1] || 'jpg'}`;
+
+                        // Create a File object from the blob
+                        const file = new File([blob], fileName, { type: blob.type });
+
+                        // Append to FormData with field name 'images'
+                        formData.append('images', file);
+                    } else if (imageUrl.startsWith('data:')) {
+                        // For data URLs, convert to blob first
+                        const response = await fetch(imageUrl);
+                        const blob = await response.blob();
+
+                        // Create a file name
+                        const fileName = `image-${Date.now()}-${i}.${blob.type.split('/')[1] || 'jpg'}`;
+
+                        // Create a File object from the blob
+                        const file = new File([blob], fileName, { type: blob.type });
+
+                        // Append to FormData with field name 'images'
+                        formData.append('images', file);
+                    } else if (!imageUrl.includes('cloudinary.com')) {
+                        console.warn('Image URL format not supported:', imageUrl);
+                    }
                 } catch (error) {
-                    console.error('Error deleting listing:', error);
+                    console.error(`Error processing image ${i}:`, error);
+                    // Continue with other images instead of failing the whole upload
                 }
             }
-        };
 
-        // Handle browser back button
-        const handlePopState = () => {
-            handleBeforeUnload(new Event('beforeunload') as unknown as BeforeUnloadEvent);
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        window.addEventListener('popstate', handlePopState);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            window.removeEventListener('popstate', handlePopState);
-        };
-    }, [isPreview, propertyId]);
-
-    // Fetch property data based on ID
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        const fetchPropertyData = async () => {
-            if (!propertyId) return;
-
-            setLoading(true);
-            try {
-                // Fetch property details
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals/${propertyId}`);
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch property data: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-
-                if (data.success && data.data) {
-                    setProperty(data.data);
-
-                    // After getting property, fetch similar properties
-                    fetchSimilarProperties(data.data.propertyType);
-                } else {
-                    throw new Error(data.message || 'Failed to load property details');
-                }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (err: any) {
-                console.error('Error loading property:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPropertyData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [propertyId]);
-
-    // Fetch similar properties
-    const fetchSimilarProperties = async (propertyType: string) => {
-        try {
-            const encodedType = encodeURIComponent(propertyType);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals/type/${encodedType}?limit=2`);
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success && data.data) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const filteredProperties = data.data.filter((p: any) => p._id !== propertyId);
-                    setSimilarProperties(filteredProperties.slice(0, 2)); // Take only 2
-                }
-            }
-        } catch (err) {
-            console.error('Error fetching similar properties:', err);
-        }
-    };
-
-    // Check token validity
-    const checkTokenValidity = async (token: string) => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-details`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                // Token is invalid, clear it from localStorage
-                localStorage.removeItem('token');
-                return false;
-            }
-
-            return true;
-        } catch (error) {
-            console.error('Error validating token:', error);
-            return false;
-        }
-    };
-
-    // Handle send message button click
-    const handleSendMessage = async () => {
-        // Check for token in localStorage
-        let token;
-
-        // Need to use this approach for Next.js client components to avoid hydration issues
-        if (typeof window !== 'undefined') {
-            token = localStorage.getItem('token');
-        }
-
-        if (!token) {
-            // No token found, show onboarding popup
-            console.log("Token not found in localStorage");
-            dispatch(openPopup('onboarding'));
-            return;
-        }
-
-        // Validate the token
-        const isValidToken = await checkTokenValidity(token);
-
-        if (!isValidToken) {
-            // Token is invalid, show onboarding popup
-            dispatch(openPopup('onboarding'));
-            return;
-        }
-
-        // Token is valid, proceed with sending the message
-        try {
-            // Get the property owner's ID (the person who listed the property)
-            const receiverId = property?.listedBy._id
-
-            // Create a new chat or send to existing chat
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats`, {
+            // Submit to API to create the listing
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    receiverId: receiverId,
-                    initialMessage: sendMessage,
-                    rentalPropertyId: propertyId
-                })
+                body: formData
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to send message: ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`API request failed (${response.status}): ${errorText}`);
             }
 
-            const data = await response.json();
-            console.log(data)
+            const result = await response.json();
+            console.log("Response from backend:", result);
 
-            // Clear the message input
-            setSendMessage('');
-
-            // Optionally redirect to messages page
-            // router.push('/messages');
+            if (result.success && result.data._id) {
+                // Clear the pending listing from localStorage
+                localStorage.removeItem('pendingListing');
+                
+                // Redirect to the show listing page with the newly created listing
+                router.push(`/show-listing/${result.data._id}`);
+            } else {
+                throw new Error(result.message || 'Unknown error');
+            }
         } catch (error) {
-            console.error('Error sending message:', error);
-            alert('Failed to send message. Please try again.');
+            console.error('Error publishing listing:', error);
+            alert(`Error: ${error instanceof Error ? error.message : 'Something went wrong'}`);
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    // Handle publish button click
-    const handlePublish = () => {
-        if (isPreview && propertyId) {
-            // This removes the preview flag and keeps the user on the same page
-            // but updates the URL to remove the preview parameter
-            router.push(`/show-listing/${propertyId}`);
-        }
+    // Handle going back to edit
+    const handleCancel = () => {
+        router.push('/create-listing');
     };
 
     // Show loading state
@@ -299,7 +234,7 @@ export default function ShowListing() {
                 <h1 className="text-xl font-bold mb-2">Error Loading Property</h1>
                 <p>{error || 'Property not found'}</p>
                 <button
-                    onClick={() => window.history.back()}
+                    onClick={() => router.push('/create-listing')}
                     className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
                 >
                     Go Back
@@ -362,7 +297,7 @@ export default function ShowListing() {
     };
 
     const availableFrom = formatDate(property.startDate);
-    const listedOn = formatDate(property.createdAt);
+    const listedOn = formatDate(new Date().toISOString());
 
     return (
         <div className={`${inter.className}`}>
@@ -370,6 +305,12 @@ export default function ShowListing() {
             <div className="hidden md:block">
                 <Navbar />
                 <div className="bg-[#1F1F21] p-10 text-white">
+                    {/* Page Title */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-2xl font-bold">Review Your Listing</h1>
+                        <p className="text-gray-300">Verify all details before publishing</p>
+                    </div>
+                
                     {/* Outer row */}
                     <div className="flex flex-col items-center space-x-6 space-y-3">
                         {/* Image container */}
@@ -478,54 +419,27 @@ export default function ShowListing() {
                         </div>
                     </div>
 
-                    {/* Right side: Message-sending card */}
+                    {/* Right side: Action buttons */}
                     <div className="flex flex-col items-start h-60 rounded-2xl w-80 p-5 justify-center bg-[#F4F4F4] space-y-4">
-                        {/* 1) Message label + textarea */}
-                        <div className="flex flex-col mt-6 space-y-2">
-                            <label htmlFor="message" className="text-sm font-semibold">
-                                Send message To {property.listedBy.fullName}
-                            </label>
-                            <textarea
-                                id="message"
-                                className="border rounded bg-[#FFFFFF] p-2 w-full"
-                                placeholder="Hello, is this available?"
-                                value={sendMessage}
-                                onChange={(e) => setSendMessage(e.target.value)}
-                            />
-                        </div>
-
-                        {/* 2) Send button */}
+                        <h3 className="font-semibold text-lg">Ready to publish?</h3>
+                        <p className="text-sm text-gray-600">Your listing will be visible to thousands of people looking for a place to live.</p>
+                        
+                        {/* Publish button */}
                         <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded-2xl"
-                            onClick={handleSendMessage}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-2xl w-full"
+                            onClick={handlePublish}
+                            disabled={submitting}
                         >
-                            Send
+                            {submitting ? "Publishing..." : "Publish Listing"}
                         </button>
-
-                        {/* 3) "Hosted by" snippet */}
-                        <div className="flex items-center pb-5 space-x-3 text-[#2C3C4E]">
-                            {/* Avatar Placeholder */}
-                            {property.listedBy.profilePicture ? (
-                                <Image
-                                    src={property.listedBy.profilePicture}
-                                    alt={property.listedBy.fullName}
-                                    width={40}
-                                    height={40}
-                                    className="rounded-full h-10 w-10 object-cover"
-                                />
-                            ) : (
-                                <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                    <span>{property.listedBy.fullName.charAt(0)}</span>
-                                </div>
-                            )}
-                            {/* Text Section */}
-                            <div className="space-y-2 flex flex-col">
-                                <div className="text-sm font-semibold">
-                                    Hosted by : <span className="font-bold">{property.listedBy.fullName}</span>
-                                </div>
-                                <div className="text-xs">Listed on {listedOn}</div>
-                            </div>
-                        </div>
+                        
+                        {/* Edit button */}
+                        <button
+                            className="border border-gray-300 text-gray-700 px-4 py-2 rounded-2xl w-full"
+                            onClick={handleCancel}
+                        >
+                            Edit Listing
+                        </button>
                     </div>
                 </div>
 
@@ -656,11 +570,11 @@ export default function ShowListing() {
                     </div>
                 </div>
 
-                <div className="px-4 pb-10 border-none space-y-6 z-10 bg-white">
+                <div className="px-4 pb-24 border-none space-y-6 z-10 bg-white">
                     {/* Location Label */}
                     <div className="text-sm font-semibold text-[#2C3C4E]">Location</div>
                     {/* Map Placeholder */}
-                    <div className="w-full h-30  bg-gray-200 flex items-center justify-center">
+                    <div className="w-full h-30 bg-gray-200 flex items-center justify-center">
                         <Image
                             src={"/icons/mapimg.png"}
                             alt="map"
@@ -669,23 +583,22 @@ export default function ShowListing() {
                             className="w-full"
                         />
                     </div>
-
                 </div>
 
-                <div className="bg-black flex justify-center flex-col py-7 z-20 sticky bottom-0 px-6">
+                {/* Fixed action bar at bottom */}
+                <div className="bg-black flex items-center justify-between py-5 z-20 fixed bottom-0 left-0 right-0 px-4">
+                    
                     <button
-                        className="bg-blue-600 text-white px-5 py-3 rounded-3xl"
+                        className="bg-blue-600 text-white px-4 py-3 items-center rounded-3xl w-full"
                         onClick={handlePublish}
+                        disabled={submitting}
                     >
-                        Publish
+                        {submitting ? "Publishing..." : "Publish"}
                     </button>
                 </div>
 
-                {/* Mobile Bottom Navigation */}
-
                 <SignUpModal />
                 <LoginModal />
-
                 <OnBoardingPopup />
             </div>
         </div>

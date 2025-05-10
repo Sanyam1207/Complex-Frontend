@@ -214,12 +214,7 @@ export default function SearchResultsPanel({
                     variants={panelVariants}
                 >
                     {/* Category indication header */}
-                    <div className="bg-gray-100 p-3 text-center">
-                        <p className="text-sm text-gray-600">
-                            Searching for {getCategoryDisplayName(selectedCategory)}
-                        </p>
-                    </div>
-                
+                    
                     {/* Use my current location button */}
                     <button
                         onClick={handleUseCurrentLocation}

@@ -92,6 +92,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ isOpen, onClose }
                     <input
                       type="number"
                       placeholder="Min price"
+                   
                       value={minValue}
                       onChange={(e) => dispatch(setMinValue(e.target.value))}
                       className="w-full placeholder:text-[#2C3C4E] p-2 py-3.5 pl-7 border border-[#E3E2E0] text-[#2C3C4E] rounded-md outline-none"
