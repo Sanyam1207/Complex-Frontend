@@ -519,7 +519,7 @@ export default function ChatList() {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-full flex flex-col">
       {checkingAuth ? (
         // Show loading spinner while checking authentication
         <div className="h-full flex items-center justify-center bg-white">
