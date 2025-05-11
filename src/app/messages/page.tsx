@@ -823,7 +823,7 @@ export default function ChatList() {
             {/* FOOTER (Mobile) */}
             {selectedChat ? (
               // Conversation view: sticky input
-              <footer className="flex-none  bottom-0 bg-[#1C1C1C] ">
+              <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] ">
                 {
                   !isProfileComplete && (
                     <div className="flex flex-row items-center  py-4  px-5">
