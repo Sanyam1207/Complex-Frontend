@@ -521,7 +521,7 @@ export default function ChatList() {
   return (
     <div className="h-screen flex flex-col">
       {checkingAuth ? (
-        // Show loading spinner while checking authentication
+        // Loading spinner (no changes)
         <div className="h-full flex items-center justify-center bg-white">
           <div className="text-center">
             <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -529,8 +529,8 @@ export default function ChatList() {
           </div>
         </div>
       ) : !isAuthenticated ? (
-        // Locked inbox screen similar to the image
-        <div className={` flex min-h-screen flex-col bg-black ${inter.className}`}>
+        // Not authenticated view (no changes)
+        <div className={`flex min-h-screen flex-col bg-black ${inter.className}`}>
           {/* Header */}
           <div className="bg-black text-white p-4 text-center">
             <h1 className={`text-sm font-medium ${inter.className}`}>Messages</h1>
@@ -540,10 +540,8 @@ export default function ChatList() {
             </div>
           </div>
 
-
-
           {/* Locked messages content */}
-          <div className="flex-grow rounded-t-3xl flex bg-white flex-col items-center  p-6">
+          <div className="flex-grow rounded-t-3xl flex bg-white flex-col items-center p-6">
             <div className="">
               <Image alt="keylock" src={"/icons/keylock.svg"} height={300} width={300} className="" />
             </div>
@@ -559,20 +557,20 @@ export default function ChatList() {
             </button>
           </div>
 
-          {/* Bottom navigation bar */}
+          {/* Modals */}
           <OnBoardingPopup />
           <SignUpModal />
           <LoginModal />
 
+          {/* Bottom navigation bar */}
           <div className="sticky bottom-0 bg-[#1C1C1C] z-10">
             <MobileBottomTabs />
           </div>
-
-
         </div>
       ) : (
-        // Original component content when authenticated
+        // Authenticated view - RESTRUCTURED
         <>
+          {/* Hidden file input for image upload */}
           <input
             type="file"
             ref={fileInputRef}
@@ -588,307 +586,298 @@ export default function ChatList() {
             </div>
           )}
 
-          {/* Mobile View */}
-          <div className="md:hidden flex flex-col bg-[#1c1c1c] h-full">
-            {/* Header (Mobile) */}
+          {/* Mobile View - RESTRUCTURED */}
+          <div className="md:hidden flex flex-col h-screen bg-[#1c1c1c]">
             {selectedChat ? (
-              <header
-                className={` ${inter.className} top-0 z-10 bg-[#1F1F21] p-5 flex items-center justify-between`}
-              >
-                <div className="flex items-center">
-                  {/* Back Button */}
-                  <button onClick={handleBackClick} className="mr-4">
+              // CHAT CONVERSATION VIEW
+              <div className="flex flex-col h-screen">
+                {/* Fixed Header */}
+                <header className={`${inter.className} bg-[#1F1F21] p-5 flex items-center justify-between`}>
+                  <div className="flex items-center">
+                    {/* Back Button */}
+                    <button onClick={handleBackClick} className="mr-4">
+                      <Image
+                        src="/icons/backbuttonn.svg"
+                        alt="Back"
+                        width={32}
+                        height={32}
+                        className="w-8 h-8"
+                      />
+                    </button>
+
+                    {/* Main Image */}
                     <Image
-                      src="/icons/backbuttonn.svg"
-                      alt="Back"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8"
+                      src={selectedChat.rentalProperty?.images?.[0] || "/icons/placeholderimageformessage.svg"}
+                      alt="Main"
+                      width={30}
+                      height={30}
+                      className="w-[30px] h-[30px] mr-2 ml-3 rounded-full"
                     />
+
+                    {/* Chat Title */}
+                    <span className="text-white font-inter text-[14px] font-medium leading-[194%]">
+                      {formatChatTitle(selectedChat)}
+                    </span>
+                  </div>
+
+                  {/* View Button */}
+                  <button
+                    onClick={() => {
+                      if (!selectedChat || !selectedChat.rentalProperty) return;
+                      const isOwner = selectedChat.rentalProperty.listedBy._id === currentUserId;
+                      const otherUser = selectedChat.users.find(user => user._id !== currentUserId);
+                      if (isOwner && otherUser) {
+                        router.push(`/show-profile/${otherUser._id}`);
+                      } else if (selectedChat.rentalProperty) {
+                        router.push(`/show-listing/${selectedChat.rentalProperty._id}`);
+                      }
+                    }}
+                    className="rounded-[57px] bg-[#353537] px-6 py-1.5">
+                    <span className="text-white text-center text-[12px] font-medium leading-[194%]">
+                      View
+                    </span>
                   </button>
+                </header>
 
-                  {/* Main Image */}
-                  <Image
-                    src={selectedChat.rentalProperty?.images?.[0] || "/icons/placeholderimageformessage.svg"}
-                    alt="Main"
-                    width={30}
-                    height={30}
-                    className="w-[30px] h-[30px] mr-2 ml-3 rounded-full"
-                  />
-
-                  {/* Chat Title */}
-                  <span className="text-white font-inter text-[14px] font-medium leading-[194%]">
-                    {formatChatTitle(selectedChat)}
-                  </span>
-                </div>
-
-                {/* View Button */}
-                <button
-                  onClick={() => {
-                    if (!selectedChat || !selectedChat.rentalProperty) return;
-
-                    // Check if current user is the owner of the listing
-                    const isOwner = selectedChat.rentalProperty.listedBy._id === currentUserId;
-
-                    // Find the other user by filtering out the current user from the users array
-                    const otherUser = selectedChat.users.find(user => user._id !== currentUserId);
-
-                    if (isOwner && otherUser) {
-                      // If current user is the owner, redirect to the renter's profile
-                      router.push(`/show-profile/${otherUser._id}`);
-                    } else if (selectedChat.rentalProperty) {
-                      // If current user is the renter, redirect to the listing details
-                      router.push(`/show-listing/${selectedChat.rentalProperty._id}`);
-                    }
-                  }}
-                  className="rounded-[57px] bg-[#353537] px-6 py-1.5">
-                  <span className="text-white text-center text-[12px] font-medium leading-[194%]">
-                    View
-                  </span>
-                </button>
-              </header>
-            ) : (
-              // If no chat selected: show the Mobile Messages Navbar
-              <header className="flex-none sticky top-0 z-10">
-                <MessagesNavbar />
-              </header>
-            )}
-
-            {/* MAIN CONTENT (Mobile) */}
-            {loading && !selectedChat ? (
-              <div className="flex-grow flex items-center justify-center bg-white">
-                <p>Loading...</p>
-              </div>
-            ) : selectedChat ? (
-              // Conversation view
-              <main className="flex-grow rounded-t-3xl w-full flex flex-col overflow-y-auto p-5 bg-white">
-
-                {loading ? (
-                  <div className="flex items-center justify-center p-4">
-                    <p>Loading messages...</p>
-                  </div>
-                ) : (
-                  <>
-                    {messages.map((message) => (
-                      <div
-                        key={message._id}
-                        className={`mb-3 ${message.sender._id === currentUserId ? "self-end" : "self-start"}`}
-                      >
-                        <div
-                          className={`max-w-64 p-3 ${message.sender._id === currentUserId
-                            ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl self-end bg-[#0A84FF]"
-                            : "self-start rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
-                            }`}
-                        >
-
-                          <p
-                            className={`${message.sender._id === currentUserId
-                              ? 'text-white font-medium'
-                              : 'text-[#2C3C4E] font-normal'
-                              } font-inter text-sm leading-relaxed`}
+                {/* Chat Messages - Scrollable Area */}
+                <div className="flex-1 overflow-y-auto bg-white rounded-t-3xl">
+                  <div className="p-5">
+                    {loading ? (
+                      <div className="flex items-center justify-center p-4">
+                        <p>Loading messages...</p>
+                      </div>
+                    ) : (
+                      <>
+                        {messages.map((message) => (
+                          <div
+                            key={message._id}
+                            className={`mb-3 ${message.sender._id === currentUserId ? "self-end" : "self-start"}`}
                           >
-                            {message.content}
-                          </p>
-                          {message.image && (
-                            <Image
-                              src={message.image}
-                              alt="Attachment"
-                              width={200}
-                              height={150}
-                              className="mt-2 rounded-md"
-                            />
-                          )}
-                        </div>
-                        <span
-                          className={`${message.sender._id === currentUserId ? 'text-right' : 'text-left'}`}
-                          style={{
-                            fontSize: "12px",
-                            color: "rgba(44, 60, 78, 0.80)",
-                            fontFamily: "Inter",
-                            fontWeight: 400,
-                            lineHeight: "194%",
-                            display: "block",
-                          }}
-                        >
-                          {new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                    ))}
-
-                    {imagePreview && (
-                      <div className="w-full max-w-xs mx-auto my-4 relative">
-                        <div className="relative">
-                          <Image src={imagePreview} alt="Selected image" width={300} height={200} className="rounded-lg w-full h-auto" />
-                          <button onClick={handleRemoveImage} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black bg-opacity-60 text-white flex items-center justify-center">
-                            ×
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-
-                    <div ref={messagesEndRef} />
-                  </>
-                )}
-              </main>
-            ) : (
-              // Chat list (Mobile)
-              <main className="flex-grow overflow-y-auto bg-white mt-5 rounded-t-3xl">
-                {chats.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full p-5 text-center">
-                    <p className="text-gray-500">No messages yet</p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Your conversations will appear here
-                    </p>
-                  </div>
-                ) : (
-                  chats.map((chat) => (
-                    <div key={chat._id}>
-                      <div
-                        className={`${chat.unreadCount > 0 ? 'bg-[#F9F9F9]' : 'bg-white'} flex justify-between items-start p-5 cursor-pointer`}
-                        onClick={() => handleChatClick(chat)}
-                      >
-                        <div className="flex items-center">
-                          <Image
-                            src={chat.rentalProperty?.images?.[0] || "/icons/similarlisting.png"}
-                            alt="Thumbnail"
-                            width={40}
-                            height={40}
-                            className="rounded-full w-9 h-9 mr-3"
-                          />
-                          <div className="flex space-y-2 flex-col">
-                            <div className="flex items-center">
-                              <span className={`font-semibold text-[#2C3C4E]`}
-                                style={{
-                                  fontFamily: "Inter",
-                                  fontSize: "14px",
-                                  lineHeight: "124%",
-                                }}
+                            <div
+                              className={`max-w-64 p-3 ${message.sender._id === currentUserId
+                                ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl self-end bg-[#0A84FF]"
+                                : "self-start rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
+                                }`}
+                            >
+                              <p
+                                className={`${message.sender._id === currentUserId
+                                  ? 'text-white font-medium'
+                                  : 'text-[#2C3C4E] font-normal'
+                                  } font-inter text-sm leading-relaxed`}
                               >
-                                {formatChatTitle(chat)}
-                              </span>
-                              <span
-                                style={{
-                                  color: "#2C3C4E",
-                                  fontFamily: "Inter",
-                                  lineHeight: "120%",
-                                }}
-                                className={`ml-4 ${chat.unreadCount === 0 ? "font-normal" : "font-medium"} text-sm`}
-                              >
-                                {formatRelativeTime(chat.updatedAt)}
-                              </span>
+                                {message.content}
+                              </p>
+                              {message.image && (
+                                <Image
+                                  src={message.image}
+                                  alt="Attachment"
+                                  width={200}
+                                  height={150}
+                                  className="mt-2 rounded-md"
+                                />
+                              )}
                             </div>
                             <span
+                              className={`${message.sender._id === currentUserId ? 'text-right' : 'text-left'}`}
                               style={{
-                                color: "#2C3C4E",
+                                fontSize: "12px",
+                                color: "rgba(44, 60, 78, 0.80)",
                                 fontFamily: "Inter",
-                                fontSize: "14px",
                                 fontWeight: 400,
-                                lineHeight: "120%",
-                              }} className="flex items-center"
+                                lineHeight: "194%",
+                                display: "block",
+                              }}
                             >
-                              {
-                                chat.unreadCount > 0 && (
-                                  <p className="h-1.5 w-1.5 rounded-full bg-[#0A84FF] mr-2"></p>
-                                )
-                              }
-                              {chat.lastMessage?.content || "No messages yet"}
+                              {new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <div className="mt-1">
-                            <svg
-                              width="48"
-                              height="48"
-                              viewBox="0 0 20 18"
-                              className="h-6 w-6"
-                              onClick={(e) => handleStarToggle(chat._id, e)}
-                            >
-                              <path
-                                d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
-                                fill={chat.starred ? "#FFBA1A" : "#D9D9D9"}
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      <hr />
-                    </div>
-                  ))
-                )}
-              </main>
-            )}
+                        ))}
 
-            {/* FOOTER (Mobile) */}
-            {selectedChat ? (
-              // Conversation view: sticky input
-              <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] ">
-                {
-                  !isProfileComplete && (
-                    <div className="flex flex-row items-center  py-4  px-5">
-                      <div className="flex items-center -center bg-white rounded-full p-2 mr-3">
+                        {imagePreview && (
+                          <div className="w-full max-w-xs mx-auto my-4 relative">
+                            <div className="relative">
+                              <Image src={imagePreview} alt="Selected image" width={300} height={200} className="rounded-lg w-full h-auto" />
+                              <button onClick={handleRemoveImage} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black bg-opacity-60 text-white flex items-center justify-center">
+                                ×
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        <div ref={messagesEndRef} />
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Fixed Footer with Input */}
+                <footer className="bg-[#1C1C1C] w-full">
+                  {!isProfileComplete && (
+                    <div className="flex flex-row items-center py-4 px-5">
+                      <div className="flex items-center bg-white rounded-full p-2 mr-3">
                         <Image src={"/icons/usercomplete.svg"} alt="create Profile" height={24} width={24} />
                       </div>
                       <div className="text-white font-normal text-sm">
                         <span onClick={() => { router.push("/complete-account") }} className="font-medium underline">Create your profile</span> to ensure landlords <br /> respond promptly to your messages.
                       </div>
                     </div>
-                  )
-                }
-                <div className="flex py-4 px-6 items-center space-x-4">
-                  <button
-                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center"
-                    onClick={handleImageClick}
-                    disabled={isUploading}
-                  >
-                    <Image src="/icons/plusiconsend.svg" alt="add" height={120} width={120} className="w-4 h-4" />
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Type your message"
-                    className="flex-grow rounded-md px-3 py-4 bg-white text-[#7D7D7D] text-sm placeholder-[#7D7D7D] outline-none"
-                    style={{
-                      fontFamily: "Inter",
-                      fontWeight: 400,
-                    }}
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
-                    disabled={isUploading}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleSendMessage();
-                      }
-                    }}
-                  />
-                  <button
-                    className={`w-10 h-10 rounded-full ${isUploading ? 'bg-gray-400' : 'bg-[#007AFF]'} flex items-center justify-center`}
-                    onClick={handleSendMessage}
-                    disabled={isUploading}
-                  >
-                    {isUploading ? (
-                      <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <Image
-                        src="/icons/sendicon.svg"
-                        alt="Send"
-                        width={128}
-                        height={128}
-                        className="h-4 w-4"
-                      />
-                    )}
-                  </button>
-                </div>
-              </footer>
+                  )}
+                  <div className="flex py-4 px-6 items-center space-x-4">
+                    <button
+                      className="w-10 h-10 rounded-full bg-white flex items-center justify-center"
+                      onClick={handleImageClick}
+                      disabled={isUploading}
+                    >
+                      <Image src="/icons/plusiconsend.svg" alt="add" height={120} width={120} className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="text"
+                      placeholder="Type your message"
+                      className="flex-grow rounded-md px-3 py-4 bg-white text-[#7D7D7D] text-sm placeholder-[#7D7D7D] outline-none"
+                      style={{
+                        fontFamily: "Inter",
+                        fontWeight: 400,
+                      }}
+                      value={messageInput}
+                      onChange={(e) => setMessageInput(e.target.value)}
+                      disabled={isUploading}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                    />
+                    <button
+                      className={`w-10 h-10 rounded-full ${isUploading ? 'bg-gray-400' : 'bg-[#007AFF]'} flex items-center justify-center`}
+                      onClick={handleSendMessage}
+                      disabled={isUploading}
+                    >
+                      {isUploading ? (
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Image
+                          src="/icons/sendicon.svg"
+                          alt="Send"
+                          width={128}
+                          height={128}
+                          className="h-4 w-4"
+                        />
+                      )}
+                    </button>
+                  </div>
+                </footer>
+              </div>
             ) : (
-              // Chat list footer on Mobile
-              <footer className="flex-none bottom-0 sticky">
-                <MobileBottomTabs />
-              </footer>
+              // CHAT LIST VIEW
+              <div className="flex flex-col h-screen">
+                {/* Fixed Header */}
+                <header className="flex-none">
+                  <MessagesNavbar />
+                </header>
+
+                {/* Chat List - Scrollable Area */}
+                <div className="flex-1 overflow-y-auto bg-white mt-5 rounded-t-3xl">
+                  {loading ? (
+                    <div className="flex items-center justify-center p-4">
+                      <p>Loading...</p>
+                    </div>
+                  ) : chats.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full p-5 text-center">
+                      <p className="text-gray-500">No messages yet</p>
+                      <p className="text-sm text-gray-400 mt-2">
+                        Your conversations will appear here
+                      </p>
+                    </div>
+                  ) : (
+                    chats.map((chat) => (
+                      <div key={chat._id}>
+                        <div
+                          className={`${chat.unreadCount > 0 ? 'bg-[#F9F9F9]' : 'bg-white'} flex justify-between items-start p-5 cursor-pointer`}
+                          onClick={() => handleChatClick(chat)}
+                        >
+                          <div className="flex items-center">
+                            <Image
+                              src={chat.rentalProperty?.images?.[0] || "/icons/similarlisting.png"}
+                              alt="Thumbnail"
+                              width={40}
+                              height={40}
+                              className="rounded-full w-9 h-9 mr-3"
+                            />
+                            <div className="flex space-y-2 flex-col">
+                              <div className="flex items-center">
+                                <span className={`font-semibold text-[#2C3C4E]`}
+                                  style={{
+                                    fontFamily: "Inter",
+                                    fontSize: "14px",
+                                    lineHeight: "124%",
+                                  }}
+                                >
+                                  {formatChatTitle(chat)}
+                                </span>
+                                <span
+                                  style={{
+                                    color: "#2C3C4E",
+                                    fontFamily: "Inter",
+                                    lineHeight: "120%",
+                                  }}
+                                  className={`ml-4 ${chat.unreadCount === 0 ? "font-normal" : "font-medium"} text-sm`}
+                                >
+                                  {formatRelativeTime(chat.updatedAt)}
+                                </span>
+                              </div>
+                              <span
+                                style={{
+                                  color: "#2C3C4E",
+                                  fontFamily: "Inter",
+                                  fontSize: "14px",
+                                  fontWeight: 400,
+                                  lineHeight: "120%",
+                                }} className="flex items-center"
+                              >
+                                {
+                                  chat.unreadCount > 0 && (
+                                    <p className="h-1.5 w-1.5 rounded-full bg-[#0A84FF] mr-2"></p>
+                                  )
+                                }
+                                {chat.lastMessage?.content || "No messages yet"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <div className="mt-1">
+                              <svg
+                                width="48"
+                                height="48"
+                                viewBox="0 0 20 18"
+                                className="h-6 w-6"
+                                onClick={(e) => handleStarToggle(chat._id, e)}
+                              >
+                                <path
+                                  d="M9.04894 0.927052C9.3483 0.00574112 10.6517 0.00573993 10.9511 0.927051L12.4697 5.60081C12.6035 6.01284 12.9875 6.2918 13.4207 6.2918H18.335C19.3037 6.2918 19.7065 7.53141 18.9228 8.10081L14.947 10.9894C14.5966 11.244 14.4499 11.6954 14.5838 12.1074L16.1024 16.7812C16.4017 17.7025 15.3472 18.4686 14.5635 17.8992L10.5878 15.0106C10.2373 14.756 9.7627 14.756 9.41221 15.0106L5.43648 17.8992C4.65276 18.4686 3.59828 17.7025 3.89763 16.7812L5.41623 12.1074C5.55011 11.6954 5.40345 11.244 5.05296 10.9894L1.07722 8.10081C0.293507 7.53141 0.696283 6.2918 1.66501 6.2918H6.57929C7.01252 6.2918 7.39647 6.01284 7.53035 5.60081L9.04894 0.927052Z"
+                                  fill={chat.starred ? "#FFBA1A" : "#D9D9D9"}
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                      </div>
+                    ))
+                  )}
+                  {/* Add some padding at the bottom to ensure content isn't hidden behind the bottom tabs */}
+                  <div className="h-16"></div>
+                </div>
+
+                {/* Fixed Footer with Bottom Tabs */}
+                <footer className="fixed bottom-0 w-full">
+                  <MobileBottomTabs />
+                </footer>
+              </div>
             )}
             <ProfileCreationModal onConfirm={handleProfileComplete} />
           </div>
+
 
           {/* =======================
           DESKTOP VIEW
