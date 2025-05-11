@@ -590,7 +590,7 @@ export default function ChatList() {
               // CHAT CONVERSATION VIEW - FIXED LAYOUT
               <div className="flex flex-col h-screen">
                 {/* Fixed Header */}
-                <header className={`${inter.className} bg-[#1F1F21] p-5 flex items-center justify-between`}>
+                <header className={`${inter.className} sticky top-0 bg-[#1F1F21] p-5 flex items-center justify-between`}>
                   <div className="flex items-center">
                     {/* Back Button */}
                     <button onClick={handleBackClick} className="mr-4">
