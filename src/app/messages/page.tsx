@@ -519,7 +519,7 @@ export default function ChatList() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-screen flex flex-col">
       {checkingAuth ? (
         // Show loading spinner while checking authentication
         <div className="h-full flex items-center justify-center bg-white">
@@ -589,7 +589,7 @@ export default function ChatList() {
           )}
 
           {/* Mobile View */}
-          <div className="md:hidden flex flex-col bg-[#1c1c1c] min-h-screen max-h-screen overflow-y-hidden">
+          <div className="md:hidden flex flex-col bg-[#1c1c1c] h-full">
             {/* Header (Mobile) */}
             {selectedChat ? (
               <header
@@ -649,7 +649,7 @@ export default function ChatList() {
               </header>
             ) : (
               // If no chat selected: show the Mobile Messages Navbar
-              <header className="flex-none  top-0 z-10">
+              <header className="flex-none sticky top-0 z-10">
                 <MessagesNavbar />
               </header>
             )}
