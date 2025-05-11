@@ -59,6 +59,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const shouldHide = hidePaths.some((path) => pathname.includes(path));
   const shouldHideSearch = hidePathsSearch.some((path) => pathname.includes(path));
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -101,12 +102,21 @@ export default function Navbar() {
   // Open search panel when input is focused
   const handleInputFocus = () => {
     setIsSearchPanelOpen(true);
+    setIsInputFocused(true);
+  };
+
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Don't immediately unfocus if user is clicking the clear button
+    // We'll handle this in the clear button click handler
+    if (!e.relatedTarget || !e.relatedTarget.classList.contains('search-clear-btn')) {
+      setIsInputFocused(false);
+    }
   };
 
   // Close search panel
   const handleCloseSearchPanel = () => {
     setIsSearchPanelOpen(false);
-    
+
     // Blur the input when closing the panel
     if (searchInputRef.current) {
       searchInputRef.current.blur();
@@ -116,11 +126,11 @@ export default function Navbar() {
   // Handle search input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
-    
+
     // If the input is cleared, also clear the location filter and refetch properties
     if (e.target.value === "") {
       dispatch(clearSelectedLocation());
-      
+
       // Refetch properties by category when location filter is cleared
       // @ts-expect-error - TS might complain about dispatch type
       dispatch(fetchPropertiesByCategory(selectedCategory));
@@ -129,32 +139,44 @@ export default function Navbar() {
 
   // Clear search input and location filter
   const handleClearSearch = () => {
-    setSearchValue("");
-    dispatch(clearSelectedLocation());
-    
-    // Refetch properties by category when location filter is cleared
-    // @ts-expect-error - TS might complain about dispatch type
-    dispatch(fetchPropertiesByCategory(selectedCategory));
-    
-    if (searchInputRef.current) {
-      searchInputRef.current.focus();
+    // If there's a search value, clear it
+    if (searchValue) {
+      setSearchValue("");
+      dispatch(clearSelectedLocation());
+
+      // Refetch properties by category when location filter is cleared
+      // @ts-expect-error - TS might complain about dispatch type
+      dispatch(fetchPropertiesByCategory(selectedCategory));
+
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    } else {
+      // If there's no search value, just close the search panel
+      setIsInputFocused(false);
+      setIsSearchPanelOpen(false);
+
+      // Blur the input
+      if (searchInputRef.current) {
+        searchInputRef.current.blur();
+      }
     }
   };
-  
+
   // Handle key press in search input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setIsSearchPanelOpen(false); // Close the panel on Enter key
-      
+
       // If the search input is empty, clear the location filter and refetch properties
       if (searchValue === "") {
         dispatch(clearSelectedLocation());
-        
+
         // Refetch properties by category when location filter is cleared
         // @ts-expect-error - TS might complain about dispatch type
         dispatch(fetchPropertiesByCategory(selectedCategory));
       }
-      
+
       // Blur the input to hide the keyboard on mobile
       if (searchInputRef.current) {
         searchInputRef.current.blur();
@@ -174,8 +196,8 @@ export default function Navbar() {
   // Get a user-friendly placeholder for search based on the selected category
   const getSearchPlaceholder = (): string => {
     if (pathname === "/messages") return "Search messages";
-    
-    switch(selectedCategory) {
+
+    switch (selectedCategory) {
       case 'privateRoom': return "Search Location";
       case 'apartments': return "Search Location";
       case 'houses': return "Search Location";
@@ -229,14 +251,15 @@ export default function Navbar() {
                 value={searchValue}
                 onChange={handleSearchChange}
                 onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
                 onKeyDown={handleKeyDown}
                 placeholder={selectedLocation || getSearchPlaceholder()}
                 className="ml-3 flex-1 text-[14px] text-white font-light tracking-[-0.3px] bg-transparent border-none outline-none"
               />
-              {searchValue && (
+              {(searchValue || isInputFocused) && (
                 <button
                   onClick={handleClearSearch}
-                  className="mr-3"
+                  className="mr-3 search-clear-btn"
                 >
                   <div className="bg-[#8E8E93] rounded-full w-5 h-5 flex items-center justify-center">
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -82,6 +82,8 @@ export default function ChatList() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [hasShownProfilePopup, setHasShownProfilePopup] = useState<boolean>(false);
+  const [hasSentFirstMessage, setHasSentFirstMessage] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isProfileComplete, setIsProfileComplete] = useState<boolean>(true);
 
@@ -316,6 +318,7 @@ export default function ChatList() {
 
   const handleProfileComplete = () => {
     setIsProfileComplete(true);
+    setHasShownProfilePopup(true); // Consider the popup shown once profile is completed
   };
 
 
@@ -342,11 +345,6 @@ export default function ChatList() {
 
   // Fetch messages when selecting a chat
   const handleChatClick = async (chat: Chat) => {
-
-    if (!isProfileComplete) {
-      dispatch(openPopup('ProfileCreation'));
-    }
-
     try {
       setLoading(true);
       console.log(`[${new Date().toISOString()}] Fetching chat details for: ${chat._id}`);
@@ -378,17 +376,38 @@ export default function ChatList() {
     }
   };
 
+
+  useEffect(() => {
+    const popupShownBefore = localStorage.getItem('profilePopupShown');
+    if (popupShownBefore === 'true') {
+      setHasShownProfilePopup(true);
+    }
+  }, []);
+
+  // Update local storage when popup is shown
+  useEffect(() => {
+    if (hasShownProfilePopup) {
+      localStorage.setItem('profilePopupShown', 'true');
+    }
+  }, [hasShownProfilePopup]);
+
+
   // Scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   const handleBackClick = () => {
+    // Check if profile popup should appear
+    if (!isProfileComplete && hasSentFirstMessage && !hasShownProfilePopup) {
+      dispatch(openPopup('ProfileCreation'));
+      setHasShownProfilePopup(true); // Mark that we've shown the popup
+    }
+
     setSelectedChat(null);
     // Refresh chat list
     fetchChats();
   };
-
 
   //TODO : Add logic for starred messages
   const handleStarToggle = async (chatId: string, e: React.MouseEvent) => {
@@ -439,6 +458,9 @@ export default function ChatList() {
       if (response.data.success) {
         console.log(`[${new Date().toISOString()}] Message sent successfully`);
 
+        // Set flag that user has sent a message
+        setHasSentFirstMessage(true);
+
         setMessages(response.data.data.messages);
         setMessageInput("");
         setImageFile(null);
@@ -460,7 +482,6 @@ export default function ChatList() {
       setIsUploading(false);
     }
   };
-
   // Format relative time (e.g., "Just now", "2 min ago")
   const formatRelativeTime = (dateString: string): string => {
     const date = new Date(dateString);

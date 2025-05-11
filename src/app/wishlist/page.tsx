@@ -5,6 +5,12 @@ import WishlistCardCarousel from "@/components/WishlistPropertyCard";
 import MobileBottomTabs from "@/components/MobileBottomTabs";
 import Navbar from "@/components/NavBar";
 import api from "@/lib/axios";
+import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { openPopup } from "@/redux/slices/showPopups";
+import OnBoardingPopup from "@/components/OnboardingPopup";
+import SignUpModal from "@/components/RegisterPopup";
+import LoginModal from "@/components/LoginPopup";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,9 +28,51 @@ export default function Wishlist() {
     const [properties, setProperties] = useState<Property[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+    const dispatch = useDispatch();
+
+    // Check if user is authenticated
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                // First check if token exists in localStorage
+                const token = localStorage.getItem('token');
+
+                if (!token) {
+                    setIsAuthenticated(false);
+                    setCheckingAuth(false);
+                    return;
+                }
+
+                // Validate token with a lightweight API call
+                const response = await api.get('/api/auth/get-details');
+
+                if (response.data.success) {
+                    setIsAuthenticated(true);
+                } else {
+                    // Invalid token
+                    localStorage.removeItem('token'); // Clear invalid token
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                console.error("Authentication error:", error);
+                setIsAuthenticated(false);
+            } finally {
+                setCheckingAuth(false);
+            }
+        };
+
+        checkAuth();
+    }, []);
 
     // Fetch wishlist data from API
     useEffect(() => {
+        if (!isAuthenticated) {
+            setIsLoading(false);
+            return;
+        }
+
         const fetchWishlist = async () => {
             setIsLoading(true);
             setError("");
@@ -46,7 +94,7 @@ export default function Wishlist() {
         };
 
         fetchWishlist();
-    }, []);
+    }, [isAuthenticated]);
 
     // Remove property from wishlist
     const handleRemoveFromWishlist = async (propertyId: string) => {
@@ -68,10 +116,56 @@ export default function Wishlist() {
     };
 
     // Loading state
-    if (isLoading) {
+    if (checkingAuth || (isLoading && isAuthenticated)) {
         return (
             <div className={`${inter.className} flex items-center justify-center h-screen bg-black`}>
-                <div className="text-white">Loading...</div>
+                <div className="text-center">
+                    <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-white">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Not authenticated state
+    if (!isAuthenticated) {
+        return (
+            <div className={`${inter.className} flex min-h-screen max-h-screen flex-col bg-black`}>
+                {/* Header */}
+                <div className="bg-black text-white p-4 text-center">
+                    <h1 className={`text-sm font-medium ${inter.className}`}>Wishlist</h1>
+                    {/* Wishlist heading */}
+                    <div className="flex mt-4">
+                        <h2 className="text-2xl font-bold">My Wishlist</h2>
+                    </div>
+                </div>
+
+                {/* Locked wishlist content */}
+                <div className="flex-grow rounded-t-3xl flex bg-white flex-col items-center pb-6 pr-6 pl-6">
+                    <div className="mt-10 mb-6">
+                        <Image alt="keylock" src={"/icons/keylock-cropped.svg"} height={300} width={300} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#2C3C4E] mb-2">Log in to see your wishlist</h3>
+                    <p className="text-[#2C3C4E] text-center font-light mb-8">
+                        Save properties you like <br /> to view them later in your wishlist.
+                    </p>
+                    <button
+                        onClick={() => dispatch(openPopup("onboarding"))}
+                        className="bg-black text-white py-3 px-6 rounded-full w-full text-center font-medium"
+                    >
+                        Login
+                    </button>
+                </div>
+
+                {/* Popups */}
+                <OnBoardingPopup />
+                <SignUpModal />
+                <LoginModal />
+
+                {/* Bottom navigation bar */}
+                <div className="sticky bottom-0 bg-[#1C1C1C] z-10">
+                    <MobileBottomTabs />
+                </div>
             </div>
         );
     }
