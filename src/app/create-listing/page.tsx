@@ -56,15 +56,15 @@ const StepItem = ({
     return (
         <div className={variant === "mobile" ? "flex flex-col space-y-3 justify-center flex-1" : ""}>
             <div
-                className={`bg-gray-200 px-3 py-1 rounded-full w-max text-xs font-semibold ${variant === "desktop" ? "mb-2" : ""
+                className={`bg-[#F4F4F4] text-[#2C3C4E] px-3 py-1 rounded-full w-max text-xs font-normal ${variant === "desktop" ? "mb-2" : ""
                     }`}
             >
                 {step}
             </div>
             <div className="flex flex-row justify-between items-start">
                 <div className="flex flex-col space-y-2 text-sm max-w-[65%]">
-                    <span className="font-semibold">{title}</span>
-                    <p className="text-xs">{description}</p>
+                    <span className="font-medium text-sm text-[#2C3C4E] ">{title}</span>
+                    <p className="text-xs text-[#2C3C4E]">{description}</p>
                 </div>
                 <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-full">
                     <Image src={imgSrc} alt={imgAlt} width={150} height={150} />
@@ -81,7 +81,7 @@ export default function CreateListing() {
     return (
         <div className="h-screen flex flex-col">
             {/* MOBILE LAYOUT */}
-            <div className={`${inter.className} flex flex-col md:hidden min-h-screen max-h-screen bg-[#1F1F21]`}>
+            <div className={`${inter.className} flex flex-col justify-center md:hidden bg-[#1F1F21]`}>
                 {/* Top Section: Black background */}
                 <div className="flex flex-col flex-1 h-full bg-[#1F1F21] text-white p-5 pb-5">
                     {/* Back arrow + Title */}
