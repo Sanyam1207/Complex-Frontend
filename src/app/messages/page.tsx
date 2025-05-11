@@ -589,7 +589,7 @@ export default function ChatList() {
           )}
 
           {/* Mobile View */}
-          <div className="md:hidden flex flex-col bg-[#1c1c1c] h-full">
+          <div className="md:hidden flex flex-col bg-[#1c1c1c] min-h-screen max-h-screen overflow-y-hidden">
             {/* Header (Mobile) */}
             {selectedChat ? (
               <header
@@ -649,7 +649,7 @@ export default function ChatList() {
               </header>
             ) : (
               // If no chat selected: show the Mobile Messages Navbar
-              <header className="flex-none sticky top-0 z-10">
+              <header className="flex-none  top-0 z-10">
                 <MessagesNavbar />
               </header>
             )}
@@ -823,7 +823,7 @@ export default function ChatList() {
             {/* FOOTER (Mobile) */}
             {selectedChat ? (
               // Conversation view: sticky input
-              <footer className="flex-none sticky bottom-0 bg-[#1C1C1C] ">
+              <footer className="flex-none  bottom-0 bg-[#1C1C1C] ">
                 {
                   !isProfileComplete && (
                     <div className="flex flex-row items-center  py-4  px-5">
