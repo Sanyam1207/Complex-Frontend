@@ -155,7 +155,7 @@ const LoginModal: React.FC = () => {
             Log in with your email and password.
           </h2>
           <h2 className="text-base text-[#2C3C4E]">
-            Log in with your email and password.
+            If you don&apos;t have an account, please sign up.
           </h2>
         </div>
 
@@ -299,8 +299,8 @@ const LoginModal: React.FC = () => {
                 <h2 className="text-lg font-semibold mb-3 text-[#2C3C4E]">
                   Log in with your email and password.
                 </h2>
-                <h2 className="text-base text-[#2C3C4E]">
-                  Log in with your email and password.
+                <h2 className="text-sm text-[#2C3C4E]">
+                  If you don&apos;t have an account, please sign up.
                 </h2>
               </div>
 

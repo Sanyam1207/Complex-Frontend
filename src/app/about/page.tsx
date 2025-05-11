@@ -306,7 +306,7 @@ export default function CompleteProfile() {
 
             {/* Main Content */}
             <div className="px-4 pt-2 text-white">
-                <h2 className="text-xl text-center font-bold">Complete your profile!</h2>
+                <h2 className="text-xl text-center font-medium">Complete your profile!</h2>
                 <p className="text-sm text-white text-center">Stand out and Shine ✨</p>
 
                 {/* Profile Picture */}

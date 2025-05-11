@@ -322,7 +322,7 @@ export default function PersonalDetails() {
                             value={formData.password}
                             onChange={handleInputChange}
                             type="password"
-                            placeholder="Leave blank to keep current password"
+                            placeholder=""
                             className="mb-5 border-gray-300 border text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg px-5 py-4 text-sm focus:outline-none focus:border focus:border-black"
 
                         />
@@ -336,7 +336,7 @@ export default function PersonalDetails() {
                             name="phoneNumber"
                             value={formData.phoneNumber}
                             onChange={handleInputChange}
-                            placeholder="Enter your phone number"
+                            placeholder=""
                             className="mb-5 border-gray-300 border text-[#2C3C4E] placeholder:text-[#727c86] font-medium placeholder:font-medium w-full rounded-lg px-5 py-4 text-sm focus:outline-none focus:border focus:border-black"
 
                         />
@@ -456,7 +456,7 @@ export default function PersonalDetails() {
                             name="password"
                             value={formData.password}
                             onChange={handleInputChange}
-                            placeholder="Leave blank to keep current password"
+                            placeholder=""
                             className="mb-7 w-full border rounded-md px-4 py-3 text-sm focus:outline-dashed"
                         />
 
@@ -469,7 +469,7 @@ export default function PersonalDetails() {
                             name="phoneNumber"
                             value={formData.phoneNumber}
                             onChange={handleInputChange}
-                            placeholder="Enter your phone number"
+                            placeholder=""
                             className="mb-7 w-full border rounded-md px-4 py-3 text-sm focus:outline-dashed"
                         />
 
