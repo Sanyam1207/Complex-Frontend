@@ -638,7 +638,7 @@ export default function ChatList() {
                 </header>
 
                 {/* Messages Area - ONLY THIS PART SCROLLS */}
-                <div className="flex-1 overflow-y-auto bg-white">
+                <div className="flex-1 overflow-y-auto rounded-t-3xl bg-white">
                   <div className="p-5 flex flex-col">
                     {loading ? (
                       <div className="flex items-center justify-center p-4">
