@@ -87,6 +87,7 @@ export default function ShowListing() {
 
   // Fetch property data based on ID
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchPropertyData = async () => {
       if (!propertyId) return;
@@ -142,6 +143,7 @@ export default function ShowListing() {
         } else {
           throw new Error(data.message || 'Failed to load property details');
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error('Error loading property:', err);
         setError(err.message);
@@ -151,6 +153,7 @@ export default function ShowListing() {
     };
 
     fetchPropertyData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyId]);
 
   // Fetch similar properties
@@ -189,10 +192,12 @@ export default function ShowListing() {
       const data = await response.json();
       if (data.success && data.data) {
         // Check if any chat exists with this property owner for this property
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const existingChat = data.data.find((chat: any) => {
           return (
             chat.rentalProperty &&
             chat.rentalProperty._id === propertyId &&
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             chat.otherUsers.some((user: any) => user._id === receiverId)
           );
         });
@@ -796,7 +801,7 @@ export default function ShowListing() {
         {!isListingOwner && (<div className="bg-black flex justify-center flex-col py-5 z-20 sticky bottom-0 px-4">
           <div className="text-sm font-normal text-white mb-3">
             {chatExists ? (
-              <span>You've already contacted <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
+              <span>You&apos;ve already contacted <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
             ) : (
               <span>Send message to <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
             )}
