@@ -521,7 +521,7 @@ export default function ChatList() {
   return (
     <div className="h-screen flex flex-col">
       {checkingAuth ? (
-        // Loading spinner (no changes)
+        // Show loading spinner while checking authentication
         <div className="h-full flex items-center justify-center bg-white">
           <div className="text-center">
             <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -529,7 +529,7 @@ export default function ChatList() {
           </div>
         </div>
       ) : !isAuthenticated ? (
-        // Not authenticated view (no changes)
+        // Locked inbox screen similar to the image
         <div className={`flex min-h-screen flex-col bg-black ${inter.className}`}>
           {/* Header */}
           <div className="bg-black text-white p-4 text-center">
@@ -557,20 +557,18 @@ export default function ChatList() {
             </button>
           </div>
 
-          {/* Modals */}
+          {/* Bottom navigation bar */}
           <OnBoardingPopup />
           <SignUpModal />
           <LoginModal />
 
-          {/* Bottom navigation bar */}
           <div className="sticky bottom-0 bg-[#1C1C1C] z-10">
             <MobileBottomTabs />
           </div>
         </div>
       ) : (
-        // Authenticated view - RESTRUCTURED
+        // Original component content when authenticated
         <>
-          {/* Hidden file input for image upload */}
           <input
             type="file"
             ref={fileInputRef}
@@ -586,10 +584,10 @@ export default function ChatList() {
             </div>
           )}
 
-          {/* Mobile View - RESTRUCTURED */}
+          {/* Mobile View */}
           <div className="md:hidden flex flex-col h-screen bg-[#1c1c1c]">
             {selectedChat ? (
-              // CHAT CONVERSATION VIEW
+              // CHAT CONVERSATION VIEW - FIXED LAYOUT
               <div className="flex flex-col h-screen">
                 {/* Fixed Header */}
                 <header className={`${inter.className} bg-[#1F1F21] p-5 flex items-center justify-between`}>
@@ -639,9 +637,9 @@ export default function ChatList() {
                   </button>
                 </header>
 
-                {/* Chat Messages - Scrollable Area */}
-                <div className="flex-1 overflow-y-auto bg-white rounded-t-3xl">
-                  <div className="p-5">
+                {/* Messages Area - ONLY THIS PART SCROLLS */}
+                <div className="flex-1 overflow-y-auto bg-white">
+                  <div className="p-5 flex flex-col">
                     {loading ? (
                       <div className="flex items-center justify-center p-4">
                         <p>Loading messages...</p>
@@ -651,12 +649,12 @@ export default function ChatList() {
                         {messages.map((message) => (
                           <div
                             key={message._id}
-                            className={`mb-3 ${message.sender._id === currentUserId ? "self-end" : "self-start"}`}
+                            className={`mb-3 ${message.sender._id === currentUserId ? "self-end text-right ml-auto" : "self-start text-left mr-auto"}`}
                           >
                             <div
                               className={`max-w-64 p-3 ${message.sender._id === currentUserId
-                                ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl self-end bg-[#0A84FF]"
-                                : "self-start rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
+                                ? "rounded-tl-xl rounded-bl-xl rounded-tr-xl bg-[#0A84FF]"
+                                : "rounded-tr-xl rounded-br-xl rounded-tl-xl bg-[#F4F4F4]"
                                 }`}
                             >
                               <p
@@ -678,7 +676,7 @@ export default function ChatList() {
                               )}
                             </div>
                             <span
-                              className={`${message.sender._id === currentUserId ? 'text-right' : 'text-left'}`}
+                              className="text-xs"
                               style={{
                                 fontSize: "12px",
                                 color: "rgba(44, 60, 78, 0.80)",
@@ -711,7 +709,7 @@ export default function ChatList() {
                 </div>
 
                 {/* Fixed Footer with Input */}
-                <footer className="bg-[#1C1C1C] sticky bottom-0 w-full">
+                <footer className="bg-[#1C1C1C] w-full">
                   {!isProfileComplete && (
                     <div className="flex flex-row items-center py-4 px-5">
                       <div className="flex items-center bg-white rounded-full p-2 mr-3">
@@ -865,7 +863,7 @@ export default function ChatList() {
                       </div>
                     ))
                   )}
-                  {/* Add some padding at the bottom to ensure content isn't hidden behind the bottom tabs */}
+                  {/* Add padding at the bottom for mobile navigation */}
                   <div className="h-16"></div>
                 </div>
 
@@ -878,11 +876,10 @@ export default function ChatList() {
             <ProfileCreationModal onConfirm={handleProfileComplete} />
           </div>
 
-
           {/* =======================
-          DESKTOP VIEW
-          - Uses "hidden md:flex" to appear only on md+ screens
-         ======================= */}
+        DESKTOP VIEW
+        - Uses "hidden md:flex" to appear only on md+ screens
+       ======================= */}
           <div className="hidden md:flex flex-col h-screen bg-[#1c1c1c]">
             <div className="h-full">
               <MessagesNavbar />
@@ -1068,9 +1065,7 @@ export default function ChatList() {
                           />
                         )}
                       </button>
-
                     </div>
-
                   </>
                 ) : (
                   /* Empty state when no chat selected */
@@ -1142,8 +1137,7 @@ export default function ChatList() {
             </div>
           </div>
         </>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }
