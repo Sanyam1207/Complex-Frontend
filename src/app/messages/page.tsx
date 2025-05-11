@@ -709,7 +709,7 @@ export default function ChatList() {
                 </div>
 
                 {/* Fixed Footer with Input */}
-                <footer className="bg-[#1C1C1C] w-full">
+                <footer className="bg-[#1C1C1C] sticky bottom-0 w-full">
                   {!isProfileComplete && (
                     <div className="flex flex-row items-center py-4 px-5">
                       <div className="flex items-center bg-white rounded-full p-2 mr-3">
