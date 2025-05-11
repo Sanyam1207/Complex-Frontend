@@ -10,7 +10,7 @@ import SimilarPropertyListing from '@/components/SimilarPropertyListing';
 import { openPopup } from '@/redux/slices/showPopups';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -73,6 +73,7 @@ export default function ShowListing() {
   const params = useParams();
   const propertyId = params?.id as string;
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [property, setProperty] = useState<PropertyType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,6 +81,9 @@ export default function ShowListing() {
   const [sendMessage, setSendMessage] = useState<string>("Hello, is this available?");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [similarProperties, setSimilarProperties] = useState<any[]>([]);
+  const [chatExists, setChatExists] = useState<boolean>(false);
+  const [isListingOwner, setIsListingOwner] = useState<boolean>(false);
+
 
   // Fetch property data based on ID
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,10 +107,41 @@ export default function ShowListing() {
 
           // After getting property, fetch similar properties
           fetchSimilarProperties(data.data.propertyType);
+
+          const token = localStorage.getItem('token');
+          if (token) {
+            const isValidToken = await checkTokenValidity(token);
+            if (isValidToken && data.data.listedBy._id) {
+              // Get current user details to check ownership
+              try {
+                const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-details`, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+
+                if (userResponse.ok) {
+                  const userData = await userResponse.json();
+                  // Check if current user is the listing owner
+                  // Note the structure matches your getCurrentUser function
+                  const currentUserId = userData.user?._id;
+                  const isOwner = currentUserId === data.data.listedBy._id;
+
+                  setIsListingOwner(isOwner);
+
+                  // Only check for existing chat if not the owner
+                  if (!isOwner) {
+                    await checkExistingChat(token, data.data.listedBy._id);
+                  }
+                }
+              } catch (userError) {
+                console.error('Error fetching user details:', userError);
+              }
+            }
+          }
         } else {
           throw new Error(data.message || 'Failed to load property details');
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error('Error loading property:', err);
         setError(err.message);
@@ -116,7 +151,6 @@ export default function ShowListing() {
     };
 
     fetchPropertyData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyId]);
 
   // Fetch similar properties
@@ -137,6 +171,42 @@ export default function ShowListing() {
       console.error('Error fetching similar properties:', err);
     }
   };
+
+
+  // Add this function to check if a chat already exists
+  const checkExistingChat = async (token: string, receiverId: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch chats: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Check if any chat exists with this property owner for this property
+        const existingChat = data.data.find((chat: any) => {
+          return (
+            chat.rentalProperty &&
+            chat.rentalProperty._id === propertyId &&
+            chat.otherUsers.some((user: any) => user._id === receiverId)
+          );
+        });
+
+        setChatExists(!!existingChat);
+        return !!existingChat;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error checking existing chat:', error);
+      return false;
+    }
+  };
+
 
   // Check token validity
   const checkTokenValidity = async (token: string) => {
@@ -162,67 +232,79 @@ export default function ShowListing() {
 
   // Handle send message button click
   // Handle send message button click
-const handleSendMessage = async () => {
-  // Check for token in localStorage
-  let token;
+  const handleSendMessage = async () => {
+    // Check for token in localStorage
+    let token;
 
-  // Need to use this approach for Next.js client components to avoid hydration issues
-  if (typeof window !== 'undefined') {
-    token = localStorage.getItem('token');
-  }
-
-  if (!token) {
-    // No token found, show onboarding popup
-    console.log("Token not found in localStorage");
-    dispatch(openPopup('onboarding'));
-    return;
-  }
-
-  // Validate the token
-  const isValidToken = await checkTokenValidity(token);
-
-  if (!isValidToken) {
-    // Token is invalid, show onboarding popup
-    dispatch(openPopup('onboarding'));
-    return;
-  }
-
-  // Token is valid, proceed with sending the message
-  try {
-    // Get the property owner's ID (the person who listed the property)
-    const receiverId = property?.listedBy._id
-    
-    // Create a new chat or send to existing chat
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        receiverId: receiverId,
-        initialMessage: sendMessage,
-        rentalPropertyId: propertyId
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to send message: ${response.statusText}`);
+    // Need to use this approach for Next.js client components to avoid hydration issues
+    if (typeof window !== 'undefined') {
+      token = localStorage.getItem('token');
     }
 
-    const data = await response.json(); 
-    console.log(data)
-    
-    // Clear the message input
-    setSendMessage('');
-    
-    // Optionally redirect to messages page
-    // router.push('/messages');
-  } catch (error) {
-    console.error('Error sending message:', error);
-    alert('Failed to send message. Please try again.');
-  }
-};
+    if (!token) {
+      // No token found, show onboarding popup
+      console.log("Token not found in localStorage");
+      dispatch(openPopup('onboarding'));
+      return;
+    }
+
+    // Validate the token
+    const isValidToken = await checkTokenValidity(token);
+
+    if (!isValidToken) {
+      // Token is invalid, show onboarding popup
+      dispatch(openPopup('onboarding'));
+      return;
+    }
+
+
+    // Check if chat already exists first
+    const receiverId = property?.listedBy._id;
+    const chatAlreadyExists = await checkExistingChat(token, receiverId!);
+
+    // If chat already exists, update state and return
+    if (chatAlreadyExists) {
+      setChatExists(true);
+      return;
+    }
+
+    // Token is valid, proceed with sending the message
+    try {
+      // Get the property owner's ID (the person who listed the property)
+      const receiverId = property?.listedBy._id
+
+      // Create a new chat or send to existing chat
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          receiverId: receiverId,
+          initialMessage: sendMessage,
+          rentalPropertyId: propertyId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to send message: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(data)
+      setChatExists(true); // Set chatExists to true after sending the message
+
+      // Clear the message input
+      setSendMessage('');
+
+      // Optionally redirect to messages page
+      // router.push('/messages');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again.');
+    }
+  };
 
   // Show loading state
   if (loading) {
@@ -711,28 +793,44 @@ const handleSendMessage = async () => {
           <br />
         </div>
 
-        <div className="bg-black flex justify-center flex-col py-5 z-20 sticky bottom-0 px-4">
+        {!isListingOwner && (<div className="bg-black flex justify-center flex-col py-5 z-20 sticky bottom-0 px-4">
           <div className="text-sm font-normal text-white mb-3">
-            Send message to <span className='text-sm font-semibold'>{property.listedBy.fullName}</span>
+            {chatExists ? (
+              <span>You've already contacted <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
+            ) : (
+              <span>Send message to <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
+            )}
           </div>
           <div className="flex space-x-4">
-            <input
-              className="flex-1 text-sm font-semibold flex items-center bg-white text-[#2C3C4E] px-4 py-3 rounded-md"
-              value={sendMessage}
-              onChange={(e) => setSendMessage(e.target.value)}
-              placeholder='Hello, is this available?'
-            />
+            {!chatExists && (
+              <input
+                className="flex-1 text-sm font-semibold flex items-center bg-white text-[#2C3C4E] px-4 py-3 rounded-md"
+                value={sendMessage}
+                onChange={(e) => setSendMessage(e.target.value)}
+                placeholder='Hello, is this available?'
+              />
+            )}
             <button
-              className="bg-blue-600 text-white px-5 py-3 rounded-3xl"
-              onClick={() => handleSendMessage()}
+              className={`text-white px-5 py-3 rounded-3xl ${chatExists
+                ? "bg-[#0A84FF] w-full"
+                : "bg-[#0A84FF]"}`}
+              onClick={() => {
+                if (chatExists) {
+                  // Redirect to messages page when chat exists
+                  router.push("/messages");
+                } else {
+                  // Send message when chat doesn't exist
+                  handleSendMessage();
+                }
+              }}
             >
-              Send
+              {chatExists ? "Message Sent" : "Send"}
             </button>
           </div>
-        </div>
+        </div>)}
 
         {/* Mobile Bottom Navigation */}
-       
+
         <SignUpModal />
         <LoginModal />
 

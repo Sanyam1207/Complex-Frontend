@@ -6,6 +6,7 @@ import Navbar from '@/components/NavBar';
 import PropertyCardCarousel from '@/components/PropertyCard';
 import TabsBar from '@/components/TabsBar';
 import { fetchPropertiesByCategory } from '@/redux/slices/categorySlice';
+import { selectIsPopupOpen } from '@/redux/slices/showPopups';
 import { RootState } from '@/redux/store/store';
 import axios from 'axios';
 import { Inter } from 'next/font/google';
@@ -33,6 +34,11 @@ const categoryToPropertyTypeMap: Record<CategoryType, string[]> = {
 export default function Home() {
     const router = useRouter();
     const dispatch = useDispatch();
+
+    const isAnyAuthPopupOpen = useSelector((state: RootState) => 
+    selectIsPopupOpen(state, 'onboarding') || 
+    selectIsPopupOpen(state, 'login') || 
+    selectIsPopupOpen(state, 'signup'));
 
     // State and ref for bottom bar visibility
     const [bottomBarVisible, setBottomBarVisible] = useState(true);
@@ -371,7 +377,7 @@ export default function Home() {
                         transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)' // Match transition timing
                     }}
                     className={`fixed bottom-0 left-0 right-0 
-                        ${bottomBarVisible ? 'translate-y-0 z-0' : 'translate-y-full md:translate-y-0'} ${isFilterModalOpen ? 'z-10' : 'z-20'}`}
+                        ${bottomBarVisible ? 'translate-y-0 z-0' : 'translate-y-full md:translate-y-0'} ${isFilterModalOpen ? 'z-10' : 'z-20'} ${isAnyAuthPopupOpen ? '-z-10' : 'z-20'}`}
                 >
                     <MobileBottomTabs />
                 </div>
