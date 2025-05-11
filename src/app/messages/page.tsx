@@ -509,7 +509,7 @@ export default function ChatList() {
         </div>
       ) : !isAuthenticated ? (
         // Locked inbox screen similar to the image
-        <div className={`h-full flex flex-col bg-black ${inter.className}`}>
+        <div className={` flex min-h-screen flex-col bg-black ${inter.className}`}>
           {/* Header */}
           <div className="bg-black text-white p-4 text-center">
             <h1 className={`text-sm font-medium ${inter.className}`}>Messages</h1>
@@ -522,9 +522,9 @@ export default function ChatList() {
 
 
           {/* Locked messages content */}
-          <div className="flex-grow overflow-hidden rounded-t-3xl flex bg-white flex-col items-center justify-center p-6 pt-0">
+          <div className="flex-grow rounded-t-3xl flex bg-white flex-col items-center  p-6">
             <div className="">
-              <Image alt="keylock" src={"/icons/keylock.svg"} height={3000} width={3000} className="h-64" />
+              <Image alt="keylock" src={"/icons/keylock.svg"} height={300} width={300} className="" />
             </div>
             <h3 className="text-xl font-semibold text-[#2C3C4E] mb-2">Log in to see messages</h3>
             <p className="text-[#2C3C4E] text-center font-light mb-8">
@@ -543,7 +543,10 @@ export default function ChatList() {
           <SignUpModal />
           <LoginModal />
 
-          <MobileBottomTabs />
+          <div className="sticky bottom-0 bg-[#1C1C1C] z-10">
+            <MobileBottomTabs />
+          </div>
+
 
         </div>
       ) : (
@@ -569,7 +572,7 @@ export default function ChatList() {
             {/* Header (Mobile) */}
             {selectedChat ? (
               <header
-                className={`sticky ${inter.className} top-0 z-10 bg-[#1F1F21] p-5 flex items-center justify-between`}
+                className={` ${inter.className} top-0 z-10 bg-[#1F1F21] p-5 flex items-center justify-between`}
               >
                 <div className="flex items-center">
                   {/* Back Button */}
