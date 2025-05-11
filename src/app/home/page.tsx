@@ -377,7 +377,7 @@ export default function Home() {
                         transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)' // Match transition timing
                     }}
                     className={`fixed bottom-0 left-0 right-0 
-                        ${bottomBarVisible ? 'translate-y-0 z-0' : 'translate-y-full md:translate-y-0'} ${isFilterModalOpen ? 'z-10' : 'z-20'} ${isAnyAuthPopupOpen ? '-z-50 hidden' : 'z-20'}`}
+                        ${bottomBarVisible ? 'translate-y-0 z-0' : 'translate-y-full md:translate-y-0'} ${isFilterModalOpen ? 'hidden' : 'z-20'} ${isAnyAuthPopupOpen ? '-z-50 hidden' : 'z-20'}`}
                 >
                     <MobileBottomTabs />
                 </div>
