@@ -236,7 +236,7 @@ export default function Navbar() {
           )}
           <div className={`${shouldHideSearch ? "hidden" : "flex"} flex items-center justify-between`}>
             {/* Search Section */}
-            <div className="bg-[#2F2F2F] rounded-full flex items-center py-2.5 flex-1 mr-3">
+            <div className={`bg-[#2F2F2F] rounded-full flex items-center py-2.5 ${isInputFocused ? 'w-full' : 'flex-1 mr-3'}`}>
               <div className="bg-[#1c1c1c] p-2 rounded-full ml-2">
                 <Image
                   src="/icons/search-icon.svg"
@@ -261,36 +261,39 @@ export default function Navbar() {
                   onClick={handleClearSearch}
                   className="mr-3 search-clear-btn"
                 >
-                  <div className="bg-[#8E8E93] rounded-full w-5 h-5 flex items-center justify-center">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 1L9 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                      <path d="M9 1L1 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
+                  <div className="rounded-full w-5 h-5 flex items-center justify-center">
+                   <Image
+                    src="/icons/searchcancel.svg"
+                    alt="Slider Icon"
+                    width={32}
+                    height={32}
+                  />
                   </div>
                 </button>
               )}
             </div>
 
-            {/* Mobile filter icon */}
-            <div className="relative flex-shrink-0">
-              <button
-                onClick={() => dispatch(openFilterModal())}
-                className={`h-11 w-11 rounded-full flex items-center justify-center relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"
-                  }`}
-              >
-                <Image
-                  src="/icons/mobileslider.svg"
-                  alt="Slider Icon"
-                  width={15}
-                  height={12}
-                />
-                {compositeCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {compositeCount}
-                  </span>
-                )}
-              </button>
-            </div>
+            {/* Mobile filter icon - Hide when input is focused */}
+            {!isInputFocused && (
+              <div className="relative flex-shrink-0">
+                <button
+                  onClick={() => dispatch(openFilterModal())}
+                  className={`h-11 w-11 rounded-full flex items-center justify-center relative ${compositeCount > 0 ? "bg-[#0A84FF]" : "bg-[#353537]"}`}
+                >
+                  <Image
+                    src="/icons/mobileslider.svg"
+                    alt="Slider Icon"
+                    width={15}
+                    height={12}
+                  />
+                  {compositeCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {compositeCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
 
           <MobileFilterModal

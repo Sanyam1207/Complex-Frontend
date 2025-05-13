@@ -661,7 +661,7 @@ export default function ChatList() {
                                 className={`${message.sender._id === currentUserId
                                   ? 'text-white font-medium'
                                   : 'text-[#2C3C4E] font-normal'
-                                  } font-inter text-sm leading-relaxed`}
+                                  } font-inter text-sm leading-relaxed max-w-64 max-w-64 break-words overflow-wrap`}
                               >
                                 {message.content}
                               </p>
@@ -838,7 +838,11 @@ export default function ChatList() {
                                     <p className="h-1.5 w-1.5 rounded-full bg-[#0A84FF] mr-2"></p>
                                   )
                                 }
-                                {chat.lastMessage?.content || "No messages yet"}
+                                {chat.lastMessage?.content
+                                  ? (chat.lastMessage.content.length > 20
+                                    ? chat.lastMessage.content.substring(0, 20) + '...'
+                                    : chat.lastMessage.content)
+                                  : "No messages yet"}
                               </span>
                             </div>
                           </div>
