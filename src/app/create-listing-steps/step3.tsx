@@ -9,7 +9,7 @@ interface LocationSelectorProps {
   setIntersection: (intersection: string) => void;
 }
 
-const LocationSelector: React.FC<LocationSelectorProps> = ({ 
+const LocationSelector: React.FC<LocationSelectorProps> = ({
   setActiveStep,
   location,
   setLocation,
@@ -33,14 +33,14 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
               onChange={(e) => setLocation(e.target.value)}
               className="
                 w-full
-                border
-                
                 rounded-lg
                 p-3
                 text-sm
-                focus:outline-none
-                focus:ring-1
-                focus:ring-black
+                text-[#2C3C4E]
+              bg-[#F4F4F4] 
+              focus:bg-white 
+              focus:outline-black
+              focus:outline
               "
             />
           </div>
@@ -66,9 +66,11 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                 rounded-lg
                 p-3
                 text-sm
-                focus:outline-none
-                focus:ring-1
-                focus:ring-black
+                text-[#2C3C4E]
+              bg-[#F4F4F4] 
+              focus:bg-white 
+              focus:outline-black
+              focus:outline
                 h-12
               "
             />
@@ -77,7 +79,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
         {/* Bottom Section: Continue Button */}
         <button
-          onClick={() => { setActiveStep(4)}}
+          onClick={() => { setActiveStep(4) }}
           type="button"
           className="
             bg-black

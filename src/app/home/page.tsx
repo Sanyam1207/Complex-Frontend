@@ -186,14 +186,18 @@ export default function Home() {
             setPropertiesByLocation([]);
             setLocationError(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedLocation]);
     
     // When category changes and we have a location filter, refetch properties
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         if (selectedLocation) {
             fetchPropertiesByLocationAndCategory();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory]);
     
     // Function to fetch properties by location AND category

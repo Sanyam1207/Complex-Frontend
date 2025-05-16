@@ -37,6 +37,11 @@ const LoginModal: React.FC = () => {
     dispatch(closePopup('login'));
     dispatch(openPopup('signup'));
   };
+  
+  const handleOpenForgotPassword = () => {
+    dispatch(closePopup('login'));
+    dispatch(openPopup('forgotPassword'));
+  }
 
   // Early return based on isOpen AFTER all hooks have been called
   if (!isOpen) return null;
@@ -199,7 +204,7 @@ const LoginModal: React.FC = () => {
 
           <br />
           <div className="text-[#0A84FF] text-sm">
-            <Link href="">Forgot Password ?</Link>
+            <p onClick={handleOpenForgotPassword}>Forgot Password ?</p>
           </div>
           <br />
 
@@ -346,7 +351,7 @@ const LoginModal: React.FC = () => {
 
 
                   <div className="text-[#0A84FF] text-sm my-6 h-10">
-                    <Link href="">Forgot Password?</Link>
+                    <p onClick={handleOpenForgotPassword}>Forgot Password?</p>
                   </div>
 
                   {/* Submit Button */}

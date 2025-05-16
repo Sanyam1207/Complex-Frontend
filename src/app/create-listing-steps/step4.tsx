@@ -1,6 +1,115 @@
 // components/PropertyFeatures.tsx
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
+
+// Custom dropdown component
+const CustomDropdown = ({ 
+  options, 
+  value, 
+  onChange, 
+  placeholder,
+  className = "" 
+}: { 
+  options: { value: string; label: string }[]; 
+  value: string; 
+  onChange: (value: string) => void;
+  placeholder: string;
+  className?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  // Find the selected option's label
+  const selectedOption = options.find(option => option.value === value);
+
+  return (
+    <div className={`relative ${className}`} ref={dropdownRef}>
+      <div 
+        className="
+          bg-white 
+          border 
+          border-gray-200 
+          rounded-lg 
+          p-4 
+          text-xs 
+          font-medium 
+          text-gray-700 
+          cursor-pointer 
+          flex 
+          justify-between 
+          items-center
+          shadow-sm
+        "
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span>{selectedOption?.label || placeholder}</span>
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="24" 
+          height="24" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          className="h-4 w-4 text-gray-500"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+      
+      {isOpen && (
+        <div className="
+          absolute 
+          z-10 
+          mt-1 
+          w-full 
+          bg-white 
+          border 
+          border-gray-200 
+          rounded-lg 
+          shadow-lg 
+          max-h-60 
+          overflow-auto
+        ">
+          {options.map((option) => (
+            <div
+              key={option.value}
+              className="
+                p-3 
+                hover:bg-gray-100 
+                cursor-pointer 
+                text-xs 
+                font-medium
+              "
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface PropertyFeaturesProps {
   bedrooms: string;
@@ -27,6 +136,24 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
   availableAmenities,
   setActiveStep
 }) => {
+  // Bedroom options
+  const bedroomOptions = [
+    { value: '1', label: '1 Bedroom' },
+    { value: '2', label: '2 Bedrooms' },
+    { value: '3', label: '3 Bedrooms' },
+    { value: '4', label: '4 Bedrooms' },
+    { value: '5', label: '5 Bedrooms' },
+  ];
+
+  // Bathroom options
+  const bathroomOptions = [
+    { value: '1', label: '1 Bathroom' },
+    { value: '2', label: '2 Bathrooms' },
+    { value: '3', label: '3 Bathrooms' },
+    { value: '4', label: '4 Bathrooms' },
+    { value: '5', label: '5 Bathrooms' },
+  ];
+
   return (
     <div
       className="
@@ -60,32 +187,22 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
           </div>
           <div className="flex flex-row space-x-2">
             {/* Bedrooms Dropdown */}
-            <select
-              className="border p-4 text-xs rounded"
+            <CustomDropdown
+              options={bedroomOptions}
               value={bedrooms}
-              onChange={(e) => setBedrooms(e.target.value)}
-            >
-              <option value="">Bedrooms</option>
-              <option value="1">1 Bedroom</option>
-              <option value="2">2 Bedrooms</option>
-              <option value="3">3 Bedrooms</option>
-              <option value="4">4 Bedrooms</option>
-              <option value="5">5 Bedrooms</option>
-            </select>
+              onChange={(value) => setBedrooms(value)}
+              placeholder="Bedrooms"
+              className="flex-1"
+            />
 
             {/* Bathrooms Dropdown */}
-            <select
-              className="border p-4 text-xs rounded"
+            <CustomDropdown
+              options={bathroomOptions}
               value={bathrooms}
-              onChange={(e) => setBathrooms(e.target.value)}
-            >
-              <option value="">Bathrooms</option>
-              <option value="1">1 Bathroom</option>
-              <option value="2">2 Bathrooms</option>
-              <option value="3">3 Bathrooms</option>
-              <option value="4">4 Bathrooms</option>
-              <option value="5">5 Bathrooms</option>
-            </select>
+              onChange={(value) => setBathrooms(value)}
+              placeholder="Bathrooms"
+              className="flex-1"
+            />
           </div>
         </div>
 
@@ -149,6 +266,9 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
 
           {/* 3 columns, auto rows */}
           <div className="flex flex-wrap space-x-2 space-y-2">
+            <div className="hidden">
+              {/* This div prevents the first item from getting the space-x-2 margin */}
+            </div>
             {availableAmenities.map((amenity) => {
               const isSelected = selectedAmenities.includes(amenity.title);
               return (
@@ -157,7 +277,7 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
                   type="button"
                   onClick={() => handleAmenityToggle(amenity.title)}
                   className={`
-                    px-4 h-9  py-1 flex items-center justify-center space-x-1 
+                    px-4 h-9 py-1 flex items-center justify-center space-x-1 
                     transition border text-[12px] font-normal font-[Inter] 
                     rounded-[42px] border-[#2C3C4E] 
                     ${isSelected ? "bg-[#0A84FF] text-white" : "text-[#2C3C4E] hover:bg-gray-100"}
