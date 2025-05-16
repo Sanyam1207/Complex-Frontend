@@ -1,5 +1,6 @@
 'use client'
 
+import ForgotPasswordModal from '@/components/ForgotPassword';
 import LoginModal from '@/components/LoginPopup';
 import Navbar from '@/components/NavBar';
 import OfferChips from '@/components/OfferChips';
@@ -70,6 +71,17 @@ export default function ReviewListing() {
     const [submitting, setSubmitting] = useState(false);
     const [userInfo, setUserInfo] = useState({ _id: '', fullName: '', profilePicture: '', createdAt: new Date().toISOString() });
     console.log(userInfo)
+
+
+    // Check if there's a temporary listing in localStorage and redirect if not
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const tempListing = localStorage.getItem('pendingListing');
+            if (!tempListing) {
+                router.push('/home');
+            }
+        }
+    }, [router]);
 
     // Load property data from localStorage on component mount
     useEffect(() => {
@@ -200,7 +212,7 @@ export default function ReviewListing() {
             if (result.success && result.data._id) {
                 // Clear the pending listing from localStorage
                 localStorage.removeItem('pendingListing');
-                
+
                 // Redirect to the show listing page with the newly created listing
                 router.push(`/show-listing/${result.data._id}`);
             } else {
@@ -312,7 +324,7 @@ export default function ReviewListing() {
                         <h1 className="text-2xl font-bold">Review Your Listing</h1>
                         <p className="text-gray-300">Verify all details before publishing</p>
                     </div>
-                
+
                     {/* Outer row */}
                     <div className="flex flex-col items-center space-x-6 space-y-3">
                         {/* Image container */}
@@ -425,7 +437,7 @@ export default function ReviewListing() {
                     <div className="flex flex-col items-start h-60 rounded-2xl w-80 p-5 justify-center bg-[#F4F4F4] space-y-4">
                         <h3 className="font-semibold text-lg">Ready to publish?</h3>
                         <p className="text-sm text-gray-600">Your listing will be visible to thousands of people looking for a place to live.</p>
-                        
+
                         {/* Publish button */}
                         <button
                             className="bg-blue-500 text-white px-4 py-2 rounded-2xl w-full"
@@ -434,7 +446,7 @@ export default function ReviewListing() {
                         >
                             {submitting ? "Publishing..." : "Publish Listing"}
                         </button>
-                        
+
                         {/* Edit button */}
                         <button
                             className="border border-gray-300 text-gray-700 px-4 py-2 rounded-2xl w-full"
@@ -589,7 +601,7 @@ export default function ReviewListing() {
 
                 {/* Fixed action bar at bottom */}
                 <div className="bg-black flex items-center justify-between py-5 z-20 fixed bottom-0 left-0 right-0 px-4">
-                    
+
                     <button
                         className="bg-blue-600 text-white px-4 py-3 items-center rounded-3xl w-full"
                         onClick={handlePublish}
@@ -600,6 +612,7 @@ export default function ReviewListing() {
                 </div>
 
                 <SignUpModal />
+                <ForgotPasswordModal />
                 <LoginModal />
                 <OnBoardingPopup />
             </div>

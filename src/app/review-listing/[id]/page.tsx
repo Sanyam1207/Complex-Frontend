@@ -1,5 +1,6 @@
 'use client'
 
+import ForgotPasswordModal from '@/components/ForgotPassword';
 import LoginModal from '@/components/LoginPopup';
 import Navbar from '@/components/NavBar';
 import OfferChips from '@/components/OfferChips';
@@ -83,6 +84,8 @@ export default function ShowListing() {
     console.log(similarProperties);
     const [isPreview, setIsPreview] = useState<boolean>(false);
 
+
+    
     // Check if this is a preview (new listing that hasn't been published)
     useEffect(() => {
         // If URL contains "preview" parameter
@@ -687,6 +690,7 @@ export default function ShowListing() {
 
                 <SignUpModal />
                 <LoginModal />
+                <ForgotPasswordModal />
 
                 <OnBoardingPopup />
             </div>

@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const dispatch = useDispatch();
 
   // Define public routes that don't require authentication
-  const publicRoutes = ['/home', '/show-listing', '/messages', '/profile', "/wishlist"];
+  const publicRoutes = ['/home', '/show-listing', '/messages', '/profile', "/wishlist", "/reset-password"];
   const isPublicRoute = publicRoutes.some(route =>
     pathname === route || pathname.startsWith(`${route}/`)
   );

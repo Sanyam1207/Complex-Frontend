@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import ProfileCreationModal from "@/components/ProfileCreationPopup";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import ForgotPasswordModal from "@/components/ForgotPassword";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -560,6 +561,7 @@ export default function ChatList() {
           {/* Bottom navigation bar */}
           <OnBoardingPopup />
           <SignUpModal />
+          <ForgotPasswordModal />
           <LoginModal />
 
           <div className="sticky bottom-0 bg-[#1C1C1C] z-10">

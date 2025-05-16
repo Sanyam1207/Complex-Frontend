@@ -11,6 +11,7 @@ import { openPopup, closePopup } from "@/redux/slices/showPopups";
 import OnBoardingPopup from "@/components/OnboardingPopup";
 import LoginModal from "@/components/LoginPopup";
 import SignUpModal from "@/components/RegisterPopup";
+import ForgotPasswordModal from "@/components/ForgotPassword";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -281,6 +282,7 @@ export default function ProfilePage() {
                 <OnBoardingPopup />
                 <LoginModal />
                 <SignUpModal />
+                <ForgotPasswordModal />
             </div>
 
             <MobileBottomTabs />

@@ -18,6 +18,7 @@ import SearchResultsPanel from "./LocationSearchPopup";
 
 import { clearSelectedLocation } from "@/redux/slices/locationSlice";
 import { fetchPropertiesByCategory } from "@/redux/slices/categorySlice";
+import ForgotPasswordModal from "./ForgotPassword";
 
 // Fonts
 const knewave = Knewave({
@@ -454,6 +455,7 @@ export default function Navbar() {
 
         {/* Modals */}
         <SignUpModal />
+        <ForgotPasswordModal />
         <LoginModal />
         <LogoutModal onConfirm={handleLogout} />
         <OnBoardingPopup />

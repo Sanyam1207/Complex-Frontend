@@ -1,5 +1,6 @@
 'use client'
 
+import ForgotPasswordModal from '@/components/ForgotPassword';
 import LoginModal from '@/components/LoginPopup';
 import Navbar from '@/components/NavBar';
 import OfferChips from '@/components/OfferChips';
@@ -395,6 +396,7 @@ export default function ShowListing() {
   return (
     <div className={`${inter.className}`}>
       {/* Desktop View */}
+
       <div className="hidden md:block">
         <Navbar />
         <div className="bg-[#1F1F21] p-10 text-white">
@@ -614,6 +616,9 @@ export default function ShowListing() {
           </div>
         </div>
       </div>
+
+
+
 
       {/* Mobile View */}
       <div className={`${inter.className} bg-[#1F1F21] block md:hidden`}>
@@ -837,6 +842,7 @@ export default function ShowListing() {
         {/* Mobile Bottom Navigation */}
 
         <SignUpModal />
+        <ForgotPasswordModal />
         <LoginModal />
 
         <OnBoardingPopup />
