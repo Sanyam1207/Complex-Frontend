@@ -3,6 +3,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { openPopup } from "@/redux/slices/showPopups";
 
 interface PropertyCardCarouselProps {
     onClick?: () => void;
@@ -23,6 +25,7 @@ export default function PropertyCardCarousel({
     propertyId,
     initialIsWishlisted = false,
 }: PropertyCardCarouselProps) {
+    const dispatch = useDispatch();
     const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
     const [current, setCurrent] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,6 +51,26 @@ export default function PropertyCardCarousel({
         e.preventDefault();
         e.stopPropagation(); // Prevent triggering parent onClick
 
+        if (localStorage.getItem('token') === null) {
+            toast("Please login to use the wishlist feature", {
+                icon: (
+                    <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
+                        <img src="/icons/tick.svg" />
+                    </div>
+                ),
+                duration: 3000,
+                position: "bottom-right",
+                style: {
+                    background: "rgba(31,31,33,1)",
+                    color: "#fff",
+                }
+            });
+
+            // Open the onboarding popup
+            dispatch(openPopup('onboarding'));
+            return;
+        }
+
         if (isLoading) return;
         setIsLoading(true);
 
@@ -57,6 +80,18 @@ export default function PropertyCardCarousel({
                 const response = await api.delete(
                     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/wishlist/${propertyId}`
                 );
+
+                if (response.status === 401) {
+                    // Simple toast for unauthorized access
+                    toast("Please login to use the wishlist feature", {
+                        icon: '👋',
+                        duration: 3000,
+                    });
+
+                    // Open the onboarding popup
+                    dispatch(openPopup('onboarding'));
+                    return;
+                }
 
                 if (response.data.success) {
                     setIsWishlisted(false);
@@ -81,7 +116,20 @@ export default function PropertyCardCarousel({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Error toggling wishlist:", error);
-            toast.error(error.response?.data?.message || "An error occurred");
+
+            // Check for 401 errors in the catch block
+            if (error.response && error.response.status === 401) {
+                // Simple toast for unauthorized access
+                toast("Please login to use the wishlist feature", {
+                    icon: '👋',
+                    duration: 3000,
+                });
+
+                // Open the onboarding popup
+                dispatch(openPopup('onboarding'));
+            } else {
+                toast.error(error.response?.data?.message || "An error occurred");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -90,7 +138,7 @@ export default function PropertyCardCarousel({
     if (!isClient) return null; // Prevent SSR mismatch
 
     return (
-        <div onClick={onClick} className="relative max-w-sm rounded-3xl overflow-hidden outline outline-[#F4F4F4] shadow-sm bg-white">
+        <div onClick={onClick} className="relative cursor-pointer max-w-sm rounded-3xl overflow-hidden outline outline-[#F4F4F4] shadow-sm bg-white">
             <Carousel setApi={setCarouselApi} className="relative w-full">
                 <CarouselContent>
                     {images.map((src, idx) => (
@@ -126,23 +174,22 @@ export default function PropertyCardCarousel({
                     </p>
                 </div>
                 <p className="mt-1 text-[0.75rem] text-[#2C3C4E] flex flex-row items-center">
-                    <Image 
-                        src={'/icons/calender.svg'} 
-                        alt="calender" 
-                        height={12} 
-                        width={12} 
-                        className="mr-2" 
+                    <Image
+                        src={'/icons/calender.svg'}
+                        alt="calender"
+                        height={12}
+                        width={12}
+                        className="mr-2"
                     />
                     {new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
                 </p>
-                
+
                 {/* Heart Icon - Wishlist toggle */}
                 <button
                     onClick={handleAddWishlist}
                     disabled={isLoading}
-                    className={`absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md transition-transform ${
-                        isLoading ? "opacity-70" : ""
-                    } active:scale-95`}
+                    className={`absolute top-4 right-4 flex items-center justify-center h-7 w-7 bg-white p-1.5 rounded-full shadow-md transition-transform ${isLoading ? "opacity-70" : ""
+                        } active:scale-95`}
                 >
                     {isWishlisted ? (
                         // Filled heart when wishlisted
@@ -158,11 +205,11 @@ export default function PropertyCardCarousel({
                         </svg>
                     ) : (
                         // Empty heart when not wishlisted
-                        <Image 
-                            alt="Add to Wishlist" 
-                            src="/icons/heart2.svg" 
-                            width={20} 
-                            height={20} 
+                        <Image
+                            alt="Add to Wishlist"
+                            src="/icons/heart2.svg"
+                            width={20}
+                            height={20}
                         />
                     )}
                 </button>

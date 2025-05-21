@@ -1,24 +1,27 @@
 "use client";
 
+import { applyFilters } from "@/redux/slices/categorySlice";
+import { closeFilterModal, openFilterModal } from "@/redux/slices/filterModalSlice";
 import { closePopup, openPopup } from "@/redux/slices/showPopups";
 import { Menu as MenuIcon } from "lucide-react";
 import { Inter, Knewave } from "next/font/google";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store/store";
+import SearchResultsPanel from "./LocationSearchPopup";
 import LoginModal from "./LoginPopup";
 import LogoutModal from "./LogoutModal";
 import MobileFilterModal from "./MobileFilterPopup";
 import OnBoardingPopup from "./OnboardingPopup";
 import SignUpModal from "./RegisterPopup";
-import { closeFilterModal, openFilterModal } from "@/redux/slices/filterModalSlice";
-import SearchResultsPanel from "./LocationSearchPopup";
 
-import { clearSelectedLocation } from "@/redux/slices/locationSlice";
 import { fetchPropertiesByCategory } from "@/redux/slices/categorySlice";
+import { clearSelectedLocation, setSelectedLocation } from "@/redux/slices/locationSlice";
 import ForgotPasswordModal from "./ForgotPassword";
+
+import axios from "axios";
 
 // Fonts
 const knewave = Knewave({
@@ -69,9 +72,12 @@ export default function Navbar() {
   // Search state
   const [searchValue, setSearchValue] = useState("");
   const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
+  const [isDesktopSearchPanelOpen, setIsDesktopSearchPanelOpen] = useState(false);
   const { selectedLocation } = useSelector((state: RootState) => state.location);
   const { selectedCategory } = useSelector((state: RootState) => state.category) as { selectedCategory: CategoryType };
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const desktopSearchInputRef = useRef<HTMLInputElement>(null);
+  const desktopSearchContainerRef = useRef<HTMLDivElement>(null);
 
   // Extract multiple fields from your filter slice
   const {
@@ -94,6 +100,177 @@ export default function Navbar() {
     (selectedFilters.length > 0 ? 1 : 0) +
     (selectedSort !== "price" ? 1 : 0);
 
+
+
+
+  const [locations, setLocations] = useState<string[]>([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  console.log(` locations: ${locationError}`);
+
+  // Get recent searches from Redux
+  const { recentSearches } = useSelector((state: RootState) => state.location);
+
+
+
+
+
+
+
+  // Debounce search input and fetch locations
+  useEffect(() => {
+    if (!searchValue || searchValue.length < 2) {
+      setLocations([]);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      fetchLocations(searchValue);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchValue]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const fetchLocations = async (searchTerm: string) => {
+    if (!searchTerm || searchTerm.length < 2) {
+      setLocations([]);
+      return;
+    }
+
+    setIsLoadingLocations(true);
+    setLocationError(null);
+
+    try {
+      // API base URL should come from environment variables in production
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+      const response = await axios.get(`${API_BASE_URL}/api/locations`, {
+        params: { search: searchTerm }
+      });
+
+      if (response.data && response.data.success) {
+        setLocations(response.data.data);
+      } else {
+        setLocationError("Failed to fetch locations");
+        // Fallback to some mock data for testing
+        setLocations([
+          `${searchTerm}, Ontario`,
+          `${searchTerm}, BC`,
+          `${searchTerm}, Alberta`
+        ]);
+      }
+    } catch (err) {
+      console.error("Error fetching locations:", err);
+      setLocationError("Error connecting to the server");
+      // Fallback to some mock data for testing
+      setLocations([
+        `${searchTerm}, Ontario`,
+        `${searchTerm}, BC`,
+        `${searchTerm}, Alberta`
+      ]);
+    } finally {
+      setIsLoadingLocations(false);
+    }
+  };
+
+  // Function to handle location selection
+  const handleLocationSelect = (location: string) => {
+    // Dispatch location to Redux
+    dispatch(setSelectedLocation(location));
+
+    // Trigger filter application
+    dispatch(applyFilters());
+
+    // Close panels
+    setIsSearchPanelOpen(false);
+    setIsDesktopSearchPanelOpen(false);
+
+    // Blur inputs
+    if (searchInputRef.current) {
+      searchInputRef.current.blur();
+    }
+    if (desktopSearchInputRef.current) {
+      desktopSearchInputRef.current.blur();
+    }
+  };
+
+  // Function to get user's current location
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        console.log(`${lng} ${lat}`);
+
+        // In a real app, you'd use a reverse geocoding service here
+        // For now, just use "Current Location" as the location string
+        dispatch(setSelectedLocation("Current Location"));
+
+        // Trigger filter application
+        dispatch(applyFilters());
+
+        // Close panels
+        setIsSearchPanelOpen(false);
+        setIsDesktopSearchPanelOpen(false);
+
+        // Blur inputs
+        if (searchInputRef.current) {
+          searchInputRef.current.blur();
+        }
+        if (desktopSearchInputRef.current) {
+          desktopSearchInputRef.current.blur();
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Unable to get your location. Please check your permissions.");
+      }
+    );
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // Handler for confirming logout
   const handleLogout = () => {
     console.log("User logged out!");
@@ -104,6 +281,11 @@ export default function Navbar() {
   const handleInputFocus = () => {
     setIsSearchPanelOpen(true);
     setIsInputFocused(true);
+  };
+
+  // Handle desktop search focus
+  const handleDesktopInputFocus = () => {
+    setIsDesktopSearchPanelOpen(true);
   };
 
   const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -123,6 +305,7 @@ export default function Navbar() {
       searchInputRef.current.blur();
     }
   };
+
 
   // Handle search input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,10 +347,37 @@ export default function Navbar() {
     }
   };
 
+  // Clear desktop search
+  const handleClearDesktopSearch = () => {
+    if (searchValue) {
+      setSearchValue("");
+      dispatch(clearSelectedLocation());
+
+      // Refetch properties by category when location filter is cleared
+      // @ts-expect-error - TS might complain about dispatch type
+      dispatch(fetchPropertiesByCategory(selectedCategory));
+
+      if (desktopSearchInputRef.current) {
+        desktopSearchInputRef.current.focus();
+      }
+    } else {
+      setIsDesktopSearchPanelOpen(false);
+
+      if (desktopSearchInputRef.current) {
+        desktopSearchInputRef.current.blur();
+      }
+    }
+  };
+
   // Handle key press in search input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setIsSearchPanelOpen(false); // Close the panel on Enter key
+      // Close the appropriate panel based on viewport
+      if (window.innerWidth >= 768) {
+        setIsDesktopSearchPanelOpen(false);
+      } else {
+        setIsSearchPanelOpen(false);
+      }
 
       // If the search input is empty, clear the location filter and refetch properties
       if (searchValue === "") {
@@ -178,9 +388,12 @@ export default function Navbar() {
         dispatch(fetchPropertiesByCategory(selectedCategory));
       }
 
-      // Blur the input to hide the keyboard on mobile
+      // Blur the inputs
       if (searchInputRef.current) {
         searchInputRef.current.blur();
+      }
+      if (desktopSearchInputRef.current) {
+        desktopSearchInputRef.current.blur();
       }
     }
   };
@@ -193,6 +406,31 @@ export default function Navbar() {
       setSearchValue("");
     }
   }, [selectedLocation]);
+
+  // Handle clicks outside of the desktop search panel to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if the desktop search panel is open
+      if (isDesktopSearchPanelOpen) {
+        // Check if the click was outside the search container and not on the input
+        if (
+          desktopSearchContainerRef.current &&
+          !desktopSearchContainerRef.current.contains(event.target as Node) &&
+          desktopSearchInputRef.current !== event.target
+        ) {
+          setIsDesktopSearchPanelOpen(false);
+        }
+      }
+    };
+
+    // Add event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up the event listener
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDesktopSearchPanelOpen]);
 
   // Get a user-friendly placeholder for search based on the selected category
   const getSearchPlaceholder = (): string => {
@@ -207,6 +445,21 @@ export default function Navbar() {
       default: return "Search location";
     }
   };
+
+  // Function to handle location selection (shared between mobile and desktop)
+  // const handleLocationSelect = (location: string) => {
+  //   setSearchValue(location);
+  //   setIsSearchPanelOpen(false);
+  //   setIsDesktopSearchPanelOpen(false);
+
+  //   // Blur inputs
+  //   if (searchInputRef.current) {
+  //     searchInputRef.current.blur();
+  //   }
+  //   if (desktopSearchInputRef.current) {
+  //     desktopSearchInputRef.current.blur();
+  //   }
+  // };
 
   return (
     <>
@@ -263,12 +516,12 @@ export default function Navbar() {
                   className="mr-3 search-clear-btn"
                 >
                   <div className="rounded-full w-5 h-5 flex items-center justify-center">
-                   <Image
-                    src="/icons/searchcancel.svg"
-                    alt="Slider Icon"
-                    width={32}
-                    height={32}
-                  />
+                    <Image
+                      src="/icons/searchcancel.svg"
+                      alt="Slider Icon"
+                      width={32}
+                      height={32}
+                    />
                   </div>
                 </button>
               )}
@@ -325,40 +578,144 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Desktop search bar */}
+          {/* Desktop search bar with its search container */}
           <div
-            className={`${shouldHide ? "hidden" : "flex"} items-center bg-[#2F2F2F] rounded-full px-4 py-2 w-[26.18rem]`}
+            ref={desktopSearchContainerRef}
+            className={`${shouldHide ? "hidden" : "flex"} relative items-center`}
           >
-            <div className="bg-[#1c1c1c] p-2 rounded-full">
-              <Image
-                src="/icons/firrsearch.png"
-                height={15.43}
-                width={15.43}
-                alt="search-icon"
+            <div className="flex items-center bg-[#2F2F2F] rounded-full px-4 py-2 w-[26.18rem]">
+              <div className="bg-[#1c1c1c] p-2 rounded-full">
+                <Image
+                  src="/icons/firrsearch.png"
+                  height={15.43}
+                  width={15.43}
+                  alt="search-icon"
+                />
+              </div>
+              <input
+                ref={desktopSearchInputRef}
+                type="text"
+                value={searchValue}
+                onChange={handleSearchChange}
+                onFocus={handleDesktopInputFocus}
+                onKeyDown={handleKeyDown}
+                placeholder={selectedLocation || getSearchPlaceholder()}
+                className="ml-2 w-full border-none outline-none bg-transparent text-[14px] text-white placeholder-white"
               />
+              {searchValue && (
+                <button
+                  onClick={handleClearDesktopSearch}
+                  className="ml-2 search-clear-btn"
+                >
+                  <div className="bg-[#8E8E93] rounded-full w-5 h-5 flex items-center justify-center">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 1L9 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M9 1L1 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </button>
+              )}
             </div>
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchValue}
-              onChange={handleSearchChange}
-              onFocus={handleInputFocus}
-              onKeyDown={handleKeyDown}
-              placeholder={selectedLocation || getSearchPlaceholder()}
-              className="ml-2 w-full border-none outline-none bg-transparent text-[14px] text-white placeholder-white"
-            />
-            {searchValue && (
-              <button
-                onClick={handleClearSearch}
-                className="ml-2"
-              >
-                <div className="bg-[#8E8E93] rounded-full w-5 h-5 flex items-center justify-center">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 1L9 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                    <path d="M9 1L1 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
+
+            {/* Desktop Search Results Popup */}
+            {isDesktopSearchPanelOpen && (
+              <div className="absolute top-full left-0 mt-2 w-[26.18rem] max-h-[400px] overflow-y-auto bg-[#2F2F2F] rounded-xl shadow-lg z-30">
+                <div className="p-4">
+                  {/* Use current location button */}
+                  <button
+                    onClick={handleUseCurrentLocation}
+                    className="flex items-center w-full py-3 px-2 mb-4 rounded-lg hover:bg-[#3D3D3D] transition-colors"
+                  >
+                    <div className="bg-[#1c1c1c] p-2 rounded-full mr-3">
+                      <Image src="/icons/location-icon.svg" height={12} width={12} alt="location"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/icons/search-icon.svg";
+                        }}
+                      />
+                    </div>
+                    <span className="text-[#0A84FF] text-sm">Use my current location</span>
+                  </button>
+
+                  {/* Loading indicator */}
+                  {isLoadingLocations && (
+                    <div className="flex justify-center py-3">
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500"></div>
+                    </div>
+                  )}
+
+                  {/* Search results - show when user is searching */}
+                  {searchValue && !isLoadingLocations && (
+                    <>
+                      <h3 className="text-white text-sm font-medium mb-3">Search Results</h3>
+                      <div className="space-y-2">
+                        {locations.length > 0 ? (
+                          locations.map((location, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center cursor-pointer hover:bg-[#3D3D3D] p-2 rounded-lg transition-all"
+                              onClick={() => handleLocationSelect(location)}
+                            >
+                              <div className="bg-[#1c1c1c] p-2 rounded-full mr-3">
+                                <Image src="/icons/search-icon.svg" height={12} width={12} alt="search" />
+                              </div>
+                              <span className="text-white text-sm">{location}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-gray-400 text-sm p-2">
+                            No locations found matching &qupt;{searchValue}&qupt;
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Recent searches - show when not searching */}
+                  {!searchValue && recentSearches.length > 0 && (
+                    <>
+                      <h3 className="text-white text-sm font-medium mb-3">Recent Searches</h3>
+                      <div className="space-y-2">
+                        {recentSearches.slice(0, 3).map((location, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center cursor-pointer hover:bg-[#3D3D3D] p-2 rounded-lg transition-all"
+                            onClick={() => handleLocationSelect(location)}
+                          >
+                            <div className="bg-[#1c1c1c] p-2 rounded-full mr-3">
+                              <Image src="/icons/search-icon.svg" height={12} width={12} alt="search" />
+                            </div>
+                            <span className="text-white text-sm">{location}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Popular locations - show when not searching or when no recent searches */}
+                  {!searchValue && (
+                    <>
+                      
+                    </>
+                  )}
+
+                  {/* Clear search button - only show when search is active */}
+                  {selectedLocation && (
+                    <button
+                      onClick={() => {
+                        dispatch(clearSelectedLocation());
+                        setSearchValue("");
+                        // @ts-expect-error - TS might complain about dispatch type
+                        dispatch(fetchPropertiesByCategory(selectedCategory));
+                        setIsDesktopSearchPanelOpen(false);
+                      }}
+                      className="mt-4 w-full py-2 bg-[#0A84FF] text-white text-sm font-medium rounded-lg hover:bg-[#0a75e0] transition-colors"
+                    >
+                      Clear Search
+                    </button>
+                  )}
                 </div>
-              </button>
+              </div>
             )}
           </div>
 
@@ -461,7 +818,7 @@ export default function Navbar() {
         <OnBoardingPopup />
       </nav>
 
-      {/* Search Results Panel with Framer Motion */}
+      {/* Search Results Panel with Framer Motion (Mobile only) */}
       <SearchResultsPanel
         isOpen={isSearchPanelOpen}
         onClose={handleCloseSearchPanel}

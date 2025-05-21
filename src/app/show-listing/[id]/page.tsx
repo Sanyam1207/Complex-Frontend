@@ -13,6 +13,7 @@ import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
 const inter = Inter({
@@ -297,6 +298,19 @@ export default function ShowListing() {
         throw new Error(`Failed to send message: ${response.statusText}`);
       }
 
+      toast("Message Sent Successfully", {
+        icon: (
+          <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
+            <img src="/icons/tick.svg" />
+          </div>
+        ),
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "rgba(31,31,33,1)",
+          color: "#fff",
+        }
+      });
       const data = await response.json();
       console.log(data)
       setChatExists(true); // Set chatExists to true after sending the message
@@ -517,16 +531,17 @@ export default function ShowListing() {
               </label>
               <textarea
                 id="message"
-                className="border rounded bg-[#FFFFFF] p-2 w-full"
+                className="border resize-none h-16 rounded bg-[#FFFFFF] p-2 w-full"
                 placeholder="Hello, is this available?"
                 value={sendMessage}
+
                 onChange={(e) => setSendMessage(e.target.value)}
               />
             </div>
 
             {/* 2) Send button */}
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-2xl"
+              className="bg-blue-500 text-white px-4 py-2 rounded-full"
               onClick={handleSendMessage}
             >
               Send
@@ -596,12 +611,13 @@ export default function ShowListing() {
           </div>
         </div>
 
-        <div className="px-60 flex-col mb-10">
+        <div className="px-80 mt-10 flex-col mb-10 ">
           <h2 className="text-xl font-bold mb-6">Similar Listings</h2>
           <div className="flex justify-between">
             {similarProperties.length > 0 ? (
               similarProperties.map((similarProperty) => (
                 <SimilarPropertyListing
+                  propertyId={similarProperty._id}
                   key={similarProperty._id}
                   images={similarProperty.images || fallbackData.demoImages}
                   location={similarProperty.location}
@@ -625,6 +641,7 @@ export default function ShowListing() {
         {/* Show Card Listing */}
         <div className="bg-[#F4F4F4]">
           <ShowListingCard
+            propertyId={property._id}
             images={property.images && property.images.length > 0
               ? property.images
               : fallbackData.demoImages}

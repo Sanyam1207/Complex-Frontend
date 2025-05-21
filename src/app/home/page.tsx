@@ -42,16 +42,18 @@ export default function Home() {
 
     // State and ref for bottom bar visibility
     const [bottomBarVisible, setBottomBarVisible] = useState(true);
-    // New state for tracking if the content is docked
+    // State for tracking if the content is docked
     const [contentDocked, setContentDocked] = useState(false);
-    // New state for tracking transition position - using actual numeric value instead of boolean
+    // State for tracking transition position
     const [dockPosition, setDockPosition] = useState(0);
-    // New state to store navbar height
+    // State to store navbar height
     const [navbarHeight, setNavbarHeight] = useState(0);
     console.log('Navbar height:', navbarHeight);
     
     // Add state to track initial load
     const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+    // Add state to track if device is mobile
+    const [isMobileView, setIsMobileView] = useState(false);
 
     // State for properties filtered by location
     const [propertiesByLocation, setPropertiesByLocation] = useState([]);
@@ -74,6 +76,27 @@ export default function Home() {
     const shouldRefetch = useSelector((state: RootState) => state.category.shouldRefetch);
     const isFilterModalOpen = useSelector((state: RootState) => state.filterModal.isOpen);
 
+    // Calculate how far to move the content when docked
+    const dockedTopPosition = -165;
+
+    // Check if the current view is mobile
+    useEffect(() => {
+        const checkIfMobile = () => {
+            // Using 768px as the breakpoint for mobile/desktop (md in Tailwind)
+            setIsMobileView(window.innerWidth < 768);
+        };
+
+        // Check initially
+        checkIfMobile();
+
+        // Re-check on window resize
+        window.addEventListener('resize', checkIfMobile);
+
+        return () => {
+            window.removeEventListener('resize', checkIfMobile);
+        };
+    }, []);
+
     // Measure header height on mount and window resize
     useEffect(() => {
         const measureHeaderHeight = () => {
@@ -95,19 +118,19 @@ export default function Home() {
         };
     }, []);
 
-    // Calculate how far to move the content when docked
-    const dockedTopPosition = -165;
-
     // Set up scroll event listener for the inner scrollable div
     useEffect(() => {
         const scrollableContent = scrollableContentRef.current;
 
-        if (!scrollableContent) return;
+        if (!scrollableContent || !isMobileView) return;
 
         let isScrollingUp = false;
         let lastScrollTop = 0;
 
         const handleScroll = () => {
+            // Only apply scroll effects on mobile
+            if (!isMobileView) return;
+            
             const currentScrollY = scrollableContent.scrollTop;
 
             // Determine scroll direction
@@ -151,7 +174,7 @@ export default function Home() {
                 scrollableContent.removeEventListener('scroll', handleScroll);
             }
         };
-    }, [dockedTopPosition]);
+    }, [dockedTopPosition, isMobileView]);
 
     // Initial fetch on component mount - This ensures properties are loaded on initial page load
     useEffect(() => {
@@ -314,9 +337,11 @@ export default function Home() {
                 <div
                     ref={whiteContainerRef}
                     style={{
-                        top: contentDocked ? `${dockPosition}px` : 0,
-                        height: contentDocked ? `calc(100% + ${-dockedTopPosition}px)` : '100%',
-                        transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)' // Smoother easing
+                        // Apply animation styles only for mobile
+                        top: isMobileView && contentDocked ? `${dockPosition}px` : 0,
+                        height: isMobileView && contentDocked ? `calc(100% + ${-dockedTopPosition}px)` : '100%',
+                        // Only apply transition on mobile
+                        transition: isMobileView ? 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)' : 'none'
                     }}
                     className={`absolute inset-x-0 bottom-0 bg-white rounded-t-3xl flex flex-col overflow-hidden
                         ${contentDocked ? 'z-20 rounded-t-3xl' : 'rounded-t-3xl'}`}
@@ -378,14 +403,17 @@ export default function Home() {
                 {/* Bottom tabs as overlay at the bottom of the screen */}
                 <div
                     style={{
-                        transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)' // Match transition timing
+                        // Only apply transition on mobile
+                        transition: isMobileView ? 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)' : 'none' 
                     }}
                     className={`fixed bottom-0 left-0 right-0 
-                        ${bottomBarVisible ? 'translate-y-0 z-0' : 'translate-y-full md:translate-y-0'} ${isFilterModalOpen ? 'hidden' : 'z-20'} ${isAnyAuthPopupOpen ? '-z-50 hidden' : 'z-20'}`}
+                        ${bottomBarVisible || !isMobileView ? 'translate-y-0 z-0' : 'translate-y-full md:translate-y-0'} 
+                        ${isFilterModalOpen ? 'hidden' : 'z-20'} 
+                        ${isAnyAuthPopupOpen ? '-z-50 hidden' : 'z-20'}`}
                 >
                     <MobileBottomTabs />
                 </div>
             </main>
         </div>
     );
-}   
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import Navbar from "@/components/NavBar";
 import api from "@/lib/axios";
 import { Inter } from "next/font/google";
 import Image from "next/image";
@@ -28,6 +29,188 @@ interface ApiResponse {
     user: User;
     message?: string;
 }
+
+
+// Move FormElements outside the CompleteProfile component
+interface FormElementsProps {
+    gender: string;
+    setGender: (gender: string) => void;
+    about: string;
+    setAbout: (about: string) => void;
+    selectedLanguages: string[];
+    toggleLanguage: (lang: string) => void;
+    languages: string[];
+    error: string;
+    successMessage: string;
+    handleSave: (e: React.FormEvent) => Promise<void>;
+    isSubmitting: boolean;
+    handleProfilePictureClick: () => void;
+    profileImagePreview: string | null;
+    user: User | null;
+    isGenderOpen: boolean;
+    setIsGenderOpen: (isOpen: boolean) => void;
+}
+
+// External FormElements Component
+const FormElements = ({
+    gender,
+    setGender,
+    about,
+    setAbout,
+    selectedLanguages,
+    toggleLanguage,
+    languages,
+    error,
+    successMessage,
+    handleSave,
+    isSubmitting,
+    isGenderOpen,
+    setIsGenderOpen
+}: FormElementsProps) => (
+    <form onSubmit={handleSave}>
+        {error && (
+            <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error}
+            </div>
+        )}
+
+        {successMessage && (
+            <div className="w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {successMessage}
+            </div>
+        )}
+
+        {/* Gender Select */}
+        <div className="mb-6">
+            <label className="block mb-2 text-sm text-[#2C3C4E] font-medium">
+                Gender
+            </label>
+            <div className="relative gender-dropdown">
+                <div
+                    onClick={() => setIsGenderOpen(!isGenderOpen)}
+                    className="w-96 bg-white p-3 rounded-lg border border-gray-300 flex justify-between items-center cursor-pointer"
+                >
+                    <span className="text-gray-700">
+                        {gender ? (
+                            gender === "male" || gender === "Male" ? "Male" :
+                                gender === "female" || gender === "Female" ? "Female" :
+                                    gender === "other" || gender === "Other" ? "Other" :
+                                        gender === "prefer-not-to-disclose" ? "Prefer not to disclose" :
+                                            "Select"
+                        ) : "Select"}
+                    </span>
+                    <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isGenderOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                    </svg>
+                </div>
+
+                {/* Custom dropdown menu */}
+                {isGenderOpen && (
+                    <div className="absolute z-10 mt-1 w-96 bg-white rounded-lg border border-gray-200 shadow-lg">
+                        <div
+                            className="p-3 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                                setGender("Male");
+                                setIsGenderOpen(false);
+                            }}
+                        >
+                            Male
+                        </div>
+                        <div
+                            className="p-3 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                                setGender("Female");
+                                setIsGenderOpen(false);
+                            }}
+                        >
+                            Female
+                        </div>
+                        <div
+                            className="p-3 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                                setGender("Other");
+                                setIsGenderOpen(false);
+                            }}
+                        >
+                            Other
+                        </div>
+                        <div
+                            className="p-3 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                                setGender("prefer-not-to-disclose");
+                                setIsGenderOpen(false);
+                            }}
+                        >
+                            Prefer not to disclose
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+
+        {/* Languages */}
+        <div className="mb-6">
+            <label className="block mb-3 text-sm font-medium text-[#2C3C4E]">
+                Select the languages that apply
+            </label>
+            <div className="flex flex-wrap w-full gap-2">
+                {languages.map((lang) => {
+                    // Case-insensitive check for selected languages
+                    const isSelected = selectedLanguages.some(
+                        selected => selected.toLowerCase() === lang.toLowerCase()
+                    );
+                    return (
+                        <button
+                            type="button"
+                            key={lang}
+                            onClick={() => toggleLanguage(lang)}
+                            className={`px-3 py-1 rounded-full text-sm border transition-colors ${isSelected
+                                ? "bg-[#0A84FF] border-[#0A84FF] text-white"
+                                : "border-[#2C3C4E] hover:bg-gray-50 text-[#2C3C4E]"
+                                }`}
+                        >
+                            {lang}
+                        </button>
+                    );
+                })}
+                <button
+                    type="button"
+                    onClick={() => toggleLanguage("Skip")}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${selectedLanguages.some(lang => lang.toLowerCase() === "skip")
+                        ? "bg-[#0A84FF] border-[#0A84FF] text-white"
+                        : "border-[#2C3C4E] hover:bg-gray-50 text-[#2C3C4E]"
+                        }`}
+                >
+                    Skip
+                </button>
+            </div>
+        </div>
+
+        {/* About */}
+        <div className="mb-6">
+            <label className="block mb-2 text-sm font-medium text-[#2C3C4E]">
+                About you?
+            </label>
+            <textarea
+                rows={4}
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+                placeholder="Eg: work, hobby, lifestyle, anything"
+                className="w-full border border-none placeholder:text-[rgba(44,60,78,0.50)] text-[#2C3C4E] focus-within:border-none rounded-xl p-4 bg-[#F4F4F4] focus:outline"
+            />
+        </div>
+
+        {/* Save Button */}
+        <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-black text-white py-4 rounded-full font-medium hover:bg-gray-900 transition-colors disabled:bg-gray-500"
+        >
+            {isSubmitting ? 'Saving...' : 'Save'}
+        </button>
+    </form>
+);
+
 
 export default function CompleteProfile() {
     const router = useRouter();
@@ -275,7 +458,7 @@ export default function CompleteProfile() {
     }
 
     return (
-        <div className={`min-h-screen bg-black flex flex-col ${inter.className}`}>
+        <>
             {/* Hidden file input for profile picture */}
             <input
                 type="file"
@@ -285,224 +468,310 @@ export default function CompleteProfile() {
                 onChange={handleProfilePictureChange}
             />
 
-            {/* Header */}
-            <div className="relative bg-black text-white pt-6 pb-2 px-4">
-                <button
-                    type="button"
-                    onClick={() => { router.push('/profile') }}
-                    // className="absolute top-6 left-4 text-white"
-                    className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full"
+            {/* Desktop View */}
+            <div className="bg-black hidden md:block">
+                <div
+                    className={`hidden text-[#2C3C4E] md:flex min-h-screen w-full bg-[#F4F4F4] flex-col ${inter.className} rounded-t-3xl`}
                 >
-                    <Image
-                        src={"/icons/backarrow.svg"}
-                        alt="back icon"
-                        width={20}
-                        height={20}
-                    />
-                </button>
+                    <Navbar />
+                    {/* Main Content */}
+                    <div className="flex-1 max-w-2xl mx-auto w-full py-12 px-4">
+                        <div className="text-start mb-8">
+                            <h2 className="text-xl font-semibold mb-2">
+                                Complete your profile!
+                            </h2>
+                            <p className="">Stand out and Shine ✨</p>
 
-                <h1 className="text-center text-lg font-medium">Profile</h1>
-            </div>
-
-            {/* Main Content */}
-            <div className="px-4 pt-2 text-white">
-                <h2 className="text-xl text-center font-medium">Complete your profile!</h2>
-                <p className="text-sm text-white text-center">Stand out and Shine ✨</p>
-
-                {/* Profile Picture */}
-                <div className="flex flex-col items-center justify-center my-6">
-                    <div className="relative w-20 h-20">
-                        {/* Profile picture */}
-                        <div
-                            className="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
-                            onClick={handleProfilePictureClick}
-                        >
-                            {profileImagePreview ? (
-                                <Image
-                                    src={profileImagePreview}
-                                    alt="profile"
-                                    width={80}
-                                    height={80}
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : user?.profilePicture && user.profilePicture !== 'default-profile.jpg' ? (
-                                <Image
-                                    src={user.profilePicture}
-                                    alt="profile"
-                                    width={80}
-                                    height={80}
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : (
-                                <div className="text-pink-500 text-2xl">😊</div>
-                            )}
-                        </div>
-
-                        {/* Small camera/plus icon circle on the bottom-right */}
-                        <div
-                            className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center border-2 border-white cursor-pointer"
-                            onClick={handleProfilePictureClick}
-                        >
-                            <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleProfilePictureClick}
-                        className="text-white text-sm mt-5"
-                    >
-                        Add your profile picture
-                    </button>
-                </div>
-            </div>
-
-            {/* Form Content */}
-            <form onSubmit={handleSave} className="bg-white flex-1 rounded-t-3xl px-4 pt-6 pb-6">
-                {error && (
-                    <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        {error}
-                    </div>
-                )}
-
-                {successMessage && (
-                    <div className="w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        {successMessage}
-                    </div>
-                )}
-
-                {/* Gender Selection */}
-                <div className="mb-6">
-                    <label className="block mb-2 text-sm text-[#2C3C4E] font-medium">
-                        Gender
-                    </label>
-                    <div className="relative gender-dropdown">
-                        <div
-                            onClick={() => setIsGenderOpen(!isGenderOpen)}
-                            className="w-full bg-white p-3 rounded-lg border border-gray-300 flex justify-between items-center cursor-pointer"
-                        >
-                            <span className="text-gray-700">
-                                {gender ? (
-                                    gender === "male" || gender === "Male" ? "Male" :
-                                        gender === "female" || gender === "Female" ? "Female" :
-                                            gender === "other" || gender === "Other" ? "Other" :
-                                                gender === "prefer-not-to-disclose" ? "Prefer not to disclose" :
-                                                    "Select"
-                                ) : "Select"}
-                            </span>
-                            <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isGenderOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
-                            </svg>
-                        </div>
-
-                        {/* Custom dropdown menu */}
-                        {isGenderOpen && (
-                            <div className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-lg">
-                                <div
-                                    className="p-3 hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => {
-                                        setGender("Male");
-                                        setIsGenderOpen(false);
-                                    }}
+                            {/* Profile Picture - Updated with functionality */}
+                            <div className="mt-6 mb-2">
+                                <div 
+                                    className="w-24 h-24 bg-pink-100 rounded-full relative flex items-center justify-center overflow-visible  cursor-pointer"
+                                    onClick={handleProfilePictureClick}
                                 >
-                                    Male
-                                </div>
-                                <div
-                                    className="p-3 hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => {
-                                        setGender("Female");
-                                        setIsGenderOpen(false);
-                                    }}
-                                >
-                                    Female
-                                </div>
-                                <div
-                                    className="p-3 hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => {
-                                        setGender("Other");
-                                        setIsGenderOpen(false);
-                                    }}
-                                >
-                                    Other
-                                </div>
-                                <div
-                                    className="p-3 hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => {
-                                        setGender("prefer-not-to-disclose");
-                                        setIsGenderOpen(false);
-                                    }}
-                                >
-                                    Prefer not to disclose
+                                    {profileImagePreview ? (
+                                        <Image
+                                            src={profileImagePreview}
+                                            alt="profile"
+                                            width={96}
+                                            height={96}
+                                            className="h-full w-full object-cover rounded-full"
+                                        />
+                                    ) : user?.profilePicture && user.profilePicture !== 'default-profile.jpg' ? (
+                                        <Image
+                                            src={user.profilePicture}
+                                            alt="profile"
+                                            width={96}
+                                            height={96}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <span className="text-4xl">😊</span>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={handleProfilePictureClick}
+                                        className="absolute right-0 bottom-0 bg-blue-500 text-white p-2 rounded-full "
+                                    >
+                                        <Image
+                                            src="/icons/plusicon.svg"
+                                            alt="Add"
+                                            width={16}
+                                            height={16}
+                                        />
+                                    </button>
                                 </div>
                             </div>
-                        )}
+                            <button
+                                type="button"
+                                onClick={handleProfilePictureClick}
+                                className="text-gray-500 text-sm mt-2"
+                            >
+                                Add your profile picture
+                            </button>
+                        </div>
+
+                        {/* Updated FormElements with all functionalities */}
+                        <FormElements
+                            gender={gender}
+                            setGender={setGender}
+                            about={about}
+                            setAbout={setAbout}
+                            selectedLanguages={selectedLanguages}
+                            toggleLanguage={toggleLanguage}
+                            languages={languages}
+                            error={error}
+                            successMessage={successMessage}
+                            handleSave={handleSave}
+                            isSubmitting={isSubmitting}
+                            handleProfilePictureClick={handleProfilePictureClick}
+                            profileImagePreview={profileImagePreview}
+                            user={user}
+                            isGenderOpen={isGenderOpen}
+                            setIsGenderOpen={setIsGenderOpen}
+                        />
                     </div>
                 </div>
+            </div>
 
-                {/* Languages */}
-                <div className="mb-6">
-                    <label className="block mb-2 text-sm font-medium text-[#2C3C4E]">
-                        Select the languages that apply
-                    </label>
-                    <div className="flex flex-wrap w-full gap-2">
-                        {languages.map((lang) => {
-                            // Case-insensitive check for selected languages
-                            const isSelected = selectedLanguages.some(
-                                selected => selected.toLowerCase() === lang.toLowerCase()
-                            );
 
-                            return (
-                                <button
-                                    type="button"
-                                    key={lang}
-                                    onClick={() => toggleLanguage(lang)}
-                                    className={`px-4 py-1.5 rounded-full text-sm border ${isSelected
-                                        ? "bg-[#0A84FF] border-[#0A84FF] text-white"
-                                        : "border-[#2C3C4E] bg-white text-[#2C3C4E]"
-                                        }`}
-                                >
-                                    {lang}
-                                </button>
-                            );
-                        })}
+            <div className={`min-h-screen md:hidden bg-black flex flex-col ${inter.className}`}>
+                {/* Header */}
+                <div className="relative bg-black text-white pt-6 pb-2 px-4">
+                    <button
+                        type="button"
+                        onClick={() => { router.push('/profile') }}
+                        className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full"
+                    >
+                        <Image
+                            src={"/icons/backarrow.svg"}
+                            alt="back icon"
+                            width={20}
+                            height={20}
+                        />
+                    </button>
+
+                    <h1 className="text-center text-lg font-medium">Profile</h1>
+                </div>
+
+                {/* Main Content */}
+                <div className="px-4 pt-2 text-white">
+                    <h2 className="text-xl text-center font-medium">Complete your profile!</h2>
+                    <p className="text-sm text-white text-center">Stand out and Shine ✨</p>
+
+                    {/* Profile Picture */}
+                    <div className="flex flex-col items-center justify-center my-6">
+                        <div className="relative w-20 h-20">
+                            {/* Profile picture */}
+                            <div
+                                className="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
+                                onClick={handleProfilePictureClick}
+                            >
+                                {profileImagePreview ? (
+                                    <Image
+                                        src={profileImagePreview}
+                                        alt="profile"
+                                        width={80}
+                                        height={80}
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : user?.profilePicture && user.profilePicture !== 'default-profile.jpg' ? (
+                                    <Image
+                                        src={user.profilePicture}
+                                        alt="profile"
+                                        width={80}
+                                        height={80}
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="text-pink-500 text-2xl">😊</div>
+                                )}
+                            </div>
+
+                            {/* Small camera/plus icon circle on the bottom-right */}
+                            <div
+                                className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center border-2 border-white cursor-pointer"
+                                onClick={handleProfilePictureClick}
+                            >
+                                <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </div>
+                        </div>
                         <button
-                            type="button"
-                            onClick={() => toggleLanguage("Skip")}
-                            className={`px-4 py-1.5 rounded-full text-sm border ${selectedLanguages.some(lang => lang.toLowerCase() === "skip")
-                                ? "bg-[#0A84FF] border-[#0A84FF] text-white"
-                                : "border-[#2C3C4E] bg-white text-[#2C3C4E]"
-                                }`}
+                            onClick={handleProfilePictureClick}
+                            className="text-white text-sm mt-5"
                         >
-                            Skip
+                            Add your profile picture
                         </button>
                     </div>
                 </div>
 
-                {/* About */}
-                <div className="mb-8">
-                    <label className="block mb-2 text-sm font-medium text-[#2C3C4E]">
-                        About you?
-                    </label>
-                    <textarea
-                        placeholder="Eg: work, hobby, lifestyle, anything"
-                        value={about}
-                        onChange={(e) => setAbout(e.target.value)}
-                        className="w-full border-gray-300 border rounded-lg p-3 min-h-24 text-sm focus:outline-none focus:border focus:border-black"
+                {/* Form Content */}
+                <form onSubmit={handleSave} className="bg-white flex-1 rounded-t-3xl px-4 pt-6 pb-6">
+                    {error && (
+                        <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            {error}
+                        </div>
+                    )}
 
-                    ></textarea>
-                </div>
+                    {successMessage && (
+                        <div className="w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                            {successMessage}
+                        </div>
+                    )}
 
-                {/* Save Button */}
-                <div className="mt-auto">
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full bg-black text-white py-3 rounded-full font-medium disabled:bg-gray-500"
-                    >
-                        {isSubmitting ? 'Saving...' : 'Save'}
-                    </button>
-                </div>
-            </form>
-        </div>
+                    {/* Gender Selection */}
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm text-[#2C3C4E] font-medium">
+                            Gender
+                        </label>
+                        <div className="relative gender-dropdown">
+                            <div
+                                onClick={() => setIsGenderOpen(!isGenderOpen)}
+                                className="w-full bg-white p-3 rounded-lg border border-gray-300 flex justify-between items-center cursor-pointer"
+                            >
+                                <span className="text-gray-700">
+                                    {gender ? (
+                                        gender === "male" || gender === "Male" ? "Male" :
+                                            gender === "female" || gender === "Female" ? "Female" :
+                                                gender === "other" || gender === "Other" ? "Other" :
+                                                    gender === "prefer-not-to-disclose" ? "Prefer not to disclose" :
+                                                        "Select"
+                                    ) : "Select"}
+                                </span>
+                                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isGenderOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                                </svg>
+                            </div>
+
+                            {/* Custom dropdown menu */}
+                            {isGenderOpen && (
+                                <div className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-lg">
+                                    <div
+                                        className="p-3 hover:bg-gray-50 cursor-pointer"
+                                        onClick={() => {
+                                            setGender("Male");
+                                            setIsGenderOpen(false);
+                                        }}
+                                    >
+                                        Male
+                                    </div>
+                                    <div
+                                        className="p-3 hover:bg-gray-50 cursor-pointer"
+                                        onClick={() => {
+                                            setGender("Female");
+                                            setIsGenderOpen(false);
+                                        }}
+                                    >
+                                        Female
+                                    </div>
+                                    <div
+                                        className="p-3 hover:bg-gray-50 cursor-pointer"
+                                        onClick={() => {
+                                            setGender("Other");
+                                            setIsGenderOpen(false);
+                                        }}
+                                    >
+                                        Other
+                                    </div>
+                                    <div
+                                        className="p-3 hover:bg-gray-50 cursor-pointer"
+                                        onClick={() => {
+                                            setGender("prefer-not-to-disclose");
+                                            setIsGenderOpen(false);
+                                        }}
+                                    >
+                                        Prefer not to disclose
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Languages */}
+                    <div className="mb-6">
+                        <label className="block mb-2 text-sm font-medium text-[#2C3C4E]">
+                            Select the languages that apply
+                        </label>
+                        <div className="flex flex-wrap w-full gap-2">
+                            {languages.map((lang) => {
+                                // Case-insensitive check for selected languages
+                                const isSelected = selectedLanguages.some(
+                                    selected => selected.toLowerCase() === lang.toLowerCase()
+                                );
+
+                                return (
+                                    <button
+                                        type="button"
+                                        key={lang}
+                                        onClick={() => toggleLanguage(lang)}
+                                        className={`px-4 py-1.5 rounded-full text-sm border ${isSelected
+                                            ? "bg-[#0A84FF] border-[#0A84FF] text-white"
+                                            : "border-[#2C3C4E] bg-white text-[#2C3C4E]"
+                                            }`}
+                                    >
+                                        {lang}
+                                    </button>
+                                );
+                            })}
+                            <button
+                                type="button"
+                                onClick={() => toggleLanguage("Skip")}
+                                className={`px-4 py-1.5 rounded-full text-sm border ${selectedLanguages.some(lang => lang.toLowerCase() === "skip")
+                                    ? "bg-[#0A84FF] border-[#0A84FF] text-white"
+                                    : "border-[#2C3C4E] bg-white text-[#2C3C4E]"
+                                    }`}
+                            >
+                                Skip
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* About */}
+                    <div className="mb-8">
+                        <label className="block mb-2 text-sm font-medium text-[#2C3C4E]">
+                            About you?
+                        </label>
+                        <textarea
+                            placeholder="Eg: work, hobby, lifestyle, anything"
+                            value={about}
+                            onChange={(e) => setAbout(e.target.value)}
+                            className="w-full border-gray-300 border rounded-lg p-3 min-h-24 text-sm focus:outline-none focus:border focus:border-black"
+                        ></textarea>
+                    </div>
+
+                    {/* Save Button */}
+                    <div className="mt-auto">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full bg-black text-white py-3 rounded-full font-medium disabled:bg-gray-500"
+                        >
+                            {isSubmitting ? 'Saving...' : 'Save'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </>
     );
 }
