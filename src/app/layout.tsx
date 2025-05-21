@@ -7,6 +7,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
+import { Toaster } from 'react-hot-toast';
 
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default function RootLayout({
             <AuthProvider>
               <ProtectedRoute>
                 {children}
+                <Toaster />
               </ProtectedRoute>
             </AuthProvider>
           </Providers>

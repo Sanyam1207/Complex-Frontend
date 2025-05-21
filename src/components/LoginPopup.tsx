@@ -37,7 +37,7 @@ const LoginModal: React.FC = () => {
     dispatch(closePopup('login'));
     dispatch(openPopup('signup'));
   };
-  
+
   const handleOpenForgotPassword = () => {
     dispatch(closePopup('login'));
     dispatch(openPopup('forgotPassword'));
@@ -204,7 +204,7 @@ const LoginModal: React.FC = () => {
 
           <br />
           <div className="text-[#0A84FF] text-sm">
-            <p onClick={handleOpenForgotPassword}>Forgot Password ?</p>
+            <p className="cursor-pointer" onClick={handleOpenForgotPassword}>Forgot Password ?</p>
           </div>
           <br />
 
@@ -277,7 +277,7 @@ const LoginModal: React.FC = () => {
       ======================= */}
       <AnimatePresence>
         {isOpen && (
-          <div className={`fixed inset-0 flex flex-col text-[#2C3C4E] ${inter.className} z-40`}>
+          <div className={`fixed md:hidden inset-0 flex flex-col text-[#2C3C4E] ${inter.className} z-40`}>
             {/* Dark overlay */}
             <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={handleClose} />
 

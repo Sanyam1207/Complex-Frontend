@@ -203,7 +203,7 @@ export default function SearchResultsPanel({
             {isOpen && (
                 <motion.div
                     ref={panelRef}
-                    className="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl overflow-hidden z-30"
+                    className="md:hidden fixed inset-x-0 bottom-0 bg-white rounded-t-3xl overflow-hidden z-30"
                     style={{
                         top: `${headerHeight}px`,
                         maxHeight: `calc(100vh - ${headerHeight}px)`,
