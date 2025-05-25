@@ -820,12 +820,12 @@ export default function ShowListing() {
           <br />
         </div>
 
-        {!isListingOwner && (<div className="bg-black flex justify-center flex-col py-5 z-20 sticky bottom-0 px-4">
-          <div className="text-sm text-center font-normal text-white mb-3">
+        {!isListingOwner && (<div className={`bg-black flex justify-center flex-col py-5 z-20 sticky ${chatExists ? 'text-center' : 'text-start'} bottom-0 px-4`}>
+          <div className="text-sm font-normal text-white mb-3">
             {chatExists ? (
               <span>You&apos;ve already contacted <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
             ) : (
-              <span>Send message to <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
+              <span className=''>Send message to <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
             )}
           </div>
           <div className="flex space-x-4">

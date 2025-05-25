@@ -437,11 +437,11 @@ export default function Navbar() {
     if (pathname === "/messages") return "Search messages";
 
     switch (selectedCategory) {
-      case 'privateRoom': return "Search Location";
-      case 'apartments': return "Search Location";
-      case 'houses': return "Search Location";
-      case 'sharing': return "Search Location";
-      case 'basement': return "Search Location";
+      case 'privateRoom': return "Search location";
+      case 'apartments': return "Search location";
+      case 'houses': return "Search location";
+      case 'sharing': return "Search location";
+      case 'basement': return "Search location";
       default: return "Search location";
     }
   };
