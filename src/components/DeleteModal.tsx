@@ -6,7 +6,7 @@ import Image from "next/image";
 interface DeleteAccountModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
 }
 
 const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
@@ -44,7 +44,7 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
         {/* 3D X Icon (Centered) */}
         <div className="flex items-center justify-center mb-4 mt-6">
           {/* Replace /icons/3dX.png with your actual icon path */}
-          <Image src="/icons/3dX.png" alt="Delete Account Icon" width={140} height={140} />
+          <Image src="/icons/deleteaccount.svg" alt="Delete Account Icon" width={140} height={140} />
         </div>
 
         {/* Heading */}
@@ -87,7 +87,7 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
         {/* 3D X Icon (Centered) */}
         <div className="flex items-center justify-center mt-10 mb-6">
           {/* Replace /icons/3dX.png with your actual icon path */}
-          <Image src="/icons/3dX.png" alt="Delete Account Icon" width={134} height={134} />
+          <Image src="/icons/deleteaccount.svg" alt="Delete Account Icon" width={134} height={134} />
         </div>
 
         {/* Heading */}
@@ -96,10 +96,10 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
         </h2>
 
         {/* Subheading */}
-        <p className="text-center text-[#2C3C4E] mb-8">
+        <p className="text-center text-sm text-[rgba(44,60,78,0.80)] mb-8">
           Are you sure you want to delete your account?
           <br />
-          This action cannot be undone and will erase all your data.
+          This action cannot be undone <br /> and will erase all your data.
         </p>
 
         {/* Confirm Button */}

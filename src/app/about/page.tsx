@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import toast from 'react-hot-toast';
 
 const inter = Inter({
     subsets: ["latin"],
@@ -30,7 +31,6 @@ interface ApiResponse {
     message?: string;
 }
 
-
 // Move FormElements outside the CompleteProfile component
 interface FormElementsProps {
     gender: string;
@@ -40,8 +40,6 @@ interface FormElementsProps {
     selectedLanguages: string[];
     toggleLanguage: (lang: string) => void;
     languages: string[];
-    error: string;
-    successMessage: string;
     handleSave: (e: React.FormEvent) => Promise<void>;
     isSubmitting: boolean;
     handleProfilePictureClick: () => void;
@@ -60,27 +58,12 @@ const FormElements = ({
     selectedLanguages,
     toggleLanguage,
     languages,
-    error,
-    successMessage,
     handleSave,
     isSubmitting,
     isGenderOpen,
     setIsGenderOpen
 }: FormElementsProps) => (
     <form onSubmit={handleSave}>
-        {error && (
-            <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-            </div>
-        )}
-
-        {successMessage && (
-            <div className="w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {successMessage}
-            </div>
-        )}
-
-        {/* Gender Select */}
         <div className="mb-6">
             <label className="block mb-2 text-sm text-[#2C3C4E] font-medium">
                 Gender
@@ -211,7 +194,6 @@ const FormElements = ({
     </form>
 );
 
-
 export default function CompleteProfile() {
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -221,7 +203,6 @@ export default function CompleteProfile() {
     const [about, setAbout] = useState<string>("");
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
     const [error, setError] = useState<string>("");
-    const [successMessage, setSuccessMessage] = useState<string>("");
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -390,7 +371,6 @@ export default function CompleteProfile() {
         e.preventDefault();
         setIsSubmitting(true);
         setError('');
-        setSuccessMessage('');
 
         try {
             // Create a FormData object for sending both text fields and file
@@ -424,7 +404,23 @@ export default function CompleteProfile() {
             );
 
             if (response.data.success) {
-                setSuccessMessage('Profile updated successfully!');
+                // Show success toast
+                toast("Profile updated successfully!", {
+                    icon: (
+                        <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    ),
+                    duration: 3000,
+                    position: "top-center",
+                    style: {
+                        background: "rgba(31,31,33,1)",
+                        color: "#fff",
+                    }
+                });
+
                 // Update the user state with new data
                 setUser(response.data.user);
 
@@ -432,11 +428,6 @@ export default function CompleteProfile() {
                 if (profileImagePreview) {
                     URL.revokeObjectURL(profileImagePreview);
                 }
-
-                // Redirect to profile page after successful update
-                setTimeout(() => {
-                    router.push('/profile');
-                }, 1500);
             } else {
                 setError(response.data.message || 'Failed to update profile');
             }
@@ -539,8 +530,7 @@ export default function CompleteProfile() {
                             selectedLanguages={selectedLanguages}
                             toggleLanguage={toggleLanguage}
                             languages={languages}
-                            error={error}
-                            successMessage={successMessage}
+                       
                             handleSave={handleSave}
                             isSubmitting={isSubmitting}
                             handleProfilePictureClick={handleProfilePictureClick}
@@ -552,7 +542,6 @@ export default function CompleteProfile() {
                     </div>
                 </div>
             </div>
-
 
             <div className={`min-h-screen md:hidden bg-black flex flex-col ${inter.className}`}>
                 {/* Header */}
@@ -631,12 +620,6 @@ export default function CompleteProfile() {
                     {error && (
                         <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             {error}
-                        </div>
-                    )}
-
-                    {successMessage && (
-                        <div className="w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {successMessage}
                         </div>
                     )}
 

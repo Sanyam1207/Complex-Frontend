@@ -158,7 +158,7 @@ export default function Page() {
             setActiveStep((prev) => prev - 1);
         }
         if (activeStep === 1) {
-            router.push("/home");
+            router.back()
         }
     };
 

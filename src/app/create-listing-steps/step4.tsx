@@ -153,7 +153,7 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
           </div>
         ),
         duration: 3000,
-        position: "bottom-right",
+        position: "bottom-center",
         style: {
           background: "rgba(31,31,33,1)",
           color: "#fff",
@@ -172,7 +172,7 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
           </div>
         ),
         duration: 3000,
-        position: "bottom-right",
+        position: "bottom-center",
         style: {
           background: "rgba(31,31,33,1)",
           color: "#fff",
