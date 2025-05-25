@@ -560,30 +560,30 @@ export default function CompleteProfile() {
                     <button
                         type="button"
                         onClick={() => { router.push('/profile') }}
-                        className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full"
+                        className=""
                     >
                         <Image
-                            src={"/icons/backarrow.svg"}
+                            src={"/icons/backbuttonn.svg"}
                             alt="back icon"
-                            width={20}
-                            height={20}
+                            width={32}
+                            height={32}
                         />
                     </button>
 
-                    <h1 className="text-center text-lg font-medium">Profile</h1>
+                    <h1 className="text-center text-sm font-medium">Profile</h1>
                 </div>
 
                 {/* Main Content */}
                 <div className="px-4 pt-2 text-white">
                     <h2 className="text-xl text-center font-medium">Complete your profile!</h2>
-                    <p className="text-sm text-white text-center">Stand out and Shine ✨</p>
+                    <p className="text-sm text-white font-medium text-center">Stand out and Shine ✨</p>
 
                     {/* Profile Picture */}
                     <div className="flex flex-col items-center justify-center my-6">
                         <div className="relative w-20 h-20">
                             {/* Profile picture */}
                             <div
-                                className="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
+                                className=" rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
                                 onClick={handleProfilePictureClick}
                             >
                                 {profileImagePreview ? (
@@ -609,7 +609,7 @@ export default function CompleteProfile() {
 
                             {/* Small camera/plus icon circle on the bottom-right */}
                             <div
-                                className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center border-2 border-white cursor-pointer"
+                                className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center  cursor-pointer"
                                 onClick={handleProfilePictureClick}
                             >
                                 <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -619,7 +619,7 @@ export default function CompleteProfile() {
                         </div>
                         <button
                             onClick={handleProfilePictureClick}
-                            className="text-white text-sm mt-5"
+                            className="text-white font-medium text-sm mt-5"
                         >
                             Add your profile picture
                         </button>

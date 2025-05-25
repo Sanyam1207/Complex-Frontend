@@ -1,17 +1,18 @@
 // components/PropertyFeatures.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
+import toast from 'react-hot-toast';
 
 // Custom dropdown component
-const CustomDropdown = ({ 
-  options, 
-  value, 
-  onChange, 
+const CustomDropdown = ({
+  options,
+  value,
+  onChange,
   placeholder,
-  className = "" 
-}: { 
-  options: { value: string; label: string }[]; 
-  value: string; 
+  className = ""
+}: {
+  options: { value: string; label: string }[];
+  value: string;
   onChange: (value: string) => void;
   placeholder: string;
   className?: string;
@@ -28,6 +29,9 @@ const CustomDropdown = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+    // Handle continue with validation
+
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -38,7 +42,7 @@ const CustomDropdown = ({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <div 
+      <div
         className="
           bg-white 
           border 
@@ -57,22 +61,22 @@ const CustomDropdown = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{selectedOption?.label || placeholder}</span>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="24" 
-          height="24" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
           strokeLinejoin="round"
           className="h-4 w-4 text-gray-500"
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </div>
-      
+
       {isOpen && (
         <div className="
           absolute 
@@ -137,6 +141,50 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
   setActiveStep
 }) => {
   // Bedroom options
+
+  const handleContinue = () => {
+    if (!bedrooms) {
+      toast("Please select number of bedrooms", {
+        icon: (
+          <div className="bg-[rgba(220,38,38,1)] p-2 rounded-full items-center text-center justify-center flex">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+        ),
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "rgba(31,31,33,1)",
+          color: "#fff",
+        }
+      });
+      return;
+    }
+
+    if (!bathrooms) {
+      toast("Please select number of bathrooms", {
+        icon: (
+          <div className="bg-[rgba(220,38,38,1)] p-2 rounded-full items-center text-center justify-center flex">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+        ),
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "rgba(31,31,33,1)",
+          color: "#fff",
+        }
+      });
+      return;
+    }
+
+    // If validation passes, proceed to next step
+    setActiveStep(5);
+  };
+
   const bedroomOptions = [
     { value: '1', label: '1 Bedroom' },
     { value: '2', label: '2 Bedrooms' },
@@ -155,31 +203,10 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
   ];
 
   return (
-    <div
-      className="
-        bg-white 
-        md:flex 
-        md:justify-center 
-        md:items-center 
-        rounded-t-[2rem] 
-        p-2
-        h-screen
-        -mt-5
-      "
-    >
-      <div
-        className="
-          flex 
-          flex-col 
-          space-y-2 
-          p-4 
-          
-          w-full 
-          md:max-w-[450px] 
-        "
-      >
+    <div className="bg-white rounded-t-[2rem] h-full overflow-y-auto">
+      <div className="p-6 max-w-md mx-auto w-full flex flex-col space-y-4">
         {/* 1) First Div: Title + Dropdowns */}
-        <div className="flex flex-col pb-4 space-y-4">
+        <div className="flex flex-col space-y-4">
           <div>
             <h2 className="text-sm text-[#2C3C4E] font-medium">
               Total number of beds + baths in your house?
@@ -209,10 +236,9 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
         <hr />
 
         {/* 2) Second Div: Couple-friendly Toggle */}
-        <div className="flex py-4 flex-row items-center justify-between">
+        <div className="flex flex-row items-center justify-between py-4">
           {/* Label + Sub-caption */}
           <div className="flex flex-col space-y-2">
-            {/* Updated styling here */}
             <span className="text-sm text-[#2C3C4E] font-medium">Couple-friendly</span>
             <span className="text-sm font-normal text-[#2C3C4E]">
               Couple can share this private room
@@ -256,19 +282,15 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
         <hr />
 
         {/* 3) Third Div: Amenities Title + Chips */}
-        <div className="flex py-4 flex-col space-y-2">
+        <div className="flex flex-col space-y-4 py-4">
           <div>
-            {/* Title */}
-            <h2 className="mb-3 text-sm text-[#2C3C4E] font-medium font-[Inter] leading-[124%]">
+            <h2 className="text-sm text-[#2C3C4E] font-medium font-[Inter] leading-[124%]">
               Select all the amenities your rental offers
             </h2>
           </div>
 
-          {/* 3 columns, auto rows */}
-          <div className="flex flex-wrap space-x-2 space-y-2">
-            <div className="hidden">
-              {/* This div prevents the first item from getting the space-x-2 margin */}
-            </div>
+          {/* Amenities grid */}
+          <div className="flex flex-wrap gap-2">
             {availableAmenities.map((amenity) => {
               const isSelected = selectedAmenities.includes(amenity.title);
               return (
@@ -283,7 +305,6 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
                     ${isSelected ? "bg-[#0A84FF] text-white" : "text-[#2C3C4E] hover:bg-gray-100"}
                   `}
                 >
-                  {/* Example icon; adjust src, width, height, or remove if not needed */}
                   <Image
                     alt={amenity.title}
                     src={amenity.icon}
@@ -300,15 +321,26 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
         <hr />
 
         {/* 4) Fourth Div: Caption + Continue Button */}
-        <div className="flex flex-col py-4 space-y-4">
-          <p className="text-sm mb-2">
+        <div className="flex flex-col space-y-4 py-4">
+          <p className="text-sm">
             If you don&apos;t see an amenity listed, you can mention it in the next step.
           </p>
+
+         <br />
           <button
-            onClick={() => {
-              setActiveStep(5);
-            }}
-            className="px-4 py-3 bg-black text-white rounded-full hover:bg-blue-700"
+            onClick={handleContinue}
+            className="
+              bg-black
+              text-white
+              w-full
+              py-4
+              rounded-full
+              font-semibold
+              text-sm
+              focus:outline-none
+              focus:ring-2
+              focus:ring-black
+            "
           >
             Continue
           </button>

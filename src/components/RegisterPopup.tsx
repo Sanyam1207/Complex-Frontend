@@ -127,7 +127,7 @@ const SignUpModal: React.FC = () => {
                     <br />
                     <button
                         type="submit"
-                        className="w-full rounded-3xl bg-black py-3 text-white font-semibold hover:bg-gray-800 transition"
+                        className="w-full rounded-full bg-black py-3 text-white font-semibold hover:bg-gray-800 transition"
                     >
                         Create account
                     </button>
@@ -288,7 +288,7 @@ const SignUpModal: React.FC = () => {
                                     <br />
                                     <button
                                         type="submit"
-                                        className="w-full rounded-3xl bg-black py-4 text-white font-semibold hover:bg-gray-800 transition"
+                                        className="w-full rounded-full bg-black py-4 text-white font-semibold hover:bg-gray-800 transition"
                                     >
                                         Create account
                                     </button>

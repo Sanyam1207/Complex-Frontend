@@ -37,7 +37,7 @@ function PropertyColumn({
     >
       {/* Title is hidden on mobile (since we use tab buttons), 
           but shown on desktop */}
-      <h2 className="hidden md:block text-xl font-semibold">{title}</h2>
+      <h2 className="hidden md:block text-xl font-semibold mb-6">{title}</h2>
 
       {items.map((item) => (
         <PropertyCard onSelectPropertyType={onSelectPropertyType} key={item.title} item={item} />
@@ -48,7 +48,7 @@ function PropertyColumn({
 
 function PropertyCard({ item, onSelectPropertyType }: { item: TypeItem, onSelectPropertyType: (propertyType: string) => void }) {
   return (
-    <div onClick={() => onSelectPropertyType(item.title)} className="hover:cursor-pointer flex items-center space-x-4 bg-[#F4F4F4] p-4 rounded-md ">
+    <div onClick={() => onSelectPropertyType(item.title)} className="hover:cursor-pointer flex items-center space-x-4 bg-[#F4F4F4] p-4 rounded-md">
       <div className="w-10 h-10 bg-[#1F1F21] flex p-2 items-center justify-center rounded-full">
         {item.icon}
       </div>
@@ -77,13 +77,13 @@ const PropertyTypeSelector: React.FC<PropertyTypeSelectorProps> = ({
   onSelectPropertyType
 }) => {
   return (
-    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 min-h-screen -mt-2">
-      <h2 className="text-base font-medium mb-4 md:hidden">
-        Select the type of rental property
-      </h2>
+    <div className="bg-white rounded-t-[2rem] h-full overflow-y-auto">
+      <div className="p-6">
+        <h2 className="text-base font-medium mb-4 md:hidden">
+          Select the type of rental property
+        </h2>
 
-      {/* Mobile-only tabs */}
-      <div>
+        {/* Mobile-only tabs */}
         <div className="flex space-x-2 mb-4 md:hidden">
           <button
             onClick={() => setSelectedTab("Apartment")}
@@ -105,7 +105,7 @@ const PropertyTypeSelector: React.FC<PropertyTypeSelectorProps> = ({
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row md:space-x-8">
+        <div className="flex flex-col md:flex-row md:space-x-8 md:justify-around">
           <PropertyColumn
             onSelectPropertyType={onSelectPropertyType}
             title="Apartment"

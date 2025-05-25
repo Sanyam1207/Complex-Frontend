@@ -1,5 +1,6 @@
 // components/RentalDetails.tsx
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 
 interface RentalDetailsProps {
   setActiveStep: (step: number) => void;
@@ -11,15 +12,69 @@ interface RentalDetailsProps {
   setLeaseDuration: (duration: string) => void;
 }
 
+// Toast component
+const Toast = ({
+  message,
+  isVisible,
+  onClose
+}: {
+  message: string;
+  isVisible: boolean;
+  onClose: () => void;
+}) => {
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+      <div className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <span className="text-sm font-medium">{message}</span>
+        <button
+          onClick={onClose}
+          className="ml-2 text-white hover:text-gray-200"
+        >
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fillRule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // Custom dropdown component
-const CustomDropdown = ({ 
-  options, 
-  value, 
-  onChange, 
-  className = "" 
-}: { 
-  options: { value: string; label: string }[]; 
-  value: string; 
+const CustomDropdown = ({
+  options,
+  value,
+  onChange,
+  className = ""
+}: {
+  options: { value: string; label: string }[];
+  value: string;
   onChange: (value: string) => void;
   className?: string;
 }) => {
@@ -45,7 +100,7 @@ const CustomDropdown = ({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <div 
+      <div
         className="
           bg-white 
           border 
@@ -64,22 +119,22 @@ const CustomDropdown = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{selectedOption?.label || "Select"}</span>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="24" 
-          height="24" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
           strokeLinejoin="round"
           className="h-5 w-5 text-gray-500"
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </div>
-      
+
       {isOpen && (
         <div className="
           absolute 
@@ -127,20 +182,66 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({
   leaseDuration,
   setLeaseDuration
 }) => {
-  // Helper function to construct date string
-  const handleDateChange = (month: string, day: string, year: string) => {
-    const formattedDate = `${year}-${month}-${day}`;
-    setStartDate(formattedDate);
-  };
-
   const [month, setMonth] = useState('01');
   const [day, setDay] = useState('01');
-  const [year, setYear] = useState('2023');
+  const [year, setYear] = useState('2025');
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+
+  // Helper function to check if date is in the past
+  const isPastDate = (selectedMonth: string, selectedDay: string, selectedYear: string) => {
+    const selectedDate = new Date(parseInt(selectedYear), parseInt(selectedMonth) - 1, parseInt(selectedDay));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to compare only dates
+    return selectedDate < today;
+  };
+
+  // Helper function to show toast
+  const showToastMessage = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
+  // Helper function to construct date string with validation
+  const handleDateChange = (selectedMonth: string, selectedDay: string, selectedYear: string) => {
+    if (isPastDate(selectedMonth, selectedDay, selectedYear)) {
+      toast("Please select a future date for your rental start date.", {
+        icon: (
+          <div className="bg-[rgba(220,38,38,1)] p-2 rounded-full items-center text-center justify-center flex">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+        ),
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "rgba(31,31,33,1)",
+          color: "#fff",
+        }
+      });
+      return false;
+    }
+
+    const formattedDate = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+    setStartDate(formattedDate);
+    return true;
+  };
 
   // Initialize date when component mounts
   useEffect(() => {
     if (!startDate) {
-      handleDateChange(month, day, year);
+      // Set to today's date or tomorrow to avoid past date
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowMonth = (tomorrow.getMonth() + 1).toString().padStart(2, '0');
+      const tomorrowDay = tomorrow.getDate().toString().padStart(2, '0');
+      const tomorrowYear = tomorrow.getFullYear().toString();
+
+      setMonth(tomorrowMonth);
+      setDay(tomorrowDay);
+      setYear(tomorrowYear);
+      handleDateChange(tomorrowMonth, tomorrowDay, tomorrowYear);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -168,17 +269,12 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({
     return { value, label: value };
   });
 
-  // Year options
-  const yearOptions = [
-    { value: '2025', label: '2025' },
-    { value: '2026', label: '2026' },
-    { value: '2027', label: '2027' },
-    { value: '2028', label: '2028' },
-    { value: '2029', label: '2029' },
-    { value: '2030', label: '2030' },
-    { value: '2031', label: '2031' },
-
-  ];
+  // Year options (current year and future years)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 7 }, (_, i) => {
+    const yearValue = (currentYear + i).toString();
+    return { value: yearValue, label: yearValue };
+  });
 
   // Lease duration options
   const leaseDurationOptions = [
@@ -187,9 +283,46 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({
     { value: '12 Months', label: '12 Months' },
   ];
 
+  // Handle continue button with validation
+  const handleContinue = () => {
+    if (!monthlyPrice || monthlyPrice === '0') {
+      showToastMessage('Please enter a valid monthly price.');
+
+      return;
+    }
+
+    if (isPastDate(month, day, year)) {
+
+      toast("Please select a future date for your rental start date.", {
+        icon: (
+          <div className="bg-[rgba(220,38,38,1)] p-2 rounded-full items-center text-center justify-center flex">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+        ),
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "rgba(31,31,33,1)",
+          color: "#fff",
+        }
+      });
+      return;
+    }
+
+    setActiveStep(3);
+  };
+
   return (
-    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 h-full -mt-2">
-      <div className="max-w-md mx-auto w-full flex flex-col pt-5 md:pt-6 justify-center md:justify-start space-y-4">
+    <div className="bg-white rounded-t-[2rem] h-full overflow-y-auto">
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
+      <div className="p-6 max-w-md mx-auto w-full h-full flex flex-col justify-center space-y-4">
         {/* Monthly price */}
         <div className="flex flex-col space-y-3">
           <label className="text-sm font-base">
@@ -265,11 +398,11 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({
           />
         </div>
 
-        <div className="h-64 md:h-8">
-        </div>
+        <br /><br />
 
         {/* Continue button */}
-        <button onClick={() => { setActiveStep(3) }}
+        <button
+          onClick={handleContinue}
           type="button"
           className="
             bg-black
