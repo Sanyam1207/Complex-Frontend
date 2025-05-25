@@ -23,6 +23,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Find My Rentals",
   description: "Find Your Desired Rentals",
+  icons: '/icons/logo2.svg'
 };
 
 export default function RootLayout({
