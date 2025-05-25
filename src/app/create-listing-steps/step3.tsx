@@ -30,7 +30,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
           </div>
         ),
         duration: 3000,
-        position: "bottom-right",
+        position: "bottom-center",
         style: {
           background: "rgba(31,31,33,1)",
           color: "#fff",

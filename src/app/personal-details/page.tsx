@@ -5,7 +5,9 @@ import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { User } from '../profile/page';
+import DeleteAccountModal from '@/components/DeleteModal';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ["100", "200", "300", "400", "500", "600"] });
 
@@ -24,8 +26,8 @@ export default function PersonalDetails() {
     const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
     const [showPassword, setShowPassword] = useState(true);
+    const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
     // Fetch user details
     useEffect(() => {
@@ -103,7 +105,6 @@ export default function PersonalDetails() {
         e.preventDefault();
         setIsSubmitting(true);
         setError('');
-        setSuccessMessage('');
 
         try {
             // Create a FormData object for sending both text fields and file
@@ -139,7 +140,23 @@ export default function PersonalDetails() {
             );
 
             if (response.data.success) {
-                setSuccessMessage('Profile updated successfully!');
+                // Show success toast
+                toast("Profile updated successfully!", {
+                    icon: (
+                        <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    ),
+                    duration: 3000,
+                    position: "bottom-right",
+                    style: {
+                        background: "rgba(31,31,33,1)",
+                        color: "#fff",
+                    }
+                });
+
                 // Update the user state with new data
                 setUser(response.data.user);
 
@@ -163,20 +180,7 @@ export default function PersonalDetails() {
 
     // Handle delete account
     const handleDeleteAccount = async () => {
-        if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-            try {
-                const response = await api.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/delete-account`);
-                if (response.data.success) {
-                    // Clear local storage
-                    localStorage.removeItem('token');
-                    // Redirect to login page
-                    router.push('/login');
-                }
-            } catch (error) {
-                console.error('Error deleting account:', error);
-                setError('Failed to delete account. Please try again.');
-            }
-        }
+        setShowDeleteAccountPopup(true);
     };
 
     if (isLoading) {
@@ -271,16 +275,10 @@ export default function PersonalDetails() {
 
                 {/* White container with rounded top corners */}
                 <form onSubmit={handleSubmit} className="bg-white overflow-y-scroll h-full rounded-t-3xl p-4 flex flex-col items-center">
-                    {/* Error and success messages */}
+                    {/* Error messages */}
                     {error && (
                         <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             {error}
-                        </div>
-                    )}
-
-                    {successMessage && (
-                        <div className="w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {successMessage}
                         </div>
                     )}
 
@@ -378,6 +376,7 @@ export default function PersonalDetails() {
                         Delete account
                     </button>
                 </form>
+                <DeleteAccountModal isOpen={showDeleteAccountPopup} onClose={() => setShowDeleteAccountPopup(false)} />
             </div>
 
             {/* ==================== DESKTOP VIEW (Updated) ==================== */}
@@ -385,16 +384,10 @@ export default function PersonalDetails() {
                 <Navbar />
 
                 <div className={`${inter.className} min-h-screen bg-white flex flex-col rounded-t-3xl items-center justify-center p-4`}>
-                    {/* Error and success messages */}
+                    {/* Error messages */}
                     {error && (
                         <div className="w-full max-w-xs bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             {error}
-                        </div>
-                    )}
-
-                    {successMessage && (
-                        <div className="w-full max-w-xs bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {successMessage}
                         </div>
                     )}
 
