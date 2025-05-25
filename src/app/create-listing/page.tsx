@@ -86,7 +86,7 @@ export default function CreateListing() {
                 <div className="flex flex-col flex-1 h-full bg-[#1F1F21] text-white p-5 pb-5">
                     {/* Back arrow + Title */}
                     <div className="flex items-center w-full">
-                        <button onClick={() => { router.push('/home') }} className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full">
+                        <button onClick={() => { router.back() }} className="flex items-center justify-center h-8 w-8 bg-[#353537] rounded-full">
                             <Image src="/icons/backarrow.svg" alt="Back" width={12} height={12} />
                         </button>
                         <div className="flex-1 text-center text-sm font-medium">Listing</div>

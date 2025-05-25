@@ -6,7 +6,7 @@ import OnBoardingPopup from "@/components/OnboardingPopup";
 import SignUpModal from "@/components/RegisterPopup";
 import api from "@/lib/axios";
 import { setResultsCount } from "@/redux/slices/messageSlice";
-import { openPopup } from "@/redux/slices/showPopups";
+import { openPopup, setReturnUrl } from "@/redux/slices/showPopups";
 import { RootState } from "@/redux/store/store";
 import { Inter } from "next/font/google";
 import Image from "next/image";
@@ -551,7 +551,11 @@ export default function ChatList() {
               Once you login, you will find the messages here.
             </p>
             <button
-              onClick={() => dispatch(openPopup("onboarding"))}
+              onClick={() => {
+                const currentUrl = window.location.pathname + window.location.search;
+                dispatch(setReturnUrl(currentUrl))
+                dispatch(openPopup("onboarding"))
+              }}
               className="bg-black text-white py-3 px-6 rounded-full w-full text-center font-medium"
             >
               Login

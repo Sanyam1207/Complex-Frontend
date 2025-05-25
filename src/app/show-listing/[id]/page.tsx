@@ -301,7 +301,7 @@ export default function ShowListing() {
       toast("Message Sent Successfully", {
         icon: (
           <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
-            <img src="/icons/tick.svg" />
+            <img alt='tick' src="/icons/tick.svg" />
           </div>
         ),
         duration: 3000,
@@ -821,7 +821,7 @@ export default function ShowListing() {
         </div>
 
         {!isListingOwner && (<div className="bg-black flex justify-center flex-col py-5 z-20 sticky bottom-0 px-4">
-          <div className="text-sm font-normal text-white mb-3">
+          <div className="text-sm text-center font-normal text-white mb-3">
             {chatExists ? (
               <span>You&apos;ve already contacted <span className='text-sm font-semibold'>{property.listedBy.fullName}</span></span>
             ) : (

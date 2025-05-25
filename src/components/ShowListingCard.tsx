@@ -51,7 +51,7 @@ export default function ShowListingCard({
         toast("Property link copied to clipboard!", {
           icon: (
             <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
-              <img src="/icons/tick.svg" />
+              <img alt="tick" src="/icons/tick.svg" />
             </div>
           ),
           duration: 3000,
@@ -79,7 +79,7 @@ export default function ShowListingCard({
       toast("Please login to use the wishlist feature", {
         icon: (
           <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
-            <img src="/icons/tick.svg" />
+            <img alt="tck" src="/icons/tick.svg" />
           </div>
         ),
         duration: 3000,
@@ -110,7 +110,7 @@ export default function ShowListingCard({
           toast("Please login to use the wishlist feature", {
             icon: (
               <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
-                <img src="/icons/tick.svg" />
+                <img alt="tick" src="/icons/tick.svg" />
               </div>
             ),
             duration: 3000,
@@ -156,7 +156,7 @@ export default function ShowListingCard({
         toast("Please login to use the wishlist feature", {
           icon: (
             <div className="bg-[rgba(52,178,51,1)] p-2 rounded-full items-center text-center justify-center flex">
-              <img src="/icons/tick.svg" />
+              <img alt="tick" src="/icons/tick.svg" />
             </div>
           ),
           duration: 3000,

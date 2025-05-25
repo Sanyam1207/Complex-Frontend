@@ -508,7 +508,10 @@ export default function Navbar() {
                 onBlur={handleInputBlur}
                 onKeyDown={handleKeyDown}
                 placeholder={selectedLocation || getSearchPlaceholder()}
-                className="ml-3 flex-1 text-[14px] text-white font-light tracking-[-0.3px] bg-transparent border-none outline-none"
+                className="ml-3 flex-1 text-[14px] placeholder:text-white text-white font-light tracking-[-0.3px] bg-transparent border-none outline-none"
+                style={{
+                  
+                }}
               />
               {(searchValue || isInputFocused) && (
                 <button

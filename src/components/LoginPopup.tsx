@@ -1,15 +1,15 @@
 "use client";
 
 import api from "@/lib/axios";
+import { closePopup, openPopup, selectIsPopupOpen, selectReturnUrl } from "@/redux/slices/showPopups";
+import { RootState } from "@/redux/store/store";
+import { AnimatePresence, motion } from "framer-motion";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { closePopup, openPopup, selectIsPopupOpen } from "@/redux/slices/showPopups";
-import { RootState } from "@/redux/store/store";
-import { AnimatePresence, motion } from "framer-motion";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,6 +18,12 @@ const inter = Inter({
 const LoginModal: React.FC = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state: RootState) => selectIsPopupOpen(state, 'login'));
+
+  // // Get the return URL from Redux state
+  // const currentUrl = window.location.pathname + window.location.search;
+  // dispatch(setReturnUrl(currentUrl))
+
+  const returnUrl = useSelector(selectReturnUrl);
 
   // All hooks are called unconditionally at the top
   const [email, setEmail] = useState("");
@@ -49,6 +55,10 @@ const LoginModal: React.FC = () => {
   // Handle Google authentication
   const handleSubmitGoogle = async () => {
     try {
+      // Store return URL in sessionStorage for OAuth callback
+      if (returnUrl) {
+        sessionStorage.setItem('loginReturnUrl', returnUrl);
+      }
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -98,8 +108,40 @@ const LoginModal: React.FC = () => {
           // Close the modal
           dispatch(closePopup('login'));
 
-          // Redirect to homepage or dashboard
-          router.push(`/home?token=${response.data.token}`);
+          // Redirect to return URL or default to home
+          const redirectUrl = returnUrl || '/home';
+
+          // Get current URL (pathname + search params)
+          const currentUrl = window.location.pathname + window.location.search;
+
+          console.log('Current URL:', currentUrl);
+          console.log('Redirect URL:', redirectUrl);
+
+          // Function to normalize URLs for comparison
+          const normalizeUrl = (url: string) => {
+            // Remove trailing slashes and normalize
+            return url.replace(/\/$/, '') || '/';
+          };
+
+          // Check if current URL matches redirect URL (normalized comparison)
+          const normalizedCurrentUrl = normalizeUrl(currentUrl);
+          const normalizedRedirectUrl = normalizeUrl(redirectUrl);
+
+          if (normalizedCurrentUrl === normalizedRedirectUrl) {
+            console.log('Current URL matches redirect URL, refreshing page...');
+            // Refresh the current page
+            window.location.reload();
+          } else {
+            console.log('Redirecting to:', redirectUrl);
+
+            // If redirecting to home, include token in URL as before
+            if (redirectUrl === '/home' || redirectUrl.startsWith('/home')) {
+              router.push(`${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}token=${response.data.token}`);
+            } else {
+              // For other pages, just redirect without token in URL
+              router.replace(redirectUrl);
+            }
+          }
         } else {
           // Check for specific error messages
           if (response.data.message?.toLowerCase().includes('email')) {
@@ -331,7 +373,6 @@ const LoginModal: React.FC = () => {
                     className={`w-full rounded-md border ${emailError ? 'border-red-500' : 'border-gray-300'} p-2 outline-none text-[#2C3C4E] focus:border-black`}
                   />
 
-
                   {/* Password */}
                   <label htmlFor="password_mobile" className="text-sm flex flex-row items-center text-[#2C3C4E]">
                     Password <span>{passwordError && (
@@ -348,7 +389,6 @@ const LoginModal: React.FC = () => {
                     }}
                     className={`w-full rounded-md border ${passwordError ? 'border-red-500' : 'border-gray-300'} p-2 outline-none text-[#2C3C4E] focus:border-black`}
                   />
-
 
                   <div className="text-[#0A84FF] text-sm my-6 h-10">
                     <p onClick={handleOpenForgotPassword}>Forgot Password?</p>

@@ -263,6 +263,12 @@ export default function Page() {
         setDescriptionPoints(updatedPoints);
     };
 
+    const handleRemoveDescriptionPoint = (index: number) => {
+        if (descriptionPoints.length > 1) {
+            setDescriptionPoints((prev) => prev.filter((_, i) => i !== index));
+        }
+    };
+
     const handleAddWalkingDistancePoint = () => {
         setWalkingDistancePoints((prev) => [...prev, ""]);
     };
@@ -271,6 +277,12 @@ export default function Page() {
         const updatedPoints = [...walkingDistancePoints];
         updatedPoints[index] = value;
         setWalkingDistancePoints(updatedPoints);
+    };
+
+    const handleRemoveWalkingDistancePoint = (index: number) => {
+        if (walkingDistancePoints.length > 1) {
+            setWalkingDistancePoints((prev) => prev.filter((_, i) => i !== index));
+        }
     };
 
     const handleRemoveImage = (index: number) => {
@@ -288,93 +300,104 @@ export default function Page() {
     const totalSlots = images.length < 6 ? 6 : images.length + 1;
 
     return (
-        <div className={`${inter.className} relative min-h-screen flex flex-col`}>
-            <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-8 left-8">
-                <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} className="" />
-            </button>
-
+        // Page container - Fixed height, no scroll
+        <div className={`${inter.className} h-screen overflow-hidden bg-[#1c1c1c] flex flex-col`}>
             {/* Navbar */}
             <Navbar />
 
-            <div className="relative bg-[#1c1c1c] h-screen flex flex-col">
-                {/* Stepper at the top (shared by mobile & desktop) */}
-                <CreateListingStepper
-                    activeStep={activeStep}
-                    handleBackButton={handleBackButton}
-                    steps={steps}
-                />
+            {/* Main content container */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Dark section - Fixed, non-scrollable */}
+                <div className="bg-[#1c1c1c] flex-shrink-0">
+                    {/* Mobile back button */}
+                    <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-8 left-8">
+                        <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} />
+                    </button>
 
-                {activeStep === 1 && (
-                    <PropertyTypeSelector
-                        selectedTab={selectedTab}
-                        setSelectedTab={setSelectedTab}
-                        setActiveStep={setActiveStep}
-                        apartmentItems={apartmentItems}
-                        houseItems={houseItems}
-                        onSelectPropertyType={handlePropertySelect}
+                    {/* Stepper */}
+                    <CreateListingStepper
+                        activeStep={activeStep}
+                        handleBackButton={handleBackButton}
+                        steps={steps}
                     />
-                )}
+                </div>
 
-                {activeStep === 2 && (
-                    <RentalDetails
-                        setActiveStep={setActiveStep}
-                        monthlyPrice={monthlyPrice}
-                        setMonthlyPrice={setMonthlyPrice}
-                        startDate={startDate}
-                        setStartDate={setStartDate}
-                        leaseDuration={leaseDuration}
-                        setLeaseDuration={setLeaseDuration}
-                    />
-                )}
+                {/* White section - Scrollable */}
+                <div className="flex-1 overflow-hidden">
+                    {activeStep === 1 && (
+                        <PropertyTypeSelector
+                            selectedTab={selectedTab}
+                            setSelectedTab={setSelectedTab}
+                            setActiveStep={setActiveStep}
+                            apartmentItems={apartmentItems}
+                            houseItems={houseItems}
+                            onSelectPropertyType={handlePropertySelect}
+                        />
+                    )}
 
-                {activeStep === 3 && (
-                    <LocationSelector
-                        setActiveStep={setActiveStep}
-                        location={location}
-                        setLocation={setLocation}
-                        intersection={intersection}
-                        setIntersection={setIntersection}
-                    />
-                )}
+                    {activeStep === 2 && (
+                        <RentalDetails
+                            setActiveStep={setActiveStep}
+                            monthlyPrice={monthlyPrice}
+                            setMonthlyPrice={setMonthlyPrice}
+                            startDate={startDate}
+                            setStartDate={setStartDate}
+                            leaseDuration={leaseDuration}
+                            setLeaseDuration={setLeaseDuration}
+                        />
+                    )}
 
-                {activeStep === 4 && (
-                    <PropertyFeatures
-                        bedrooms={bedrooms}
-                        setBedrooms={setBedrooms}
-                        bathrooms={bathrooms}
-                        setBathrooms={setBathrooms}
-                        isCoupleFriendly={isCoupleFriendly}
-                        setIsCoupleFriendly={setIsCoupleFriendly}
-                        selectedAmenities={selectedAmenities}
-                        handleAmenityToggle={handleAmenityToggle}
-                        availableAmenities={availableAmenities}
-                        setActiveStep={setActiveStep}
-                    />
-                )}
+                    {activeStep === 3 && (
+                        <LocationSelector
+                            setActiveStep={setActiveStep}
+                            location={location}
+                            setLocation={setLocation}
+                            intersection={intersection}
+                            setIntersection={setIntersection}
+                        />
+                    )}
 
-                {activeStep === 5 && (
-                    <PropertyDescription
-                        descriptionPoints={descriptionPoints}
-                        handleDescriptionChange={handleDescriptionChange}
-                        handleAddDescriptionPoint={handleAddDescriptionPoint}
-                        walkingDistancePoints={walkingDistancePoints}
-                        handleWalkingDistanceChange={handleWalkingDistanceChange}
-                        handleAddWalkingDistancePoint={handleAddWalkingDistancePoint}
-                        setActiveStep={setActiveStep}
-                    />
-                )}
+                    {activeStep === 4 && (
+                        <PropertyFeatures
+                            bedrooms={bedrooms}
+                            setBedrooms={setBedrooms}
+                            bathrooms={bathrooms}
+                            setBathrooms={setBathrooms}
+                            isCoupleFriendly={isCoupleFriendly}
+                            setIsCoupleFriendly={setIsCoupleFriendly}
+                            selectedAmenities={selectedAmenities}
+                            handleAmenityToggle={handleAmenityToggle}
+                            availableAmenities={availableAmenities}
+                            setActiveStep={setActiveStep}
+                        />
+                    )}
 
-                {activeStep === 6 && (
-                    <PropertyPhotos
-                        images={images}
-                        setImages={setImages}
-                        handleFileUpload={handleFileUpload}
-                        handleRemoveImage={handleRemoveImage}
-                        totalSlots={totalSlots}
-                        handleSubmitListing={handleSubmitListing}
-                        isSubmitting={submitting}
-                    />
-                )}
+                    {activeStep === 5 && (
+                        <PropertyDescription
+                            descriptionPoints={descriptionPoints}
+                            handleDescriptionChange={handleDescriptionChange}
+                            handleAddDescriptionPoint={handleAddDescriptionPoint}
+                            handleRemoveDescriptionPoint={handleRemoveDescriptionPoint}
+                            walkingDistancePoints={walkingDistancePoints}
+                            handleWalkingDistanceChange={handleWalkingDistanceChange}
+                            handleAddWalkingDistancePoint={handleAddWalkingDistancePoint}
+                            handleRemoveWalkingDistancePoint={handleRemoveWalkingDistancePoint}
+                            setActiveStep={setActiveStep}
+                        />
+                    )}
+
+                    {activeStep === 6 && (
+                        <PropertyPhotos
+                            images={images}
+                            setImages={setImages}
+                            handleFileUpload={handleFileUpload}
+                            handleRemoveImage={handleRemoveImage}
+                            totalSlots={totalSlots}
+                            handleSubmitListing={handleSubmitListing}
+                            isSubmitting={submitting}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

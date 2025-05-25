@@ -1,5 +1,6 @@
 // components/LocationSelector.tsx
 import React from 'react';
+import toast from 'react-hot-toast';
 
 interface LocationSelectorProps {
   setActiveStep: (step: number) => void;
@@ -16,13 +17,39 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   intersection,
   setIntersection
 }) => {
+  // Handle continue with validation
+  const handleContinue = () => {
+    // Check if both location and intersection are empty
+    if (!location.trim() && !intersection.trim()) {
+      toast("Please provide either your location or nearest intersection", {
+        icon: (
+          <div className="bg-[rgba(220,38,38,1)] p-2 rounded-full items-center text-center justify-center flex">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+        ),
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: "rgba(31,31,33,1)",
+          color: "#fff",
+        }
+      });
+      return;
+    }
+
+    // If validation passes, proceed to next step
+    setActiveStep(4);
+  };
+
   return (
-    <div className="bg-white md:flex md:justify-around rounded-t-[2rem] p-6 h-full -mt-2">
-      <div className="flex flex-col justify-stretch h-full max-w-md mx-auto w-full">
+    <div className="bg-white rounded-t-[2rem] h-full overflow-y-auto">
+      <div className="p-6 max-w-md mx-auto w-full flex flex-col justify-between h-full">
         {/* Top Section: Location & Intersection */}
         <div className="space-y-6">
           {/* "Your location?" */}
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col space-y-3">
             <label className="text-sm font-medium text-[#2C3C4E]">
               Your location?
             </label>
@@ -37,10 +64,10 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                 p-3
                 text-sm
                 text-[#2C3C4E]
-              bg-[#F4F4F4] 
-              focus:bg-white 
-              focus:outline-black
-              focus:outline
+                bg-[#F4F4F4] 
+                focus:bg-white 
+                focus:outline-black
+                focus:outline
               "
             />
           </div>
@@ -52,7 +79,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
           </div>
 
           {/* "Nearest intersection" */}
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col space-y-3">
             <label className="text-sm font-medium text-[#2C3C4E]">
               Nearest intersection
             </label>
@@ -62,34 +89,32 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
               onChange={(e) => setIntersection(e.target.value)}
               className="
                 w-full
-                border
                 rounded-lg
                 p-3
                 text-sm
                 text-[#2C3C4E]
-              bg-[#F4F4F4] 
-              focus:bg-white 
-              focus:outline-black
-              focus:outline
+                bg-[#F4F4F4] 
+                focus:bg-white 
+                focus:outline-black
+                focus:outline
                 h-12
+                resize-none
               "
             />
           </div>
         </div>
-
         {/* Bottom Section: Continue Button */}
         <button
-          onClick={() => { setActiveStep(4) }}
+          onClick={handleContinue}
           type="button"
           className="
             bg-black
             text-white
             w-full
-            py-4    
+            py-4
             rounded-full
             font-semibold
             text-sm
-            mt-6
             focus:outline-none
             focus:ring-2
             focus:ring-black

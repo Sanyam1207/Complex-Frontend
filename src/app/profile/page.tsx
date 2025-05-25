@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { openPopup, closePopup } from "@/redux/slices/showPopups";
+import { openPopup, closePopup, setReturnUrl } from "@/redux/slices/showPopups";
 import OnBoardingPopup from "@/components/OnboardingPopup";
 import LoginModal from "@/components/LoginPopup";
 import SignUpModal from "@/components/RegisterPopup";
@@ -44,30 +44,41 @@ export default function ProfilePage() {
     const dispatch = useDispatch();
     const [user, setUser] = useState<User>();
     const [isTokenValid, setIsTokenValid] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true); // Add loading state
+    const [authCheckComplete, setAuthCheckComplete] = useState<boolean>(false); // Track if auth check is done
 
     useLayoutEffect(() => {
         const getDetails = async () => {
             try {
+                setIsLoading(true); // Start loading
                 const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-details`)
                 console.log(response)
                 if (response.data.success) {
                     setUser(response.data.user)
                     console.log(`User details: ${JSON.stringify(response.data.user.profilePicture)}`)
                     setIsTokenValid(true)
+                } else {
+                    setIsTokenValid(false)
                 }
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 console.log(error)
                 setIsTokenValid(false)
+            } finally {
+                setIsLoading(false); // End loading
+                setAuthCheckComplete(true); // Mark auth check as complete
             }
         }
 
         // Check if token exists in localStorage
         const token = localStorage.getItem('token');
         if (!token) {
+            // No token found, user is not authenticated
             setIsTokenValid(false);
-            return;
+            setIsLoading(false);
+            setAuthCheckComplete(true);
         } else {
+            // Token exists, verify it with the server
             getDetails()
         }
     }, [])
@@ -83,6 +94,7 @@ export default function ProfilePage() {
         localStorage.removeItem('token');
         router.push('/login');
     };
+    
     const handleOpenSignup = () => {
         dispatch(closePopup('onboarding'));
         dispatch(openPopup('signup'));
@@ -90,8 +102,25 @@ export default function ProfilePage() {
 
     // Function to handle unauthenticated clicks
     const handleUnauthenticatedClick = () => {
+        const currentUrl = window.location.pathname + window.location.search;
+        dispatch(setReturnUrl(currentUrl))
         dispatch(openPopup('onboarding'));
     };
+
+    // Show loading spinner while authentication is being checked
+    if (isLoading || !authCheckComplete) {
+        return (
+            <div className={`flex flex-col h-screen ${inter.className}`}>
+                <div className="flex-1 flex items-center justify-center bg-[#1F1F21]">
+                    <div className="flex flex-col items-center">
+                        {/* Loading spinner */}
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-4"></div>
+                        <p className="text-white text-sm">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={`flex flex-col h-screen ${inter.className}`}>
@@ -151,6 +180,7 @@ export default function ProfilePage() {
                                     <p className="text-[16px] mb-4 mt-4 text-center w-full">Log in or sign up to continue</p>
 
                                     <button
+                                        onClick={handleUnauthenticatedClick}
                                         className="w-full rounded-full bg-white py-4 text-black font-semibold hover:bg-gray-800 transition"
                                     >
                                         Log In
@@ -158,7 +188,7 @@ export default function ProfilePage() {
 
                                     <p className="text-[14px] mt-4 text-center w-full">
                                         Don&apos;t have an account?
-                                        <span onClick={handleOpenSignup} className="text-[#0A84FF]"> Sign up</span>
+                                        <span onClick={handleOpenSignup} className="text-[#0A84FF] cursor-pointer"> Sign up</span>
                                     </p>
 
                                 </div>
@@ -177,7 +207,7 @@ export default function ProfilePage() {
                 {/* -- 2) MAIN WHITE CARD WITH ROUNDED TOP -- */}
                 <div className="bg-white flex-grow text-[#2C3C4E] rounded-t-3xl pt-2 px-6 overflow-y-auto">
                     {/* A) Create Listing */}
-                    <div onClick={() => isTokenValid ? router.push('/create-listing') : handleUnauthenticatedClick()} className="flex items-center justify-between py-5">
+                    <div onClick={() => isTokenValid ? router.push('/create-listing') : handleUnauthenticatedClick()} className="flex items-center justify-between py-5 cursor-pointer">
                         <div className="flex items-center">
                             {/* Icon circle (plus sign) */}
                             <div className="w-12 h-12 flex items-center justify-center bg-[#0A84FF] rounded-full mr-3">
@@ -198,14 +228,14 @@ export default function ProfilePage() {
                     {/* B) Renters Profile - only show when token is valid */}
                     {isTokenValid && (
                         <>
-                            <div className="flex items-center justify-between py-5">
+                            <div className="flex items-center justify-between py-5 cursor-pointer">
                                 <div className="flex items-center">
                                     {/* Icon circle (user) */}
                                     <div className="w-12 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
                                         <Image src={'/icons/profileuser.svg'} alt="profile" height={27} width={27} />
                                     </div>
-                                    <div>
-                                        <p onClick={() => { router.push('/about') }} className="text-sm text-[#2C3C4E] font-semibold">About you</p>
+                                    <div onClick={() => { router.push('/about') }}>
+                                        <p className="text-sm text-[#2C3C4E] font-semibold">About you</p>
                                         <p className="text-xs  text-[#2C3C4E] font-normal">Complete your profile to stand out.</p>
                                     </div>
                                 </div>
@@ -222,7 +252,7 @@ export default function ProfilePage() {
                     <p className="my-6 text-sm font-semibold text-[#2C3C4E]">Settings</p>
 
                     {/* C) Notifications */}
-                    <div onClick={() => isTokenValid ? router.push("/notifications") : handleUnauthenticatedClick()} className="flex items-center justify-between py-5">
+                    <div onClick={() => isTokenValid ? router.push("/notifications") : handleUnauthenticatedClick()} className="flex items-center justify-between py-5 cursor-pointer">
                         <div className="flex items-center">
                             {/* Bell icon */}
                             <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -237,7 +267,7 @@ export default function ProfilePage() {
                     <hr />
 
                     {/* D) Terms & conditions */}
-                    <div onClick={() => { router.push('/terms-and-conditions') }} className="flex items-center justify-between py-5">
+                    <div onClick={() => { router.push('/terms-and-conditions') }} className="flex items-center justify-between py-5 cursor-pointer">
                         <div className="flex items-center">
                             {/* Document icon */}
                             <div className="w-12 p-3 h-12 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -252,7 +282,7 @@ export default function ProfilePage() {
                     <hr />
 
                     {/* E) Help & feedback */}
-                    <div onClick={() => { router.push('/help-feedback') }} className="flex items-center justify-between py-5">
+                    <div onClick={() => { router.push('/help-feedback') }} className="flex items-center justify-between py-5 cursor-pointer">
                         <div className="flex items-center">
                             {/* Mail icon */}
                             <div className="w-12 h-12 p-3 flex items-center justify-center bg-[#F4F4F4] rounded-full mr-3">
@@ -286,7 +316,7 @@ export default function ProfilePage() {
                     <ForgotPasswordModal />
                 </div>
             </div>
-            
+
             {/* Sticky Bottom Tabs */}
             <div className="sticky bottom-0 w-full">
                 <MobileBottomTabs />
