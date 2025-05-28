@@ -297,7 +297,7 @@ export default function Page() {
         e.target.value = "";
     };
 
-    const totalSlots = images.length < 6 ? 6 : images.length + 1;
+    // const totalSlots = images.length < 6 ? 6 : images.length + 1;
 
     return (
         // Page container - Fixed height, no scroll
