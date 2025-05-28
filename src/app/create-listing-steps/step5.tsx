@@ -63,7 +63,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
           {descriptionPoints.map((point, index) => {
             const showRemove = descriptionPoints.length > 1;
             return (
-              <div key={index} className="relative">
+              <div key={index} className="relative group">
                 <input
                   type="text"
                   placeholder={`Description point ${index + 1}`}
@@ -98,8 +98,10 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
                       rounded-full
                       flex items-center
                       justify-center
-                      hover:bg-gray-100
-                      transition
+                      opacity-0
+                      group-hover:opacity-100
+                      group-focus-within:opacity-100
+                      transition-opacity
                     "
                     title="Remove point"
                   >
@@ -115,10 +117,11 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
             onClick={handleAddDescriptionPoint}
             className="
               mt-2
-              w-20
+              px-4
               bg-blue-500
               text-white
               rounded-full
+              w-20
               py-3
               text-sm
               hover:bg-blue-600
@@ -138,7 +141,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
           {walkingDistancePoints.map((point, index) => {
             const showRemove = walkingDistancePoints.length > 1;
             return (
-              <div key={index} className="relative">
+              <div key={index} className="relative group">
                 <input
                   type="text"
                   placeholder={`Walking distance point ${index + 1}`}
@@ -173,8 +176,10 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
                       rounded-full
                       flex items-center
                       justify-center
-                      hover:bg-gray-100
-                      transition
+                      opacity-0
+                      group-hover:opacity-100
+                      group-focus-within:opacity-100
+                      transition-opacity
                     "
                     title="Remove point"
                   >
@@ -190,7 +195,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
             onClick={handleAddWalkingDistancePoint}
             className="
               mt-2
-              w-20
+              px-4
               bg-blue-500
               text-white
               rounded-full
@@ -198,6 +203,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
               text-sm
               hover:bg-blue-600
               transition
+              w-20
               font-semibold
             "
             title="Add walking distance point"
