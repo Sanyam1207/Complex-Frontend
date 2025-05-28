@@ -111,8 +111,6 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
               </div>
             );
           })}
-
-          {/* global “Add” button */}
           <button
             onClick={handleAddDescriptionPoint}
             className="
@@ -123,6 +121,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
               rounded-full
               w-20
               py-3
+              flex flex-row
               text-sm
               hover:bg-blue-600
               transition
@@ -130,7 +129,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
             "
             title="Add description point"
           >
-            Add +
+            Add <img src='/icons/plusicon.svg' alt='plus icon' className='ml-1.5' height={18} width={10}/>
           </button>
         </div>
 
@@ -189,8 +188,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
               </div>
             );
           })}
-
-          {/* global “Add” button */}
+          
           <button
             onClick={handleAddWalkingDistancePoint}
             className="
@@ -200,6 +198,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
               text-white
               rounded-full
               py-3
+              flex flex-row
               text-sm
               hover:bg-blue-600
               transition
@@ -208,11 +207,11 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
             "
             title="Add walking distance point"
           >
-            Add +
+            Add  <img src='/icons/plusicon.svg' alt='plus icon' className='ml-1.5' height={18} width={10}/>
           </button>
         </div>
 
-        {/* 3) Continue */}
+       
         <button
           onClick={handleContinue}
           className="
