@@ -45,7 +45,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
   return (
     <div className="bg-white rounded-t-[2rem] h-screen overflow-y-hidden">
-      <div className="p-6 max-w-md mx-auto w-full flex flex-col justify-between h-full">
+      <div className="p-6 max-w-md mx-auto w-full flex flex-col justify-between">
         {/* Top Section: Location & Intersection */}
         <div className="space-y-6">
           {/* "Your location?" */}
