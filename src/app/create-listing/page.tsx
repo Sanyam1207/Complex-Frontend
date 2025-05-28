@@ -81,7 +81,7 @@ export default function CreateListing() {
     return (
         <div className="h-screen flex flex-col">
             {/* MOBILE LAYOUT */}
-            <div className={`${inter.className} flex flex-col justify-center md:hidden bg-[#1F1F21]`}>
+            <div className={`${inter.className} flex flex-col h-full justify-center md:hidden bg-[#1F1F21]`}>
                 {/* Top Section: Black background */}
                 <div className="flex flex-col flex-1 h-full bg-[#1F1F21] text-white p-5 pb-5">
                     {/* Back arrow + Title */}

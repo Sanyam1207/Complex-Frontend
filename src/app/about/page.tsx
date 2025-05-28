@@ -89,7 +89,7 @@ const FormElements = ({
 
                 {/* Custom dropdown menu */}
                 {isGenderOpen && (
-                    <div className="absolute z-10 mt-1 w-96 bg-white rounded-lg border border-gray-200 shadow-lg">
+                    <div className="absolute z-10 mt-1  bg-white rounded-lg border border-gray-200 shadow-lg">
                         <div
                             className="p-3 hover:bg-gray-50 cursor-pointer"
                             onClick={() => {

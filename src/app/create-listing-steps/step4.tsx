@@ -56,7 +56,6 @@ const CustomDropdown = ({
           flex 
           justify-between 
           items-center
-          shadow-sm
         "
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -87,7 +86,7 @@ const CustomDropdown = ({
           border 
           border-gray-200 
           rounded-lg 
-          shadow-lg 
+        
           max-h-60 
           overflow-auto
         ">
@@ -236,7 +235,7 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
         <hr />
 
         {/* 2) Second Div: Couple-friendly Toggle */}
-        <div className="flex flex-row items-center justify-between py-4">
+        <div className="flex flex-row items-center justify-between">
           {/* Label + Sub-caption */}
           <div className="flex flex-col space-y-2">
             <span className="text-sm text-[#2C3C4E] font-medium">Couple-friendly</span>
@@ -282,7 +281,7 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
         <hr />
 
         {/* 3) Third Div: Amenities Title + Chips */}
-        <div className="flex flex-col space-y-4 py-4">
+        <div className="flex flex-col space-y-4">
           <div>
             <h2 className="text-sm text-[#2C3C4E] font-medium font-[Inter] leading-[124%]">
               Select all the amenities your rental offers
@@ -301,8 +300,8 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
                   className={`
                     px-4 h-9 py-1 flex items-center justify-center space-x-1 
                     transition border text-[12px] font-normal font-[Inter] 
-                    rounded-[42px] border-[#2C3C4E] 
-                    ${isSelected ? "bg-[#0A84FF] text-white" : "text-[#2C3C4E] hover:bg-gray-100"}
+                    rounded-[42px] 
+                    ${isSelected ? "bg-[#0A84FF] text-white border-[#0A84FF]" : "border-[#2C3C4E]  text-[#2C3C4E] hover:bg-gray-100"}
                   `}
                 >
                   <Image
@@ -310,6 +309,8 @@ const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({
                     src={amenity.icon}
                     width={16}
                     height={16}
+                    className={isSelected ? "invert brightness-200" : ""}
+
                   />
                   <span>{amenity.title}</span>
                 </button>

@@ -62,7 +62,7 @@ const CustomDropdown = ({
           flex 
           justify-between 
           items-center
-          shadow-sm
+          
         "
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -292,8 +292,9 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({
               text-[#2C3C4E]
               bg-[#F4F4F4] 
               focus:bg-white 
-              focus:outline-black
-              focus:outline
+              focus:border-black
+              focus:outline-none
+              focus:border
             "
           />
         </div>

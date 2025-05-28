@@ -310,7 +310,7 @@ export default function Page() {
                 {/* Dark section - Fixed, non-scrollable */}
                 <div className="bg-[#1c1c1c] flex-shrink-0">
                     {/* Mobile back button */}
-                    <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-8 left-8">
+                    <button onClick={handleBackButton} className="md:hidden absolute bg-[#353537] rounded-full text-white z-50 top-7 left-8">
                         <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} />
                     </button>
 
@@ -392,7 +392,7 @@ export default function Page() {
                             setImages={setImages}
                             handleFileUpload={handleFileUpload}
                             handleRemoveImage={handleRemoveImage}
-                            totalSlots={totalSlots}
+                            
                             handleSubmitListing={handleSubmitListing}
                             isSubmitting={submitting}
                         />

@@ -32,7 +32,7 @@ function PropertyColumn({
         ${selectedTab === isThisTab ? "block" : "hidden"}
 
         // Some spacing and sizing
-        space-y-4 w-full max-w-md
+        space-y-4 w-full max-w-md px-6 rounded-t-3xl
       `}
     >
       {/* Title is hidden on mobile (since we use tab buttons), 
@@ -77,35 +77,34 @@ const PropertyTypeSelector: React.FC<PropertyTypeSelectorProps> = ({
   onSelectPropertyType
 }) => {
   return (
-    <div className="bg-white rounded-t-[2rem] h-full overflow-y-auto">
-      <div className="p-6">
-        <h2 className="text-base font-medium mb-4 md:hidden">
-          Select the type of rental property
-        </h2>
-
-        {/* Mobile-only tabs */}
-        <div className="flex space-x-2 mb-4 md:hidden">
-          <button
-            onClick={() => setSelectedTab("Apartment")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedTab === "Apartment"
-              ? "bg-[#353537] text-white"
-              : "bg-gray-200 text-gray-700"
-              }`}
-          >
-            Apartment
-          </button>
-          <button
-            onClick={() => setSelectedTab("House")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedTab === "House"
-              ? "bg-[#353537] text-white"
-              : "bg-gray-200 text-gray-700"
-              }`}
-          >
-            House
-          </button>
+    <div className="bg-white h-full overflow-y-auto">
+      <div className="bg-[#1F1F21]">
+        <div className='bg-[#1F1F21] px-6 pb-2'>
+          {/* Mobile-only tabs */}
+          <div className="flex bg-[#1F1F21] space-x-2 mb-4 md:hidden">
+            <button
+              onClick={() => setSelectedTab("Apartment")}
+              className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedTab === "Apartment"
+                ? "bg-[#353537] text-white"
+                : "bg-gray-200 text-gray-700"
+                }`}
+            >
+              Apartment
+            </button>
+            <button
+              onClick={() => setSelectedTab("House")}
+              className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedTab === "House"
+                ? "bg-[#353537] text-white"
+                : "bg-gray-200 text-gray-700"
+                }`}
+            >
+              House
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:space-x-8 md:justify-around">
+
+        <div className="flex rounded-t-[2rem] bg-white h-full flex-col md:flex-row md:space-x-8 md:justify-around">
           <PropertyColumn
             onSelectPropertyType={onSelectPropertyType}
             title="Apartment"

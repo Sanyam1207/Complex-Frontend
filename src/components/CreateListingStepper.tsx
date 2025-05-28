@@ -4,7 +4,7 @@ import CustomStepper from './Stepper'
 const CreateListingStepper = ({steps, activeStep, handleBackButton} : {steps: string[], activeStep: number, handleBackButton: () => void}) => {
     
     return (
-        <div className="bg-[#1c1c1c] flex flex-col md:items-center p-6 md:p-0 mb-3 space-y-10">
+        <div className="bg-[#1c1c1c] flex flex-col md:items-center pt-2 md:p-0 space-y-5">
             
             {/* Stepper */}
             <CustomStepper steps={steps} activeStep={activeStep} />
@@ -17,7 +17,7 @@ const CreateListingStepper = ({steps, activeStep, handleBackButton} : {steps: st
                 >
                     Back
                 </button>
-                <h1 className="text-xl font-medium">
+                <h1 className="text-xl px-5 pb-4 font-medium">
                     {steps[activeStep - 1]} <br />
                     {activeStep === 3 ? (<div className='mt-2 text-sm font-normal'>Enter the nearest intersection if you <br /> prefer not to share your exact address</div>) : ''}
                 </h1>

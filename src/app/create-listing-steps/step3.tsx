@@ -66,8 +66,9 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                 text-[#2C3C4E]
                 bg-[#F4F4F4] 
                 focus:bg-white 
-                focus:outline-black
-                focus:outline
+                focus:border-black
+              focus:outline-none
+              focus:border
               "
             />
           </div>
@@ -95,8 +96,9 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                 text-[#2C3C4E]
                 bg-[#F4F4F4] 
                 focus:bg-white 
-                focus:outline-black
-                focus:outline
+                focus:border-black
+              focus:outline-none
+              focus:border
                 h-12
                 resize-none
               "
