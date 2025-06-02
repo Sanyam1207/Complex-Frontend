@@ -207,14 +207,14 @@ export default function ProfilePage() {
                 {/* -- 2) MAIN WHITE CARD WITH ROUNDED TOP -- */}
                 <div className="bg-white flex-grow text-[#2C3C4E] rounded-t-3xl pt-2 px-6 overflow-y-auto">
                     {/* A) Create Listing */}
-                    <div onClick={() => isTokenValid ? router.push('/create-listing') : handleUnauthenticatedClick()} className="flex items-center justify-between py-5 cursor-pointer">
+                    <div onClick={() => isTokenValid ? router.push('/manage-listing') : handleUnauthenticatedClick()} className="flex items-center justify-between py-5 cursor-pointer">
                         <div className="flex items-center">
                             {/* Icon circle (plus sign) */}
                             <div className="w-12 h-12 flex items-center justify-center bg-[#0A84FF] rounded-full mr-3">
                                 <Image alt="create listing" src={'/icons/createlisting.svg'} width={27} height={12} />
                             </div>
                             <div>
-                                <p className="text-sm text-[#2C3C4E] font-semibold">Create listing</p>
+                                <p className="text-sm text-[#2C3C4E] font-semibold">Manage / Create listing</p>
                                 <p className="text-xs text-[#2C3C4E] font-normal">List your space and start earning.</p>
                             </div>
                         </div>

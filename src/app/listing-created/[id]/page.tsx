@@ -3,15 +3,14 @@
 import ForgotPasswordModal from '@/components/ForgotPassword';
 import LoginModal from '@/components/LoginPopup';
 import Navbar from '@/components/NavBar';
-import OfferChips from '@/components/OfferChips';
 import OnBoardingPopup from '@/components/OnboardingPopup';
 import SignUpModal from '@/components/RegisterPopup';
-import ShowListingCardReview from '@/components/ShowListingCardReview';
+import SuccessCardCarousel from '@/components/SuccessCardCarousel';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -21,13 +20,11 @@ const inter = Inter({
 interface PropertyType {
     propertyType: string;
     monthlyPrice: number;
-    _id: string;
     location: string;
     nearestIntersection?: string;
     numberOfBedrooms: number;
     numberOfBathrooms: number;
     coupleFriendly: boolean;
-    isBeingEdited: boolean;
     amenities: string[];
     description: string[];
     startDate: string;
@@ -36,36 +33,10 @@ interface PropertyType {
     images: string[];
 }
 
-// Fallback data in case localStorage data fails
-const fallbackData = {
-    demoImages: [
-        "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-        "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-        "https://i.pinimg.com/736x/c8/42/c8/c842c87b22e9b538c8b6fe5024029f46.jpg",
-    ],
-    walkingDistance: [
-        "Fully Furnished",
-        "Kitchen with steel appliances",
-        "Sharing Washroom",
-        "Intersection Main and Danforth",
-        "First come first basis",
-    ],
-    description: [
-        "Fully Furnished",
-        "Kitchen with steel appliances",
-        "Sharing Washroom",
-        "Intersection Main and Danforth",
-    ],
-    address: "265 Mainstreet, Toronto",
-    price: 1200,
-    availableFrom: "15 June 2023",
-    leaseDuration: "12 months"
-};
-
 export default function ReviewListing() {
-    const dispatch = useDispatch();
-    console.log(dispatch)
     const router = useRouter();
+    const params = useParams();
+    const { id } = params || {};
 
     const [property, setProperty] = useState<PropertyType | null>(null);
     const [loading, setLoading] = useState(true);
@@ -74,20 +45,8 @@ export default function ReviewListing() {
     const [userInfo, setUserInfo] = useState({ _id: '', fullName: '', profilePicture: '', createdAt: new Date().toISOString() });
     console.log(userInfo)
 
-
-    // Check if there's a temporary listing in localStorage and redirect if not
+    // Load user info from localStorage
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const tempListing = localStorage.getItem('pendingListing');
-            if (!tempListing) {
-                router.push('/home');
-            }
-        }
-    }, [router]);
-
-    // Load property data from localStorage on component mount
-    useEffect(() => {
-        // Load user info from localStorage
         const userStr = localStorage.getItem('user');
         if (userStr) {
             try {
@@ -97,25 +56,38 @@ export default function ReviewListing() {
                 console.error('Error parsing user info:', e);
             }
         }
-
-        // Load listing data from localStorage
-        try {
-            const savedData = localStorage.getItem('pendingListing');
-            if (!savedData) {
-                setError('No listing data found');
-                setLoading(false);
-                return;
-            }
-
-            const parsedData = JSON.parse(savedData);
-            setProperty(parsedData);
-        } catch (err) {
-            console.error('Error loading listing data:', err);
-            setError('Failed to load listing data');
-        } finally {
-            setLoading(false);
-        }
     }, []);
+
+    // Fetch property data from API based on dynamic route ID
+    useEffect(() => {
+        if (!id) {
+            router.push('/home');
+            return;
+        }
+
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals/${id}`);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`API request failed (${response.status}): ${errorText}`);
+                }
+                const result = await response.json();
+                if (result.success && result.data) {
+                    setProperty(result.data as PropertyType);
+                } else {
+                    throw new Error(result.message || 'Failed to fetch listing data');
+                }
+            } catch (err) {
+                console.error('Error fetching listing data:', err);
+                setError(err instanceof Error ? err.message : 'Failed to fetch listing data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [id, router]);
 
     // Handle publishing the listing (submitting to database)
     const handlePublish = async () => {
@@ -195,35 +167,6 @@ export default function ReviewListing() {
             }
 
             // Submit to API to create the listing
-
-            if (property.isBeingEdited) {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals/${property._id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: formData
-                });
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`API request failed (${response.status}): ${errorText}`);
-                }
-
-                const result = await response.json();
-                console.log("Response from backend:", result);
-
-                if (result.success && result.data._id) {
-                    // Clear the pending listing from localStorage
-                    localStorage.removeItem('pendingListing');
-
-                    // Redirect to the show listing page with the newly created listing
-                    router.push(`/listing-created/${result.data._id}`);
-                } else {
-                    throw new Error(result.message || 'Unknown error');
-                }
-                return
-            }
-
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rentals`, {
                 method: 'POST',
                 headers: {
@@ -241,11 +184,8 @@ export default function ReviewListing() {
             console.log("Response from backend:", result);
 
             if (result.success && result.data._id) {
-                // Clear the pending listing from localStorage
-                localStorage.removeItem('pendingListing');
-
                 // Redirect to the show listing page with the newly created listing
-                router.push(`/listing-created/${result.data._id}`);
+                router.push(`/show-listing/${result.data._id}`);
             } else {
                 throw new Error(result.message || 'Unknown error');
             }
@@ -260,6 +200,19 @@ export default function ReviewListing() {
     // Handle going back to edit
     const handleCancel = () => {
         router.push('/create-listing');
+    };
+
+
+    // Handle copying link to clipboard and showing toast
+    const handleShare = () => {
+        const shareLink = `/show-listing/${id}`;
+        navigator.clipboard.writeText(shareLink)
+            .then(() => {
+                toast.success('Link copied to clipboard');
+            })
+            .catch(() => {
+                toast.error('Failed to copy link');
+            });
     };
 
     // Show loading state
@@ -278,7 +231,7 @@ export default function ReviewListing() {
                 <h1 className="text-xl font-bold mb-2">Error Loading Property</h1>
                 <p>{error || 'Property not found'}</p>
                 <button
-                    onClick={() => router.push('/create-listing')}
+                    onClick={() => router.push('/home')}
                     className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
                 >
                     Go Back
@@ -341,8 +294,6 @@ export default function ReviewListing() {
     };
 
     const availableFrom = formatDate(property.startDate);
-    const listedOn = formatDate(new Date().toISOString());
-    console.log('Listed on:', listedOn);
 
     return (
         <div className={`${inter.className}`}>
@@ -511,8 +462,6 @@ export default function ReviewListing() {
                         ))}
                     </div>
 
-                    {/* <hr className="border-gray-400" /> */}
-
                     {/* Location heading */}
                     <h2 className="text-lg font-semibold">Location:</h2>
 
@@ -533,8 +482,7 @@ export default function ReviewListing() {
                     {/* Header with back button and title */}
                     <div className='flex items-center justify-between p-4 pb-6'>
                         <div onClick={() => {
-                            localStorage.removeItem("pendingListing")
-                            router.push('/create-listing-steps')
+                            router.push('/profile')
                         }} className='w-7 h-7 flex items-center justify-center'>
                             <Image alt="Favourite" src="/icons/backbuttonn.svg" className="text-black" width={32} height={32} />
                         </div>
@@ -544,122 +492,46 @@ export default function ReviewListing() {
 
                     {/* Main content */}
                     <div className='px-4 flex-1 space-y-1 pb-5'>
-                        <h1 className='text-white font-medium text-xl'>Review your listing.</h1>
-                        <p className='text-white text-sm'>You have successfully created the listing!</p>
+                        <h1 className='text-white font-medium text-xl'>Congratulations 🎉</h1>
+                        <p className='text-white text-sm'>Your listing is live!</p>
                     </div>
                 </div>
 
-                <div className="bg-[#F4F4F4]">
-                    <ShowListingCardReview
-                        images={property.images && property.images.length > 0
-                            ? property.images
-                            : fallbackData.demoImages}
-                    />
-                </div>
+                <div className="bg-[#FFF] rounded-t-3xl p-6 h-full flex flex-col">
+                    <SuccessCardCarousel address={property.location} date={new Date(property.startDate)} images={property.images} price={property.monthlyPrice} propertyId={''} onClick={() => { }} />
 
-                <div>
-                    <div className="px-4 pt-6 pb-4 bg-[#1F1F21] text-[#FFFFFF]">
-                        {/* Address & Price */}
-                        <div className="flex justify-between mb-2 items-center">
-                            <h2 className="font-semibold text-base">{property.location}</h2>
-                            <p className="font-semibold text-base">${property.monthlyPrice}
-                                <span className='text-xs font-light'>/month</span>
-                            </p>
-                        </div>
-                        {/* Availability */}
-                        <p className="mt-1 mb-5 font-normal text-xs text-white">
-                            Available from:{" "}
-                            <span className="text-sm font-medium">
-                                {availableFrom} for {property.leaseDuration}
-                            </span>
-                        </p>
-                        {/* Features (chips) */}
-                        <div className="flex flex-wrap gap-2 mb-2 mt-3">
-                            {features.map((feature, idx) => (
-                                <span
-                                    key={idx}
-                                    className="bg-[#353537] text-white text-xs font-normal px-2 py-1 rounded-full flex items-center gap-1"
-                                >
-                                    <Image
-                                        src={feature.icon}
-                                        alt={`${feature.name} icon`}
-                                        width={12}
-                                        height={12}
-                                        className='object-scale-down brightness-0 invert'
-                                    />
-                                    {feature.name}
+                    <div className={`mt-8 ${inter.className}`}>
+                        <h2 className="text-sm font-medium text-[#2C3C4E] mb-4">What&apos;s next?</h2>
+
+                        <ol className="space-y-3 list-disc mb-6">
+                            <li className="flex list-disc items-start">
+                                <span className="text-[#2C3C4E] font-normal text-xs">Keep an eye on your inbox to receive messages.</span>
+                            </li>
+                            <li className="flex items-start">
+                                <span className="text-[#2C3C4E] font-normal text-xs">Select the best tenants using the filter option.</span>
+                            </li>
+                            <li className="flex items-start">
+                                <span className="text-[#2C3C4E] font-normal text-xs">Boost your listing&apos;s visibility by sharing on social media.</span>
+                            </li>
+                            <li className="flex items-start">
+                                <span className="text-[#2C3C4E] font-normal text-xs">
+                                    Want to add another listing?{' '}
+                                    <a href="/create-listing" className="text-blue-500 hover:text-blue-600 underline">
+                                        Create listing
+                                    </a>
                                 </span>
-                            ))}
+                            </li>
+                        </ol>
+
+                        <div className="flex gap-4 items-center justify-around  ">
+                            <button onClick={() => handleShare()} className="bg-[#0A84FF] hover:bg-blue-600 text-white px-8 py-3 rounded-full font-medium text-sm transition-colors">
+                                Share listing
+                            </button>
+                            <button onClick={() => router.push("/home")} className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-full text-sm font-medium transition-colors">
+                                Home
+                            </button>
                         </div>
                     </div>
-
-                    <div className="p-4 rounded-t-3xl bg-white z-10 text-[#2C3C4E]">
-                        {/* Description */}
-                        <div>
-                            <h3 className="text-base mt-5 mb-4 font-semibold">Description:</h3>
-                            <ul className="list-disc list-inside text-sm font-normal mt-1 space-y-2">
-                                {property.description && property.description.length > 0 ? (
-                                    property.description.map((item, idx) => (
-                                        <li key={idx}>{item}</li>
-                                    ))
-                                ) : (
-                                    <li>No description available</li>
-                                )}
-                            </ul>
-                        </div>
-
-                        {/* Walking Distance */}
-                        <div className="mt-4">
-                            <h3 className="text-base mt-5 mb-4 font-semibold">Walking distance to:</h3>
-                            <ul className="list-disc list-inside text-sm font-normal mt-1 space-y-2">
-                                {property.walkingDistanceTo && property.walkingDistanceTo.length > 0 ? (
-                                    property.walkingDistanceTo.map((item, idx) => (
-                                        <li key={idx}>{item}</li>
-                                    ))
-                                ) : (
-                                    <li>No information available</li>
-                                )}
-                            </ul>
-                        </div>
-                        <hr className="mt-5 mb-4 w-[90vw]" />
-
-                        <div className="bg-white p-2 rounded-md w-full max-w-md">
-                            {/* Title */}
-                            <h2 className="text-base font-semibold text-[#2C3C4E] mb-3">
-                                What this places offers:
-                            </h2>
-                            {/* Chips Container */}
-                            <OfferChips features={amenitiesWithIcons} />
-                        </div>
-                        <hr className="my-4" />
-                    </div>
-                </div>
-
-                <div className="px-4 pb-24 border-none space-y-6 z-10 bg-white">
-                    {/* Location Label */}
-                    <div className="text-sm font-semibold text-[#2C3C4E]">Location</div>
-                    {/* Map Placeholder */}
-                    <div className="w-full h-30 bg-gray-200 flex items-center justify-center">
-                        <Image
-                            src={"/icons/mapimg.png"}
-                            alt="map"
-                            height={1000}
-                            width={1000}
-                            className="w-full"
-                        />
-                    </div>
-                </div>
-
-                {/* Fixed action bar at bottom */}
-                <div className="bg-black flex items-center justify-between py-5 z-20 fixed bottom-0 left-0 right-0 px-4">
-
-                    <button
-                        className="bg-blue-600 text-white px-4 py-3 items-center rounded-3xl w-full"
-                        onClick={handlePublish}
-                        disabled={submitting}
-                    >
-                        {submitting ? "Publishing..." : "Publish"}
-                    </button>
                 </div>
 
                 <SignUpModal />

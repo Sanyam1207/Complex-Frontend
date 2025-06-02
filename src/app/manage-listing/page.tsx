@@ -1,94 +1,87 @@
-"use client"; // If you're using Next.js 13+ App Router; remove if using Pages Router
-import React from "react";
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import ManageLIstingCard from '@/components/ManageListingCard'
+import api from '@/lib/axios'
+
+interface Listing {
+  _id: string
+  location: string
+  createdAt: string
+  images: string[]
+  monthlyPrice: number
+}
 
 export default function ManageListingPage() {
+  const router = useRouter()
+  const [listings, setListings] = useState<Listing[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const response = await api.get('/api/rentals/user/mylistings')
+        console.log(response)
+        setListings(response.data.data || [])
+      } catch (error) {
+        console.error('Failed to fetch listings:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchListings()
+  }, [])
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f9f9f9]">
-      {/* -- 1) TOP BAR -- */}
-      <div className="bg-black py-4 text-center">
-        <h1 className="text-white font-medium">Manage listing</h1>
+    <div className="flex flex-col bg-[#1F1F21] min-h-screen">
+      {/* Black Header */}
+      <div className="flex px-4 items-center py-4">
+        <button
+          onClick={() => router.back()}
+          className="p-2 rounded-full hover:bg-gray-800/50 transition"
+        >
+          <Image src={'/icons/backbuttonn.svg'} alt="back" height={32} width={32} />
+        </button>
+        <h1 className="w-full text-center text-sm text-white font-medium">Manage listing</h1>
       </div>
-      
 
-      {/* -- 2) LISTING CARD -- */}
-      <div className="p-4">
-        <div className="bg-white rounded-xl shadow">
-          {/* Listing Image + Trash Icon */}
-          <div className="relative">
-            {/* Replace with your listing image URL */}
-            <img
-              src="https://via.placeholder.com/400x300" 
-              alt="Listing"
-              className="w-full h-48 object-cover rounded-t-xl"
-            />
-            {/* Trash icon in top-right corner */}
-            <button className="absolute top-2 right-2 p-2 bg-white bg-opacity-80 rounded-full shadow">
-              {/* Example Trash Icon (Feather Icons style) */}
-              <svg
-                className="w-4 h-4 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 6h18M9 6v-2c0-.55.45-1 
-                  1-1h4c.55 0 1 .45 1 1v2m1 0v12c0 
-                  1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2V6h8" 
-                />
-              </svg>
-            </button>
-          </div>
+      {/* Main Content */}
+      <main className="flex-1 bg-white rounded-t-3xl overflow-auto">
+        <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+          {loading && <p className="text-center text-gray-500">Loading listings...</p>}
 
-          {/* Listing Details */}
-          <div className="p-4">
-            <div className="flex items-start justify-between">
-              {/* Left side: Address + Date */}
-              <div>
-                <h2 className="text-base font-semibold">265 Mainstreet, Toronto</h2>
-                <div className="mt-1 flex items-center text-sm text-gray-500">
-                  {/* Calendar Icon */}
-                  <svg
-                    className="w-4 h-4 text-gray-400 mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    viewBox="0 0 24 24"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <span>June 15</span>
-                </div>
-              </div>
-              {/* Right side: Price */}
-              <p className="text-sm font-semibold text-gray-900">$1200/month</p>
-            </div>
+          {!loading && listings.length === 0 && (
+            <p className="text-center text-gray-500">No listings found.</p>
+          )}
 
-            {/* Action Buttons */}
-            <div className="mt-4 flex space-x-2">
-              <button className="flex-1 border border-gray-300 rounded-full py-2 text-sm font-medium text-gray-700">
-                Mark as rented
-              </button>
-              <button className="flex-1 border border-gray-300 rounded-full py-2 text-sm font-medium text-gray-700">
-                Edit listing
-              </button>
-            </div>
-          </div>
+          {!loading &&
+            listings.map((listing) => (
+              <ManageLIstingCard
+                key={listing._id}
+                address={listing.location}
+                date={new Date(listing.createdAt)}
+                images={listing.images}
+                price={listing.monthlyPrice}
+                propertyId={listing._id}
+                onClick={() => router.push(`/edit-listing/${listing._id}`)}
+              />
+            ))}
         </div>
-      </div>
+      </main>
 
-      {/* -- 3) CREATE NEW LISTING BUTTON -- */}
-      <div className="mt-auto p-4">
-        <button className="w-full bg-black text-white rounded-full py-3 text-sm font-semibold">
+      {/* Bottom Button */}
+      <div className="fixed bottom-0 left-0 w-full bg-white p-4">
+        <button
+          onClick={() => router.push('/create-listing')}
+          type="button"
+          className="w-full bg-black text-white py-3 rounded-full text-center font-medium hover:opacity-90 transition"
+        >
           Create new listing
         </button>
       </div>
     </div>
-  );
+  )
 }

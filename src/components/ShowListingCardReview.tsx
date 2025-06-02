@@ -2,7 +2,6 @@
 
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface ShowListingCardProps {
@@ -15,7 +14,6 @@ export default function ShowListingCardReview({
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
   
   // Add state for the image popup
   const [showPopup, setShowPopup] = useState(false);
@@ -77,10 +75,7 @@ export default function ShowListingCardReview({
           </div>
         </Carousel>
 
-        {/* Heart / Favorite Icon */}
-        <button onClick={() => { router.back() }} className="absolute top-4 left-4 flex items-center justify-center h-8 w-8  bg-white rounded-full shadow-sm z-[1]">
-          <Image alt="Favourite" src="/icons/backbutton.svg" className="text-black" width={32} height={32} />
-        </button>
+        
       </div>
 
       {/* Image Popup */}
